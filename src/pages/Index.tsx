@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import { Link } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -65,6 +66,12 @@ const Index = () => {
 
         {/* History */}
         <ZakatRiwayat history={history} onChanged={refreshHistory} />
+
+        <div className="text-center">
+          <Link to="/panduan" className="text-sm text-primary hover:underline">
+            📖 Baca Panduan Zakat
+          </Link>
+        </div>
       </div>
     </div>
   );

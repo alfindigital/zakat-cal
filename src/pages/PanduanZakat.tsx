@@ -1,0 +1,98 @@
+import { Link } from "react-router-dom";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { DarkModeToggle } from "@/components/DarkModeToggle";
+import { ArrowLeft } from "lucide-react";
+
+const sections = [
+  {
+    title: "Apa Itu Zakat?",
+    content:
+      "Zakat adalah rukun Islam ke-4, yaitu kewajiban mengeluarkan sebagian harta bagi setiap Muslim yang telah memenuhi syarat tertentu. Zakat berfungsi untuk membersihkan harta dan membantu mereka yang membutuhkan.",
+  },
+  {
+    title: "Syarat Wajib Zakat",
+    content: null,
+    list: [
+      "Muslim — Zakat hanya diwajibkan bagi umat Islam.",
+      "Merdeka — Bukan hamba sahaya (konteks historis).",
+      "Baligh & Berakal — Sudah dewasa dan berakal sehat.",
+      "Mencapai Nisab — Harta mencapai batas minimum yang ditetapkan syariat (setara 85 gram emas untuk zakat maal).",
+      "Haul — Harta telah dimiliki selama satu tahun hijriyah penuh (kecuali zakat pertanian dan rikaz).",
+      "Milik Penuh — Harta dimiliki secara penuh dan tidak terikat utang pokok.",
+    ],
+  },
+  {
+    title: "Jenis-Jenis Zakat",
+    content: null,
+    list: [
+      "Zakat Fitrah — Wajib dikeluarkan sebelum shalat Idul Fitri, sebesar 2,5 kg makanan pokok per jiwa.",
+      "Zakat Maal (Harta) — Dikeluarkan atas harta yang mencapai nisab dan haul, meliputi tabungan, emas, perak, investasi, dan aset produktif.",
+      "Zakat Penghasilan — Zakat atas pendapatan/gaji yang diqiyaskan pada zakat pertanian, dikeluarkan saat menerima penghasilan jika total tahunan mencapai nisab.",
+    ],
+  },
+  {
+    title: "Nisab & Kadar Zakat",
+    content:
+      "Nisab zakat maal dan penghasilan setara dengan 85 gram emas murni. Kadar zakatnya adalah 2,5% dari total harta/penghasilan yang memenuhi syarat. Untuk zakat fitrah, besarannya 2,5 kg (atau 3,5 liter) makanan pokok daerah setempat.",
+  },
+  {
+    title: "8 Golongan Penerima Zakat (Asnaf)",
+    content: "Berdasarkan QS. At-Taubah ayat 60:",
+    list: [
+      "Fakir — Orang yang hampir tidak memiliki apa-apa.",
+      "Miskin — Orang yang penghasilannya tidak mencukupi kebutuhan dasar.",
+      "Amil — Pengelola/pengumpul zakat.",
+      "Muallaf — Orang yang baru masuk Islam atau yang hatinya perlu dilunakkan.",
+      "Riqab — Memerdekakan budak (konteks historis).",
+      "Gharimin — Orang yang terlilit hutang untuk kebutuhan halal.",
+      "Fi Sabilillah — Pejuang di jalan Allah.",
+      "Ibnu Sabil — Musafir yang kehabisan bekal dalam perjalanan.",
+    ],
+  },
+  {
+    title: "Waktu Pembayaran",
+    content:
+      "Zakat maal dan penghasilan dapat dibayarkan kapan saja setelah memenuhi syarat nisab dan haul. Zakat fitrah wajib dibayarkan sebelum shalat Idul Fitri, dan paling utama di akhir bulan Ramadhan.",
+  },
+];
+
+export default function PanduanZakat() {
+  return (
+    <div className="min-h-screen bg-background px-4 py-8 sm:py-12">
+      <div className="mx-auto max-w-2xl space-y-6">
+        <div className="flex items-center justify-between">
+          <Button variant="ghost" size="sm" asChild>
+            <Link to="/"><ArrowLeft className="mr-2 h-4 w-4" />Kembali</Link>
+          </Button>
+          <DarkModeToggle />
+        </div>
+
+        <div className="text-center space-y-2">
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Panduan Zakat</h1>
+          <p className="text-muted-foreground">Syarat, ketentuan, dan jenis-jenis zakat dalam Islam</p>
+        </div>
+
+        <div className="space-y-4">
+          {sections.map((s) => (
+            <Card key={s.title}>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg">{s.title}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3 text-sm text-muted-foreground leading-relaxed">
+                {s.content && <p>{s.content}</p>}
+                {s.list && (
+                  <ol className="list-decimal list-inside space-y-1.5">
+                    {s.list.map((item, i) => (
+                      <li key={i}><span className="text-foreground font-medium">{item.split(" — ")[0]}</span> — {item.split(" — ")[1]}</li>
+                    ))}
+                  </ol>
+                )}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
