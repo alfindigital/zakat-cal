@@ -6,6 +6,7 @@ import { fetchGoldPrice, getHistory, type GoldPrice } from "@/lib/zakat";
 import ZakatPenghasilan from "@/components/ZakatPenghasilan";
 import ZakatMaal from "@/components/ZakatMaal";
 import ZakatFitrah from "@/components/ZakatFitrah";
+import { DarkModeToggle } from "@/components/DarkModeToggle";
 import ZakatRiwayat from "@/components/ZakatRiwayat";
 
 const Index = () => {
