@@ -3,7 +3,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { Download } from "lucide-react";
 import { calcZakatPenghasilan, formatRupiah, addHistory } from "@/lib/zakat";
+import { generateZakatPdf } from "@/lib/pdf-generator";
 
 interface Props {
   goldPrice: number;
@@ -22,6 +24,16 @@ export default function ZakatPenghasilan({ goldPrice, onCalculated }: Props) {
       addHistory({ type: "Penghasilan", amount: r.zakatAmount });
       onCalculated();
     }
+  };
+
+  const handleDownload = () => {
+    if (!result) return;
+    generateZakatPdf("Penghasilan", [
+      { label: "Penghasilan Bulanan", value: formatRupiah(Number(monthly) || 0) },
+      { label: "Bonus / THR Tahunan", value: formatRupiah(Number(bonus) || 0) },
+      { label: "Penghasilan Tahunan", value: formatRupiah(result.annualIncome) },
+      { label: "Nisab (85g emas)", value: formatRupiah(result.nisab) },
+    ], result.zakatAmount, result.isWajib);
   };
 
   return (
@@ -59,6 +71,9 @@ export default function ZakatPenghasilan({ goldPrice, onCalculated }: Props) {
             <span className="font-semibold">Zakat yang Harus Dibayar</span>
             <span className="text-2xl font-bold text-primary">{formatRupiah(result.zakatAmount)}</span>
           </div>
+          <Button variant="outline" size="sm" className="w-full mt-2" onClick={handleDownload}>
+            <Download className="mr-2 h-4 w-4" /> Download PDF
+          </Button>
         </div>
       )}
     </div>

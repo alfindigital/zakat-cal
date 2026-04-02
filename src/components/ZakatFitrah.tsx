@@ -3,7 +3,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Download } from "lucide-react";
 import { calcZakatFitrah, formatRupiah, addHistory, RICE_OPTIONS } from "@/lib/zakat";
+import { generateZakatPdf } from "@/lib/pdf-generator";
 
 interface Props {
   onCalculated: () => void;
@@ -21,6 +23,16 @@ export default function ZakatFitrah({ onCalculated }: Props) {
     setResult(r);
     addHistory({ type: "Fitrah", amount: r.total });
     onCalculated();
+  };
+
+  const handleDownload = () => {
+    if (!result) return;
+    generateZakatPdf("Fitrah", [
+      { label: "Jumlah Jiwa", value: jiwa },
+      { label: "Jenis Beras", value: RICE_OPTIONS[Number(riceIdx)].label },
+      { label: "Harga Beras per kg", value: formatRupiah(RICE_OPTIONS[Number(riceIdx)].pricePerKg) },
+      { label: `Per Jiwa (${result.kg} kg)`, value: formatRupiah(result.perPerson) },
+    ], result.total, true);
   };
 
   return (
@@ -63,6 +75,9 @@ export default function ZakatFitrah({ onCalculated }: Props) {
             <span className="font-semibold">Total Zakat Fitrah</span>
             <span className="text-2xl font-bold text-primary">{formatRupiah(result.total)}</span>
           </div>
+          <Button variant="outline" size="sm" className="w-full mt-2" onClick={handleDownload}>
+            <Download className="mr-2 h-4 w-4" /> Download PDF
+          </Button>
         </div>
       )}
     </div>
