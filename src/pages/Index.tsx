@@ -66,6 +66,12 @@ const Index = () => {
 
         {/* History */}
         <ZakatRiwayat history={history} onChanged={refreshHistory} />
+
+        <div className="text-center">
+          <Link to="/panduan" className="text-sm text-primary hover:underline">
+            📖 Baca Panduan Zakat
+          </Link>
+        </div>
       </div>
     </div>
   );
