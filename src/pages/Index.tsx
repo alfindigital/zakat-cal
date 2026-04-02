@@ -23,7 +23,10 @@ const Index = () => {
     <div className="min-h-screen bg-background px-4 py-8 sm:py-12">
       <div className="mx-auto max-w-2xl space-y-6">
         {/* Header */}
-        <div className="text-center space-y-2">
+        <div className="text-center space-y-2 relative">
+          <div className="absolute right-0 top-0">
+            <DarkModeToggle />
+          </div>
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Kalkulator Zakat</h1>
           <p className="text-muted-foreground">Hitung zakat penghasilan, maal, dan fitrah dengan mudah</p>
           {gold && (
