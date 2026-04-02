@@ -3,7 +3,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { Download } from "lucide-react";
 import { calcZakatMaal, formatRupiah, addHistory } from "@/lib/zakat";
+import { generateZakatPdf } from "@/lib/pdf-generator";
 
 interface Props {
   goldPrice: number;
@@ -29,6 +31,21 @@ export default function ZakatMaal({ goldPrice, onCalculated }: Props) {
       addHistory({ type: "Maal", amount: r.zakatAmount });
       onCalculated();
     }
+  };
+
+  const handleDownload = () => {
+    if (!result) return;
+    generateZakatPdf("Maal", [
+      { label: "Tabungan", value: formatRupiah(Number(tabungan) || 0) },
+      { label: "Nilai Emas", value: formatRupiah(result.emasValue) },
+      { label: "Nilai Perak", value: formatRupiah(result.perakValue) },
+      { label: "Investasi / Saham", value: formatRupiah(Number(investasi) || 0) },
+      { label: "Properti Investasi", value: formatRupiah(Number(properti) || 0) },
+      { label: "Total Harta", value: formatRupiah(result.totalHarta) },
+      { label: "Hutang", value: formatRupiah(result.totalHarta - result.hartaBersih) },
+      { label: "Harta Bersih", value: formatRupiah(result.hartaBersih) },
+      { label: "Nisab (85g emas)", value: formatRupiah(result.nisab) },
+    ], result.zakatAmount, result.isWajib);
   };
 
   return (
@@ -90,6 +107,9 @@ export default function ZakatMaal({ goldPrice, onCalculated }: Props) {
             <span className="font-semibold">Zakat yang Harus Dibayar</span>
             <span className="text-2xl font-bold text-primary">{formatRupiah(result.zakatAmount)}</span>
           </div>
+          <Button variant="outline" size="sm" className="w-full mt-2" onClick={handleDownload}>
+            <Download className="mr-2 h-4 w-4" /> Download PDF
+          </Button>
         </div>
       )}
     </div>
