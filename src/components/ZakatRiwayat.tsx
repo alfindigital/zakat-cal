@@ -12,25 +12,25 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
   if (history.length === 0) return null;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 sm:space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Riwayat Perhitungan</h2>
-        <Button variant="ghost" size="sm" onClick={() => { clearHistory(); onChanged(); }}>
+        <h2 className="text-base sm:text-lg font-semibold">Riwayat Perhitungan</h2>
+        <Button variant="ghost" size="sm" className="text-xs sm:text-sm" onClick={() => { clearHistory(); onChanged(); }}>
           Hapus Semua
         </Button>
       </div>
       <div className="space-y-2">
         {history.map((h) => (
-          <div key={h.id} className="flex items-center justify-between rounded-lg border bg-card p-3">
-            <div className="flex items-center gap-3">
-              <Badge variant="secondary">{h.type}</Badge>
-              <div>
-                <p className="font-medium text-primary">{formatRupiah(h.amount)}</p>
-                <p className="text-xs text-muted-foreground">{h.date}</p>
+          <div key={h.id} className="flex items-center justify-between rounded-lg border bg-card p-2.5 sm:p-3">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+              <Badge variant="secondary" className="text-[10px] sm:text-xs shrink-0">{h.type}</Badge>
+              <div className="min-w-0">
+                <p className="font-medium text-sm sm:text-base text-primary truncate">{formatRupiah(h.amount)}</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">{h.date}</p>
               </div>
             </div>
-            <Button variant="ghost" size="icon" onClick={() => { removeHistory(h.id); onChanged(); }}>
-              <Trash2 className="h-4 w-4" />
+            <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => { removeHistory(h.id); onChanged(); }}>
+              <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             </Button>
           </div>
         ))}
