@@ -49,30 +49,30 @@ export default function ZakatMaal({ goldPrice, onCalculated }: Props) {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="space-y-2">
-          <Label>Tabungan (Rp)</Label>
+    <div className="space-y-4 sm:space-y-6">
+      <div className="grid gap-3 sm:gap-4 sm:grid-cols-2">
+        <div className="space-y-1.5 sm:space-y-2">
+          <Label className="text-xs sm:text-sm">Tabungan (Rp)</Label>
           <Input type="number" placeholder="0" value={tabungan} onChange={(e) => setTabungan(e.target.value)} />
         </div>
-        <div className="space-y-2">
-          <Label>Emas (gram)</Label>
+        <div className="space-y-1.5 sm:space-y-2">
+          <Label className="text-xs sm:text-sm">Emas (gram)</Label>
           <Input type="number" placeholder="0" value={emas} onChange={(e) => setEmas(e.target.value)} />
         </div>
-        <div className="space-y-2">
-          <Label>Perak (gram)</Label>
+        <div className="space-y-1.5 sm:space-y-2">
+          <Label className="text-xs sm:text-sm">Perak (gram)</Label>
           <Input type="number" placeholder="0" value={perak} onChange={(e) => setPerak(e.target.value)} />
         </div>
-        <div className="space-y-2">
-          <Label>Investasi / Saham (Rp)</Label>
+        <div className="space-y-1.5 sm:space-y-2">
+          <Label className="text-xs sm:text-sm">Investasi / Saham (Rp)</Label>
           <Input type="number" placeholder="0" value={investasi} onChange={(e) => setInvestasi(e.target.value)} />
         </div>
-        <div className="space-y-2">
-          <Label>Properti Investasi (Rp)</Label>
+        <div className="space-y-1.5 sm:space-y-2">
+          <Label className="text-xs sm:text-sm">Properti Investasi (Rp)</Label>
           <Input type="number" placeholder="0" value={properti} onChange={(e) => setProperti(e.target.value)} />
         </div>
-        <div className="space-y-2">
-          <Label>Hutang (Rp)</Label>
+        <div className="space-y-1.5 sm:space-y-2">
+          <Label className="text-xs sm:text-sm">Hutang (Rp)</Label>
           <Input type="number" placeholder="0" value={hutang} onChange={(e) => setHutang(e.target.value)} />
         </div>
       </div>
@@ -80,32 +80,32 @@ export default function ZakatMaal({ goldPrice, onCalculated }: Props) {
       <Button onClick={handleCalc} className="w-full">Hitung Zakat Maal</Button>
 
       {result && (
-        <div className="rounded-lg border bg-muted/50 p-5 space-y-3">
+        <div className="rounded-lg border bg-muted/50 p-3 sm:p-5 space-y-2 sm:space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">Total Harta</span>
-            <span className="font-medium">{formatRupiah(result.totalHarta)}</span>
+            <span className="text-xs sm:text-sm text-muted-foreground">Total Harta</span>
+            <span className="font-medium text-sm sm:text-base">{formatRupiah(result.totalHarta)}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">Hutang</span>
-            <span className="font-medium">{formatRupiah(result.totalHarta - result.hartaBersih)}</span>
+            <span className="text-xs sm:text-sm text-muted-foreground">Hutang</span>
+            <span className="font-medium text-sm sm:text-base">{formatRupiah(result.totalHarta - result.hartaBersih)}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">Harta Bersih</span>
-            <span className="font-medium">{formatRupiah(result.hartaBersih)}</span>
+            <span className="text-xs sm:text-sm text-muted-foreground">Harta Bersih</span>
+            <span className="font-medium text-sm sm:text-base">{formatRupiah(result.hartaBersih)}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">Nisab (85g emas)</span>
-            <span className="font-medium">{formatRupiah(result.nisab)}</span>
+            <span className="text-xs sm:text-sm text-muted-foreground">Nisab (85g emas)</span>
+            <span className="font-medium text-sm sm:text-base">{formatRupiah(result.nisab)}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">Status</span>
+            <span className="text-xs sm:text-sm text-muted-foreground">Status</span>
             <Badge variant={result.isWajib ? "default" : "secondary"}>
               {result.isWajib ? "Wajib Zakat" : "Belum Wajib"}
             </Badge>
           </div>
-          <div className="border-t pt-3 flex items-center justify-between">
-            <span className="font-semibold">Zakat yang Harus Dibayar</span>
-            <span className="text-2xl font-bold text-primary">{formatRupiah(result.zakatAmount)}</span>
+          <div className="border-t pt-2 sm:pt-3 flex items-center justify-between">
+            <span className="font-semibold text-sm sm:text-base">Zakat yang Harus Dibayar</span>
+            <span className="text-xl sm:text-2xl font-bold text-primary">{formatRupiah(result.zakatAmount)}</span>
           </div>
           <Button variant="outline" size="sm" className="w-full mt-2" onClick={handleDownload}>
             <Download className="mr-2 h-4 w-4" /> Download PDF
