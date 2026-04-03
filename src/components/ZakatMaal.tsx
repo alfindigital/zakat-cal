@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -79,39 +80,55 @@ export default function ZakatMaal({ goldPrice, onCalculated }: Props) {
 
       <Button onClick={handleCalc} className="w-full">Hitung Zakat Maal</Button>
 
-      {result && (
-        <div className="rounded-lg border bg-muted/50 p-3 sm:p-5 space-y-2 sm:space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs sm:text-sm text-muted-foreground">Total Harta</span>
-            <span className="font-medium text-sm sm:text-base">{formatRupiah(result.totalHarta)}</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-xs sm:text-sm text-muted-foreground">Hutang</span>
-            <span className="font-medium text-sm sm:text-base">{formatRupiah(result.totalHarta - result.hartaBersih)}</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-xs sm:text-sm text-muted-foreground">Harta Bersih</span>
-            <span className="font-medium text-sm sm:text-base">{formatRupiah(result.hartaBersih)}</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-xs sm:text-sm text-muted-foreground">Nisab (85g emas)</span>
-            <span className="font-medium text-sm sm:text-base">{formatRupiah(result.nisab)}</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-xs sm:text-sm text-muted-foreground">Status</span>
-            <Badge variant={result.isWajib ? "default" : "secondary"}>
-              {result.isWajib ? "Wajib Zakat" : "Belum Wajib"}
-            </Badge>
-          </div>
-          <div className="border-t pt-2 sm:pt-3 flex items-center justify-between">
-            <span className="font-semibold text-sm sm:text-base">Zakat yang Harus Dibayar</span>
-            <span className="text-xl sm:text-2xl font-bold text-primary">{formatRupiah(result.zakatAmount)}</span>
-          </div>
-          <Button variant="outline" size="sm" className="w-full mt-2" onClick={handleDownload}>
-            <Download className="mr-2 h-4 w-4" /> Download PDF
-          </Button>
-        </div>
-      )}
+      <AnimatePresence>
+        {result && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.35 }}
+            className="rounded-lg border bg-muted/50 p-3 sm:p-5 space-y-2 sm:space-y-3"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-xs sm:text-sm text-muted-foreground">Total Harta</span>
+              <span className="font-medium text-sm sm:text-base">{formatRupiah(result.totalHarta)}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-xs sm:text-sm text-muted-foreground">Hutang</span>
+              <span className="font-medium text-sm sm:text-base">{formatRupiah(result.totalHarta - result.hartaBersih)}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-xs sm:text-sm text-muted-foreground">Harta Bersih</span>
+              <span className="font-medium text-sm sm:text-base">{formatRupiah(result.hartaBersih)}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-xs sm:text-sm text-muted-foreground">Nisab (85g emas)</span>
+              <span className="font-medium text-sm sm:text-base">{formatRupiah(result.nisab)}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-xs sm:text-sm text-muted-foreground">Status</span>
+              <Badge variant={result.isWajib ? "default" : "secondary"}>
+                {result.isWajib ? "Wajib Zakat" : "Belum Wajib"}
+              </Badge>
+            </div>
+            <div className="border-t pt-2 sm:pt-3 flex items-center justify-between">
+              <span className="font-semibold text-sm sm:text-base">Zakat yang Harus Dibayar</span>
+              <motion.span
+                key={result.zakatAmount}
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                className="text-xl sm:text-2xl font-bold text-primary"
+              >
+                {formatRupiah(result.zakatAmount)}
+              </motion.span>
+            </div>
+            <Button variant="outline" size="sm" className="w-full mt-2 transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]" onClick={handleDownload}>
+              <Download className="mr-2 h-4 w-4" /> Download PDF
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
