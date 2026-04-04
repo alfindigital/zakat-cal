@@ -33,27 +33,29 @@ const Index = () => {
       <div className="mx-auto max-w-2xl space-y-4 sm:space-y-6">
         {/* Header */}
         <motion.div
-          className="text-center space-y-1.5 sm:space-y-2 relative"
+          className="flex items-start justify-between gap-3"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="absolute right-0 top-0">
-            <DarkModeToggle />
+          <div className="space-y-0.5">
+            <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">Kalkulator Zakat</h1>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <span>Hitung zakat dengan mudah</span>
+              {gold && (
+                <motion.span
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="hidden sm:inline"
+                >
+                  · Emas {new Intl.NumberFormat("id-ID").format(gold.price)}/g
+                  {gold.isDefault && <Badge variant="secondary" className="ml-1 text-[10px]">est</Badge>}
+                </motion.span>
+              )}
+            </div>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight sm:text-4xl pr-10">Kalkulator Zakat</h1>
-          <p className="text-sm sm:text-base text-muted-foreground">Hitung zakat penghasilan, maal, dan fitrah dengan mudah</p>
-          {gold && (
-            <motion.div
-              className="flex items-center justify-center gap-2 text-xs text-muted-foreground"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-            >
-              <span>Harga emas: {new Intl.NumberFormat("id-ID").format(gold.price)}/gram</span>
-              {gold.isDefault && <Badge variant="secondary" className="text-[10px]">estimasi</Badge>}
-            </motion.div>
-          )}
+          <DarkModeToggle />
         </motion.div>
 
         {/* Calculator Card */}
