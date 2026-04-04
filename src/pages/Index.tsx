@@ -29,47 +29,32 @@ const Index = () => {
   const refreshHistory = useCallback(() => setHistory(getHistory()), []);
 
   return (
-    <div className="min-h-screen bg-background px-3 py-6 sm:px-4 sm:py-12">
-      <div className="mx-auto max-w-2xl space-y-4 sm:space-y-6">
-        {/* Header */}
-        <motion.div
-          className="flex items-start justify-between gap-3"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <div className="space-y-0.5">
-            <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">Kalkulator Zakat</h1>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <span>Hitung zakat dengan mudah</span>
-              {gold && (
-                <motion.span
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.3 }}
-                  className="hidden sm:inline"
-                >
-                  · Emas {new Intl.NumberFormat("id-ID").format(gold.price)}/g
-                  {gold.isDefault && <Badge variant="secondary" className="ml-1 text-[10px]">est</Badge>}
-                </motion.span>
-              )}
-            </div>
+    <div className="min-h-screen bg-background">
+      {/* Sticky Header */}
+      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
+        <div className="mx-auto max-w-2xl flex items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
+          <div>
+            <h1 className="text-lg font-semibold tracking-tight sm:text-xl">Kalkulator Zakat</h1>
+            {gold && (
+              <p className="text-[11px] text-muted-foreground mt-0.5">
+                Emas {new Intl.NumberFormat("id-ID").format(gold.price)}/g
+                {gold.isDefault && <Badge variant="secondary" className="ml-1.5 text-[9px] py-0 px-1">est</Badge>}
+              </p>
+            )}
           </div>
           <DarkModeToggle />
-        </motion.div>
+        </div>
+      </header>
 
-        {/* Calculator Card */}
+      {/* Content */}
+      <main className="mx-auto max-w-2xl px-4 py-5 sm:px-6 sm:py-8 space-y-4 sm:space-y-6">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.15 }}
+          transition={{ duration: 0.4 }}
         >
           <Card className="overflow-hidden transition-shadow duration-300 hover:shadow-lg">
-            <CardHeader className="px-4 pb-2 sm:px-6 sm:pb-3">
-              <CardTitle className="text-base sm:text-lg">Pilih Jenis Zakat</CardTitle>
-              <CardDescription className="text-xs sm:text-sm">Masukkan data untuk menghitung zakat Anda</CardDescription>
-            </CardHeader>
-            <CardContent className="px-4 sm:px-6">
+            <CardContent className="px-4 pt-4 sm:px-6 sm:pt-5">
               <Tabs value={activeTab} onValueChange={setActiveTab}>
                 <TabsList className="w-full">
                   <TabsTrigger value="penghasilan" className="flex-1 text-xs sm:text-sm transition-all duration-200">Penghasilan</TabsTrigger>
@@ -100,26 +85,20 @@ const Index = () => {
           </Card>
         </motion.div>
 
-        {/* History */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
+          transition={{ duration: 0.4, delay: 0.15 }}
         >
           <ZakatRiwayat history={history} onChanged={refreshHistory} />
         </motion.div>
 
-        <motion.div
-          className="text-center pb-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.45 }}
-        >
+        <div className="text-center pb-4">
           <Link to="/panduan" className="text-sm text-primary hover:underline transition-colors duration-200">
-            📖 Baca Panduan Zakat
+            📖 Panduan Zakat
           </Link>
-        </motion.div>
-      </div>
+        </div>
+      </main>
     </div>
   );
 };
