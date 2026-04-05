@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Trash2 } from "lucide-react";
 import { type ZakatHistory, formatRupiah, removeHistory, clearHistory } from "@/lib/zakat";
+import ZakatChart from "./ZakatChart";
 
 interface Props {
   history: ZakatHistory[];
