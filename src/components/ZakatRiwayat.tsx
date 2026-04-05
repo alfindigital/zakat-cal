@@ -13,7 +13,9 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
   if (history.length === 0) return null;
 
   return (
-    <div className="space-y-3 sm:space-y-4">
+    <div className="space-y-4 sm:space-y-5">
+      <ZakatChart history={history} />
+
       <div className="flex items-center justify-between">
         <h2 className="text-base sm:text-lg font-semibold">Riwayat Perhitungan</h2>
         <Button variant="ghost" size="sm" className="text-xs sm:text-sm" onClick={() => { clearHistory(); onChanged(); }}>
