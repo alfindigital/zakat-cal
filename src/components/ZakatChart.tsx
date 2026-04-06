@@ -117,8 +117,8 @@ export default function ZakatChart({ history }: Props) {
                 />
               </PieChart>
             </ResponsiveContainer>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
         {/* Legend */}
         <div className="flex flex-wrap gap-3 mt-3 justify-center">
