@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { motion } from "framer-motion";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, PieChart, Pie } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { type ZakatHistory, formatRupiah } from "@/lib/zakat";
@@ -31,6 +32,11 @@ export default function ZakatChart({ history }: Props) {
   if (history.length === 0) return null;
 
   return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95, y: 16 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+    >
     <Card>
       <CardHeader className="pb-2 px-4 pt-4 sm:px-6 sm:pt-5">
         <CardTitle className="text-sm sm:text-base font-semibold">Ringkasan Zakat</CardTitle>
@@ -39,8 +45,12 @@ export default function ZakatChart({ history }: Props) {
         </p>
       </CardHeader>
       <CardContent className="px-4 pb-4 sm:px-6 sm:pb-5">
-        <div className="flex flex-col sm:flex-row gap-4 items-center">
-          {/* Bar Chart */}
+        <motion.div
+          className="flex flex-col sm:flex-row gap-4 items-center"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+        >
           <div className="w-full sm:flex-1 h-[160px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={summaryByType} layout="vertical" margin={{ left: 0, right: 8, top: 4, bottom: 4 }}>
@@ -73,7 +83,12 @@ export default function ZakatChart({ history }: Props) {
           </div>
 
           {/* Pie Chart */}
-          <div className="w-[140px] h-[140px] shrink-0">
+          <motion.div
+            className="w-[140px] h-[140px] shrink-0"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4, delay: 0.35 }}
+          >
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -102,8 +117,8 @@ export default function ZakatChart({ history }: Props) {
                 />
               </PieChart>
             </ResponsiveContainer>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
         {/* Legend */}
         <div className="flex flex-wrap gap-3 mt-3 justify-center">
@@ -116,5 +131,6 @@ export default function ZakatChart({ history }: Props) {
         </div>
       </CardContent>
     </Card>
+    </motion.div>
   );
 }
