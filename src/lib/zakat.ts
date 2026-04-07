@@ -1,9 +1,16 @@
-// Default gold price per gram in IDR (fallback)
+// Default prices per gram in IDR (fallback)
 const DEFAULT_GOLD_PRICE = 1_200_000;
+export const DEFAULT_SILVER_PRICE = 15_000;
 const NISAB_GOLD_GRAMS = 85;
-const SILVER_PRICE_PER_GRAM = 15_000;
+const NISAB_SILVER_GRAMS = 595;
 const ZAKAT_RATE = 0.025;
 const FITRAH_KG = 2.5;
+
+export type NisabType = "gold" | "silver";
+
+export function getNisabGrams(type: NisabType) {
+  return type === "gold" ? NISAB_GOLD_GRAMS : NISAB_SILVER_GRAMS;
+}
 
 export const RICE_OPTIONS = [
   { label: "Beras Standar", pricePerKg: 14_000 },
@@ -35,16 +42,18 @@ export async function fetchGoldPrice(): Promise<GoldPrice> {
   return { price: DEFAULT_GOLD_PRICE, date: new Date().toLocaleDateString("id-ID"), isDefault: true };
 }
 
-export function getNisab(goldPrice: number) {
-  return NISAB_GOLD_GRAMS * goldPrice;
+export function getNisab(metalPrice: number, type: NisabType = "gold") {
+  const grams = type === "gold" ? NISAB_GOLD_GRAMS : NISAB_SILVER_GRAMS;
+  return grams * metalPrice;
 }
 
-export function calcZakatPenghasilan(monthlyIncome: number, annualBonus: number, goldPrice: number) {
+export function calcZakatPenghasilan(monthlyIncome: number, annualBonus: number, metalPrice: number, nisabType: NisabType = "gold") {
   const annualIncome = monthlyIncome * 12 + annualBonus;
-  const nisab = getNisab(goldPrice);
+  const nisab = getNisab(metalPrice, nisabType);
+  const nisabLabel = nisabType === "gold" ? "85g emas" : "595g perak";
   const isWajib = annualIncome >= nisab;
   const zakatAmount = isWajib ? annualIncome * ZAKAT_RATE : 0;
-  return { annualIncome, nisab, isWajib, zakatAmount };
+  return { annualIncome, nisab, nisabLabel, isWajib, zakatAmount };
 }
 
 export function calcZakatMaal(
@@ -54,16 +63,20 @@ export function calcZakatMaal(
   investasi: number,
   properti: number,
   hutang: number,
-  goldPrice: number
+  goldPrice: number,
+  silverPrice: number = DEFAULT_SILVER_PRICE,
+  nisabType: NisabType = "gold"
 ) {
   const emasValue = emasGram * goldPrice;
-  const perakValue = perakGram * SILVER_PRICE_PER_GRAM;
+  const perakValue = perakGram * silverPrice;
   const totalHarta = tabungan + emasValue + perakValue + investasi + properti;
   const hartaBersih = Math.max(0, totalHarta - hutang);
-  const nisab = getNisab(goldPrice);
+  const metalPrice = nisabType === "gold" ? goldPrice : silverPrice;
+  const nisab = getNisab(metalPrice, nisabType);
+  const nisabLabel = nisabType === "gold" ? "85g emas" : "595g perak";
   const isWajib = hartaBersih >= nisab;
   const zakatAmount = isWajib ? hartaBersih * ZAKAT_RATE : 0;
-  return { totalHarta, hartaBersih, emasValue, perakValue, nisab, isWajib, zakatAmount };
+  return { totalHarta, hartaBersih, emasValue, perakValue, nisab, nisabLabel, isWajib, zakatAmount };
 }
 
 export function calcZakatFitrah(jumlahJiwa: number, riceIndex: number) {

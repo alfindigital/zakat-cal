@@ -5,21 +5,22 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Download } from "lucide-react";
-import { calcZakatPenghasilan, formatRupiah, addHistory } from "@/lib/zakat";
+import { calcZakatPenghasilan, formatRupiah, addHistory, type NisabType } from "@/lib/zakat";
 import { generateZakatPdf } from "@/lib/pdf-generator";
 
 interface Props {
-  goldPrice: number;
+  metalPrice: number;
+  nisabType: NisabType;
   onCalculated: () => void;
 }
 
-export default function ZakatPenghasilan({ goldPrice, onCalculated }: Props) {
+export default function ZakatPenghasilan({ metalPrice, nisabType, onCalculated }: Props) {
   const [monthly, setMonthly] = useState("");
   const [bonus, setBonus] = useState("");
   const [result, setResult] = useState<ReturnType<typeof calcZakatPenghasilan> | null>(null);
 
   const handleCalc = () => {
-    const r = calcZakatPenghasilan(Number(monthly) || 0, Number(bonus) || 0, goldPrice);
+    const r = calcZakatPenghasilan(Number(monthly) || 0, Number(bonus) || 0, metalPrice, nisabType);
     setResult(r);
     if (r.zakatAmount > 0) {
       addHistory({ type: "Penghasilan", amount: r.zakatAmount });
@@ -33,7 +34,7 @@ export default function ZakatPenghasilan({ goldPrice, onCalculated }: Props) {
       { label: "Penghasilan Bulanan", value: formatRupiah(Number(monthly) || 0) },
       { label: "Bonus / THR Tahunan", value: formatRupiah(Number(bonus) || 0) },
       { label: "Penghasilan Tahunan", value: formatRupiah(result.annualIncome) },
-      { label: "Nisab (85g emas)", value: formatRupiah(result.nisab) },
+      { label: "Nisab (" + result.nisabLabel + ")", value: formatRupiah(result.nisab) },
     ], result.zakatAmount, result.isWajib);
   };
 
@@ -66,7 +67,7 @@ export default function ZakatPenghasilan({ goldPrice, onCalculated }: Props) {
               <span className="font-medium text-sm sm:text-base">{formatRupiah(result.annualIncome)}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-xs sm:text-sm text-muted-foreground">Nisab (85g emas)</span>
+              <span className="text-xs sm:text-sm text-muted-foreground">Nisab ({result.nisabLabel})</span>
               <span className="font-medium text-sm sm:text-base">{formatRupiah(result.nisab)}</span>
             </div>
             <div className="flex items-center justify-between">

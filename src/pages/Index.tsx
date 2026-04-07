@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { fetchGoldPrice, getHistory, formatRupiah, type GoldPrice } from "@/lib/zakat";
+import { fetchGoldPrice, getHistory, DEFAULT_SILVER_PRICE, type NisabType } from "@/lib/zakat";
 import ZakatPenghasilan from "@/components/ZakatPenghasilan";
 import ZakatMaal from "@/components/ZakatMaal";
 import ZakatFitrah from "@/components/ZakatFitrah";
@@ -12,10 +12,14 @@ import { DarkModeToggle } from "@/components/DarkModeToggle";
 import ZakatRiwayat from "@/components/ZakatRiwayat";
 import { motion, AnimatePresence } from "framer-motion";
 import { Calculator, ExternalLink } from "lucide-react";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 const Index = () => {
   const [goldPrice, setGoldPrice] = useState(1_200_000);
   const [goldInput, setGoldInput] = useState("");
+  const [silverPrice, setSilverPrice] = useState(DEFAULT_SILVER_PRICE);
+  const [silverInput, setSilverInput] = useState(String(DEFAULT_SILVER_PRICE));
+  const [nisabType, setNisabType] = useState<NisabType>("gold");
   const [history, setHistory] = useState(getHistory());
   const [activeTab, setActiveTab] = useState("penghasilan");
 
@@ -31,6 +35,14 @@ const Index = () => {
     const num = Number(val);
     if (num > 0) setGoldPrice(num);
   };
+
+  const handleSilverChange = (val: string) => {
+    setSilverInput(val);
+    const num = Number(val);
+    if (num > 0) setSilverPrice(num);
+  };
+
+  const metalPrice = nisabType === "gold" ? goldPrice : silverPrice;
 
   const refreshHistory = useCallback(() => setHistory(getHistory()), []);
 
@@ -53,16 +65,46 @@ const Index = () => {
 
       {/* Content */}
       <main className="mx-auto max-w-2xl w-full px-4 py-5 sm:px-6 sm:py-8 space-y-5 sm:space-y-7 flex-1">
-        {/* Gold Price Input */}
-        <div className="flex items-center gap-3">
-          <Label className="text-sm text-muted-foreground whitespace-nowrap shrink-0 font-medium">Harga Emas /g</Label>
-          <Input
-            type="number"
-            value={goldInput}
-            onChange={(e) => handleGoldChange(e.target.value)}
-            className="h-9 text-sm max-w-[200px] font-semibold"
-            placeholder="1200000"
-          />
+        {/* Nisab Type & Metal Prices */}
+        <div className="space-y-3">
+          <div className="flex items-center gap-3 flex-wrap">
+            <Label className="text-sm text-muted-foreground font-medium shrink-0">Standar Nisab</Label>
+            <ToggleGroup
+              type="single"
+              value={nisabType}
+              onValueChange={(v) => v && setNisabType(v as NisabType)}
+              className="gap-0 rounded-lg border border-border/60 p-0.5"
+            >
+              <ToggleGroupItem value="gold" className="text-xs sm:text-sm px-3 h-8 rounded-md data-[state=on]:bg-primary data-[state=on]:text-primary-foreground font-semibold">
+                🥇 Emas (85g)
+              </ToggleGroupItem>
+              <ToggleGroupItem value="silver" className="text-xs sm:text-sm px-3 h-8 rounded-md data-[state=on]:bg-primary data-[state=on]:text-primary-foreground font-semibold">
+                🥈 Perak (595g)
+              </ToggleGroupItem>
+            </ToggleGroup>
+          </div>
+          <div className="flex items-center gap-3 flex-wrap">
+            <div className="flex items-center gap-2">
+              <Label className="text-sm text-muted-foreground whitespace-nowrap shrink-0 font-medium">Emas /g</Label>
+              <Input
+                type="number"
+                value={goldInput}
+                onChange={(e) => handleGoldChange(e.target.value)}
+                className="h-9 text-sm w-[140px] font-semibold"
+                placeholder="1200000"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <Label className="text-sm text-muted-foreground whitespace-nowrap shrink-0 font-medium">Perak /g</Label>
+              <Input
+                type="number"
+                value={silverInput}
+                onChange={(e) => handleSilverChange(e.target.value)}
+                className="h-9 text-sm w-[140px] font-semibold"
+                placeholder="15000"
+              />
+            </div>
+          </div>
         </div>
 
         <motion.div
@@ -87,10 +129,10 @@ const Index = () => {
                     transition={{ duration: 0.25, ease: "easeInOut" }}
                   >
                     <TabsContent value="penghasilan" forceMount={activeTab === "penghasilan" ? true : undefined} className={activeTab !== "penghasilan" ? "hidden" : ""}>
-                      <ZakatPenghasilan goldPrice={goldPrice} onCalculated={refreshHistory} />
+                      <ZakatPenghasilan metalPrice={metalPrice} nisabType={nisabType} onCalculated={refreshHistory} />
                     </TabsContent>
                     <TabsContent value="maal" forceMount={activeTab === "maal" ? true : undefined} className={activeTab !== "maal" ? "hidden" : ""}>
-                      <ZakatMaal goldPrice={goldPrice} onCalculated={refreshHistory} />
+                      <ZakatMaal goldPrice={goldPrice} silverPrice={silverPrice} nisabType={nisabType} onCalculated={refreshHistory} />
                     </TabsContent>
                     <TabsContent value="fitrah" forceMount={activeTab === "fitrah" ? true : undefined} className={activeTab !== "fitrah" ? "hidden" : ""}>
                       <ZakatFitrah onCalculated={refreshHistory} />
@@ -132,7 +174,7 @@ const Index = () => {
                   <AccordionContent className="text-sm text-muted-foreground leading-relaxed">
                     <ul className="list-disc list-inside space-y-0.5">
                       <li>Muslim, baligh, berakal</li>
-                      <li>Harta mencapai nisab (setara 85g emas)</li>
+                      <li>Harta mencapai nisab (setara 85g emas atau 595g perak)</li>
                       <li>Harta dimiliki penuh selama 1 tahun hijriyah (haul)</li>
                     </ul>
                   </AccordionContent>
@@ -146,6 +188,17 @@ const Index = () => {
                       <li><span className="font-semibold text-foreground">Maal</span> — 2,5% dari harta yang mencapai nisab & haul</li>
                       <li><span className="font-semibold text-foreground">Penghasilan</span> — 2,5% dari pendapatan jika total setahun ≥ nisab</li>
                     </ul>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="nisab">
+                  <AccordionTrigger className="text-sm sm:text-base py-2 font-semibold">Nisab Emas vs Perak</AccordionTrigger>
+                  <AccordionContent className="text-sm text-muted-foreground leading-relaxed">
+                    <ul className="list-disc list-inside space-y-0.5">
+                      <li><span className="font-semibold text-foreground">Emas</span> — 85 gram emas murni (standar mayoritas ulama)</li>
+                      <li><span className="font-semibold text-foreground">Perak</span> — 595 gram perak murni (nisab lebih rendah, lebih banyak orang wajib zakat)</li>
+                    </ul>
+                    <p className="mt-1.5">Sebagian ulama merekomendasikan standar perak agar lebih banyak yang terkena kewajiban zakat.</p>
                   </AccordionContent>
                 </AccordionItem>
 
