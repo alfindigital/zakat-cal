@@ -40,8 +40,8 @@ export default function ZakatFitrah({ onCalculated }: Props) {
     <div className="space-y-4 sm:space-y-6">
       <div className="grid gap-3 sm:gap-4 sm:grid-cols-2">
         <div className="space-y-1.5 sm:space-y-2">
-          <Label className="text-xs sm:text-sm">Jumlah Jiwa / Anggota Keluarga</Label>
-          <Input type="number" placeholder="1" min={1} value={jiwa} onChange={(e) => setJiwa(e.target.value)} />
+          <Label htmlFor="fitrah-jiwa" className="text-xs sm:text-sm">Jumlah Jiwa / Anggota Keluarga</Label>
+          <Input id="fitrah-jiwa" type="number" placeholder="1" min={1} value={jiwa} onChange={(e) => setJiwa(e.target.value)} />
         </div>
         <div className="space-y-1.5 sm:space-y-2">
           <Label className="text-xs sm:text-sm">Jenis Beras</Label>

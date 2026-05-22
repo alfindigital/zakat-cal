@@ -56,28 +56,28 @@ export default function ZakatMaal({ goldPrice, silverPrice, nisabType, onCalcula
     <div className="space-y-4 sm:space-y-6">
       <div className="grid gap-3 sm:gap-4 sm:grid-cols-2">
         <div className="space-y-1.5 sm:space-y-2">
-          <Label className="text-xs sm:text-sm">Tabungan (Rp)</Label>
-          <Input type="number" placeholder="0" value={tabungan} onChange={(e) => setTabungan(e.target.value)} />
+          <Label htmlFor="maal-tabungan" className="text-xs sm:text-sm">Tabungan (Rp)</Label>
+          <Input id="maal-tabungan" type="number" placeholder="0" value={tabungan} onChange={(e) => setTabungan(e.target.value)} />
         </div>
         <div className="space-y-1.5 sm:space-y-2">
-          <Label className="text-xs sm:text-sm">Emas (gram)</Label>
-          <Input type="number" placeholder="0" value={emas} onChange={(e) => setEmas(e.target.value)} />
+          <Label htmlFor="maal-emas" className="text-xs sm:text-sm">Emas (gram)</Label>
+          <Input id="maal-emas" type="number" placeholder="0" value={emas} onChange={(e) => setEmas(e.target.value)} />
         </div>
         <div className="space-y-1.5 sm:space-y-2">
-          <Label className="text-xs sm:text-sm">Perak (gram)</Label>
-          <Input type="number" placeholder="0" value={perak} onChange={(e) => setPerak(e.target.value)} />
+          <Label htmlFor="maal-perak" className="text-xs sm:text-sm">Perak (gram)</Label>
+          <Input id="maal-perak" type="number" placeholder="0" value={perak} onChange={(e) => setPerak(e.target.value)} />
         </div>
         <div className="space-y-1.5 sm:space-y-2">
-          <Label className="text-xs sm:text-sm">Investasi / Saham (Rp)</Label>
-          <Input type="number" placeholder="0" value={investasi} onChange={(e) => setInvestasi(e.target.value)} />
+          <Label htmlFor="maal-investasi" className="text-xs sm:text-sm">Investasi / Saham (Rp)</Label>
+          <Input id="maal-investasi" type="number" placeholder="0" value={investasi} onChange={(e) => setInvestasi(e.target.value)} />
         </div>
         <div className="space-y-1.5 sm:space-y-2">
-          <Label className="text-xs sm:text-sm">Properti Investasi (Rp)</Label>
-          <Input type="number" placeholder="0" value={properti} onChange={(e) => setProperti(e.target.value)} />
+          <Label htmlFor="maal-properti" className="text-xs sm:text-sm">Properti Investasi (Rp)</Label>
+          <Input id="maal-properti" type="number" placeholder="0" value={properti} onChange={(e) => setProperti(e.target.value)} />
         </div>
         <div className="space-y-1.5 sm:space-y-2">
-          <Label className="text-xs sm:text-sm">Hutang (Rp)</Label>
-          <Input type="number" placeholder="0" value={hutang} onChange={(e) => setHutang(e.target.value)} />
+          <Label htmlFor="maal-hutang" className="text-xs sm:text-sm">Hutang (Rp)</Label>
+          <Input id="maal-hutang" type="number" placeholder="0" value={hutang} onChange={(e) => setHutang(e.target.value)} />
         </div>
       </div>
 
