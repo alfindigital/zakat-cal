@@ -32,7 +32,7 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
                 <p className="text-[10px] sm:text-xs text-muted-foreground">{h.date}</p>
               </div>
             </div>
-            <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => { removeHistory(h.id); onChanged(); }}>
+            <Button aria-label="Hapus riwayat" variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => { removeHistory(h.id); onChanged(); }}>
               <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             </Button>
           </div>
