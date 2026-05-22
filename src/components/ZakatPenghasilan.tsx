@@ -42,12 +42,12 @@ export default function ZakatPenghasilan({ metalPrice, nisabType, onCalculated }
     <div className="space-y-4 sm:space-y-6">
       <div className="grid gap-3 sm:gap-4 sm:grid-cols-2">
         <div className="space-y-1.5 sm:space-y-2">
-          <Label className="text-xs sm:text-sm">Penghasilan Bulanan (Rp)</Label>
-          <Input type="number" placeholder="0" value={monthly} onChange={(e) => setMonthly(e.target.value)} />
+          <Label htmlFor="penghasilan-bulanan" className="text-xs sm:text-sm">Penghasilan Bulanan (Rp)</Label>
+          <Input id="penghasilan-bulanan" type="number" placeholder="0" value={monthly} onChange={(e) => setMonthly(e.target.value)} />
         </div>
         <div className="space-y-1.5 sm:space-y-2">
-          <Label className="text-xs sm:text-sm">Bonus / THR Tahunan (Rp)</Label>
-          <Input type="number" placeholder="0" value={bonus} onChange={(e) => setBonus(e.target.value)} />
+          <Label htmlFor="penghasilan-bonus" className="text-xs sm:text-sm">Bonus / THR Tahunan (Rp)</Label>
+          <Input id="penghasilan-bonus" type="number" placeholder="0" value={bonus} onChange={(e) => setBonus(e.target.value)} />
         </div>
       </div>
 

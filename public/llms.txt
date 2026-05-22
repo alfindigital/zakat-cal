@@ -1,0 +1,10 @@
+# ZakatCal
+
+> Kalkulator zakat online gratis untuk menghitung zakat penghasilan, maal, dan fitrah sesuai syariat Islam.
+
+ZakatCal membantu umat Muslim menghitung kewajiban zakat dengan cepat dan akurat. Mendukung standar nisab emas (85g) dan perak (595g), perhitungan dapat diunduh sebagai PDF, dan menyimpan riwayat perhitungan secara lokal.
+
+## Pages
+
+- [Beranda](/): Kalkulator zakat penghasilan, maal, dan fitrah dengan toggle standar nisab emas/perak.
+- [Panduan Zakat](/panduan-zakat): Penjelasan lengkap tentang zakat, syarat wajib, jenis, nisab, dan 8 asnaf penerima zakat.

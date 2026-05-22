@@ -56,7 +56,7 @@ const Index = () => {
               <Calculator className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
             </div>
             <h1 className="text-xl font-extrabold tracking-tight sm:text-2xl">
-              Zakat<span className="text-primary">Cal</span>
+              Zakat<span className="text-primary">Cal</span> <span className="sr-only">— Kalkulator Zakat Modern</span>
             </h1>
           </div>
           <DarkModeToggle />
@@ -85,8 +85,9 @@ const Index = () => {
           </div>
           <div className="flex items-center gap-3 flex-wrap">
             <div className="flex items-center gap-2">
-              <Label className="text-sm text-muted-foreground whitespace-nowrap shrink-0 font-medium">Emas /g</Label>
+              <Label htmlFor="gold-price" className="text-sm text-muted-foreground whitespace-nowrap shrink-0 font-medium">Emas /g</Label>
               <Input
+                id="gold-price"
                 type="number"
                 value={goldInput}
                 onChange={(e) => handleGoldChange(e.target.value)}
@@ -95,8 +96,9 @@ const Index = () => {
               />
             </div>
             <div className="flex items-center gap-2">
-              <Label className="text-sm text-muted-foreground whitespace-nowrap shrink-0 font-medium">Perak /g</Label>
+              <Label htmlFor="silver-price" className="text-sm text-muted-foreground whitespace-nowrap shrink-0 font-medium">Perak /g</Label>
               <Input
+                id="silver-price"
                 type="number"
                 value={silverInput}
                 onChange={(e) => handleSilverChange(e.target.value)}
