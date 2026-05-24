@@ -412,7 +412,7 @@ const Index = () => {
                 onClick={() => setActiveTab(t.id)}
                 aria-current={active ? "page" : undefined}
                 aria-label={`Zakat ${t.label}`}
-                className="flex flex-1 flex-col items-center justify-center gap-1 min-h-[44px] active:scale-95 transition-transform"
+                className="relative flex flex-1 flex-col items-center justify-center gap-1 min-h-[44px] active:scale-95 transition-transform"
               >
                 <Icon className={`h-5 w-5 transition-colors ${active ? "text-primary" : "text-muted-foreground"}`} />
                 <span className={`text-[11px] font-medium transition-colors ${active ? "text-primary" : "text-muted-foreground"}`}>
