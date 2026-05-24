@@ -1,15 +1,79 @@
+import { useState } from "react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Trash2 } from "lucide-react";
+import { Trash2, Briefcase, Wallet, Wheat } from "lucide-react";
 import { type ZakatHistory, formatRupiah, removeHistory, clearHistory } from "@/lib/zakat";
 import ZakatChart from "./ZakatChart";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface Props {
   history: ZakatHistory[];
   onChanged: () => void;
 }
 
+const TYPE_ICON: Record<string, typeof Briefcase> = {
+  Penghasilan: Briefcase,
+  Maal: Wallet,
+  Fitrah: Wheat,
+};
+
+function HistoryItem({ h, onRemove, isMobile }: { h: ZakatHistory; onRemove: () => void; isMobile: boolean }) {
+  const [revealed, setRevealed] = useState(false);
+  const Icon = TYPE_ICON[h.type] ?? Briefcase;
+
+  return (
+    <div className="relative overflow-hidden rounded-lg">
+      {/* Delete background, revealed on swipe (mobile only) */}
+      {isMobile && (
+        <button
+          onClick={onRemove}
+          aria-label="Hapus riwayat"
+          className="absolute inset-y-0 right-0 w-20 bg-destructive text-destructive-foreground flex items-center justify-center"
+        >
+          <Trash2 className="h-5 w-5" />
+        </button>
+      )}
+      <motion.div
+        drag={isMobile ? "x" : false}
+        dragConstraints={{ left: -80, right: 0 }}
+        dragElastic={0.15}
+        animate={{ x: revealed ? -80 : 0 }}
+        onDragEnd={(_, info) => setRevealed(info.offset.x < -40)}
+        className="relative flex items-center justify-between rounded-lg border bg-card p-3 sm:p-3 min-h-[56px] touch-pan-y"
+      >
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+            <Icon className="h-4 w-4 text-primary" />
+          </div>
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <Badge variant="secondary" className="text-[10px] sm:text-xs shrink-0">
+                {h.type}
+              </Badge>
+            </div>
+            <p className="font-semibold text-sm sm:text-base text-primary truncate mt-0.5">{formatRupiah(h.amount)}</p>
+            <p className="text-[10px] sm:text-xs text-muted-foreground">{h.date}</p>
+          </div>
+        </div>
+        {!isMobile && (
+          <Button
+            aria-label="Hapus riwayat"
+            variant="ghost"
+            size="icon"
+            className="h-10 w-10 shrink-0"
+            onClick={onRemove}
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        )}
+      </motion.div>
+    </div>
+  );
+}
+
 export default function ZakatRiwayat({ history, onChanged }: Props) {
+  const isMobile = useIsMobile();
   if (history.length === 0) return null;
 
   return (
@@ -18,24 +82,32 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
 
       <div className="flex items-center justify-between">
         <h2 className="text-base sm:text-lg font-semibold">Riwayat Perhitungan</h2>
-        <Button variant="ghost" size="sm" className="text-xs sm:text-sm" onClick={() => { clearHistory(); onChanged(); }}>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-xs sm:text-sm h-9"
+          onClick={() => {
+            clearHistory();
+            onChanged();
+          }}
+        >
           Hapus Semua
         </Button>
       </div>
+      {isMobile && (
+        <p className="text-[11px] text-muted-foreground -mt-2">Geser ke kiri untuk menghapus item</p>
+      )}
       <div className="space-y-2">
         {history.map((h) => (
-          <div key={h.id} className="flex items-center justify-between rounded-lg border bg-card p-2.5 sm:p-3">
-            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-              <Badge variant="secondary" className="text-[10px] sm:text-xs shrink-0">{h.type}</Badge>
-              <div className="min-w-0">
-                <p className="font-medium text-sm sm:text-base text-primary truncate">{formatRupiah(h.amount)}</p>
-                <p className="text-[10px] sm:text-xs text-muted-foreground">{h.date}</p>
-              </div>
-            </div>
-            <Button aria-label="Hapus riwayat" variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => { removeHistory(h.id); onChanged(); }}>
-              <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-            </Button>
-          </div>
+          <HistoryItem
+            key={h.id}
+            h={h}
+            isMobile={isMobile}
+            onRemove={() => {
+              removeHistory(h.id);
+              onChanged();
+            }}
+          />
         ))}
       </div>
     </div>
