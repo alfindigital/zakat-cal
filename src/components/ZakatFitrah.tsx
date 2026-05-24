@@ -1,26 +1,29 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Download } from "lucide-react";
 import { calcZakatFitrah, formatRupiah, addHistory, RICE_OPTIONS } from "@/lib/zakat";
 import { generateZakatPdf } from "@/lib/pdf-generator";
+import { ResultCard, MobileCta, MobilePdfFab } from "./MobileCalcChrome";
 
 interface Props {
+  isActive: boolean;
   onCalculated: () => void;
 }
 
-export default function ZakatFitrah({ onCalculated }: Props) {
+export default function ZakatFitrah({ isActive, onCalculated }: Props) {
   const [jiwa, setJiwa] = useState("");
   const [riceIdx, setRiceIdx] = useState("0");
   const [result, setResult] = useState<ReturnType<typeof calcZakatFitrah> | null>(null);
 
+  const jiwaNum = Number(jiwa) || 0;
+  const canCalc = jiwaNum > 0;
+
   const handleCalc = () => {
-    const count = Number(jiwa) || 0;
-    if (count <= 0) return;
-    const r = calcZakatFitrah(count, Number(riceIdx));
+    if (!canCalc) return;
+    const r = calcZakatFitrah(jiwaNum, Number(riceIdx));
     setResult(r);
     addHistory({ type: "Fitrah", amount: r.total });
     onCalculated();
@@ -28,25 +31,39 @@ export default function ZakatFitrah({ onCalculated }: Props) {
 
   const handleDownload = () => {
     if (!result) return;
-    generateZakatPdf("Fitrah", [
-      { label: "Jumlah Jiwa", value: jiwa },
-      { label: "Jenis Beras", value: RICE_OPTIONS[Number(riceIdx)].label },
-      { label: "Harga Beras per kg", value: formatRupiah(RICE_OPTIONS[Number(riceIdx)].pricePerKg) },
-      { label: `Per Jiwa (${result.kg} kg)`, value: formatRupiah(result.perPerson) },
-    ], result.total, true);
+    generateZakatPdf(
+      "Fitrah",
+      [
+        { label: "Jumlah Jiwa", value: jiwa },
+        { label: "Jenis Beras", value: RICE_OPTIONS[Number(riceIdx)].label },
+        { label: "Harga Beras per kg", value: formatRupiah(RICE_OPTIONS[Number(riceIdx)].pricePerKg) },
+        { label: `Per Jiwa (${result.kg} kg)`, value: formatRupiah(result.perPerson) },
+      ],
+      result.total,
+      true,
+    );
   };
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <div className="grid gap-3 sm:gap-4 sm:grid-cols-2">
-        <div className="space-y-1.5 sm:space-y-2">
-          <Label htmlFor="fitrah-jiwa" className="text-xs sm:text-sm">Jumlah Jiwa / Anggota Keluarga</Label>
-          <Input id="fitrah-jiwa" type="number" placeholder="1" min={1} value={jiwa} onChange={(e) => setJiwa(e.target.value)} />
+      <div className="grid gap-4 sm:gap-4 sm:grid-cols-2">
+        <div className="space-y-2">
+          <Label htmlFor="fitrah-jiwa" className="text-sm">Jumlah Jiwa / Anggota Keluarga</Label>
+          <Input
+            id="fitrah-jiwa"
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            placeholder="1"
+            value={jiwa}
+            onChange={(e) => setJiwa(e.target.value.replace(/\D/g, ""))}
+            className="h-12 sm:h-10 text-base"
+          />
         </div>
-        <div className="space-y-1.5 sm:space-y-2">
-          <Label className="text-xs sm:text-sm">Jenis Beras</Label>
+        <div className="space-y-2">
+          <Label className="text-sm">Jenis Beras</Label>
           <Select value={riceIdx} onValueChange={setRiceIdx}>
-            <SelectTrigger>
+            <SelectTrigger className="h-12 sm:h-10 text-base">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -60,43 +77,26 @@ export default function ZakatFitrah({ onCalculated }: Props) {
         </div>
       </div>
 
-      <Button onClick={handleCalc} className="w-full">Hitung Zakat Fitrah</Button>
+      <Button onClick={handleCalc} disabled={!canCalc} className="w-full h-11 hidden md:inline-flex">
+        Hitung Zakat Fitrah
+      </Button>
 
       <AnimatePresence>
         {result && (
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.35 }}
-            className="rounded-lg border bg-muted/50 p-3 sm:p-5 space-y-2 sm:space-y-3"
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-xs sm:text-sm text-muted-foreground">Per Jiwa ({result.kg} kg)</span>
-              <span className="font-medium text-sm sm:text-base">{formatRupiah(result.perPerson)}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-xs sm:text-sm text-muted-foreground">Jumlah Jiwa</span>
-              <span className="font-medium text-sm sm:text-base">{jiwa}</span>
-            </div>
-            <div className="border-t pt-2 sm:pt-3 flex items-center justify-between">
-              <span className="font-semibold text-sm sm:text-base">Total Zakat Fitrah</span>
-              <motion.span
-                key={result.total}
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                className="text-xl sm:text-2xl font-bold text-primary"
-              >
-                {formatRupiah(result.total)}
-              </motion.span>
-            </div>
-            <Button variant="outline" size="sm" className="w-full mt-2 transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]" onClick={handleDownload}>
-              <Download className="mr-2 h-4 w-4" /> Download PDF
-            </Button>
-          </motion.div>
+          <ResultCard
+            rows={[
+              { label: `Per Jiwa (${result.kg} kg)`, value: formatRupiah(result.perPerson) },
+              { label: "Jumlah Jiwa", value: jiwa },
+            ]}
+            amount={result.total}
+            amountLabel="Total Zakat Fitrah"
+            onDownload={handleDownload}
+          />
         )}
       </AnimatePresence>
+
+      <MobileCta isActive={isActive} label="Hitung Zakat Fitrah" disabled={!canCalc} onClick={handleCalc} />
+      <MobilePdfFab isActive={isActive} visible={!!result} onClick={handleDownload} />
     </div>
   );
 }

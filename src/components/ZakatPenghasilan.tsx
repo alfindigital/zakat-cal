@@ -1,26 +1,31 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { Download } from "lucide-react";
 import { calcZakatPenghasilan, formatRupiah, addHistory, type NisabType } from "@/lib/zakat";
 import { generateZakatPdf } from "@/lib/pdf-generator";
+import { formatNumberInput, parseFormattedNumber } from "@/lib/format";
+import { ResultCard, MobileCta, MobilePdfFab } from "./MobileCalcChrome";
 
 interface Props {
   metalPrice: number;
   nisabType: NisabType;
+  isActive: boolean;
   onCalculated: () => void;
 }
 
-export default function ZakatPenghasilan({ metalPrice, nisabType, onCalculated }: Props) {
+export default function ZakatPenghasilan({ metalPrice, nisabType, isActive, onCalculated }: Props) {
   const [monthly, setMonthly] = useState("");
   const [bonus, setBonus] = useState("");
   const [result, setResult] = useState<ReturnType<typeof calcZakatPenghasilan> | null>(null);
 
+  const monthlyNum = parseFormattedNumber(monthly);
+  const canCalc = monthlyNum > 0;
+
   const handleCalc = () => {
-    const r = calcZakatPenghasilan(Number(monthly) || 0, Number(bonus) || 0, metalPrice, nisabType);
+    if (!canCalc) return;
+    const r = calcZakatPenghasilan(monthlyNum, parseFormattedNumber(bonus), metalPrice, nisabType);
     setResult(r);
     if (r.zakatAmount > 0) {
       addHistory({ type: "Penghasilan", amount: r.zakatAmount });
@@ -30,70 +35,73 @@ export default function ZakatPenghasilan({ metalPrice, nisabType, onCalculated }
 
   const handleDownload = () => {
     if (!result) return;
-    generateZakatPdf("Penghasilan", [
-      { label: "Penghasilan Bulanan", value: formatRupiah(Number(monthly) || 0) },
-      { label: "Bonus / THR Tahunan", value: formatRupiah(Number(bonus) || 0) },
-      { label: "Penghasilan Tahunan", value: formatRupiah(result.annualIncome) },
-      { label: "Nisab (" + result.nisabLabel + ")", value: formatRupiah(result.nisab) },
-    ], result.zakatAmount, result.isWajib);
+    generateZakatPdf(
+      "Penghasilan",
+      [
+        { label: "Penghasilan Bulanan", value: formatRupiah(monthlyNum) },
+        { label: "Bonus / THR Tahunan", value: formatRupiah(parseFormattedNumber(bonus)) },
+        { label: "Penghasilan Tahunan", value: formatRupiah(result.annualIncome) },
+        { label: "Nisab (" + result.nisabLabel + ")", value: formatRupiah(result.nisab) },
+      ],
+      result.zakatAmount,
+      result.isWajib,
+    );
   };
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <div className="grid gap-3 sm:gap-4 sm:grid-cols-2">
-        <div className="space-y-1.5 sm:space-y-2">
-          <Label htmlFor="penghasilan-bulanan" className="text-xs sm:text-sm">Penghasilan Bulanan (Rp)</Label>
-          <Input id="penghasilan-bulanan" type="number" placeholder="0" value={monthly} onChange={(e) => setMonthly(e.target.value)} />
+      <div className="grid gap-4 sm:gap-4 sm:grid-cols-2">
+        <div className="space-y-2">
+          <Label htmlFor="penghasilan-bulanan" className="text-sm">Penghasilan Bulanan (Rp)</Label>
+          <Input
+            id="penghasilan-bulanan"
+            type="text"
+            inputMode="decimal"
+            pattern="[0-9]*"
+            placeholder="0"
+            value={monthly}
+            onChange={(e) => setMonthly(formatNumberInput(e.target.value))}
+            className="h-12 sm:h-10 text-base"
+          />
         </div>
-        <div className="space-y-1.5 sm:space-y-2">
-          <Label htmlFor="penghasilan-bonus" className="text-xs sm:text-sm">Bonus / THR Tahunan (Rp)</Label>
-          <Input id="penghasilan-bonus" type="number" placeholder="0" value={bonus} onChange={(e) => setBonus(e.target.value)} />
+        <div className="space-y-2">
+          <Label htmlFor="penghasilan-bonus" className="text-sm">Bonus / THR Tahunan (Rp)</Label>
+          <Input
+            id="penghasilan-bonus"
+            type="text"
+            inputMode="decimal"
+            pattern="[0-9]*"
+            placeholder="0"
+            value={bonus}
+            onChange={(e) => setBonus(formatNumberInput(e.target.value))}
+            className="h-12 sm:h-10 text-base"
+          />
         </div>
       </div>
 
-      <Button onClick={handleCalc} className="w-full">Hitung Zakat Penghasilan</Button>
+      {/* Desktop button (mobile uses sticky CTA) */}
+      <Button onClick={handleCalc} disabled={!canCalc} className="w-full h-11 hidden md:inline-flex">
+        Hitung Zakat Penghasilan
+      </Button>
 
       <AnimatePresence>
         {result && (
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.35 }}
-            className="rounded-lg border bg-muted/50 p-3 sm:p-5 space-y-2 sm:space-y-3"
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-xs sm:text-sm text-muted-foreground">Penghasilan Tahunan</span>
-              <span className="font-medium text-sm sm:text-base">{formatRupiah(result.annualIncome)}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-xs sm:text-sm text-muted-foreground">Nisab ({result.nisabLabel})</span>
-              <span className="font-medium text-sm sm:text-base">{formatRupiah(result.nisab)}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-xs sm:text-sm text-muted-foreground">Status</span>
-              <Badge variant={result.isWajib ? "default" : "secondary"}>
-                {result.isWajib ? "Wajib Zakat" : "Belum Wajib"}
-              </Badge>
-            </div>
-            <div className="border-t pt-2 sm:pt-3 flex items-center justify-between">
-              <span className="font-semibold text-sm sm:text-base">Zakat yang Harus Dibayar</span>
-              <motion.span
-                key={result.zakatAmount}
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                className="text-xl sm:text-2xl font-bold text-primary"
-              >
-                {formatRupiah(result.zakatAmount)}
-              </motion.span>
-            </div>
-            <Button variant="outline" size="sm" className="w-full mt-2 transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]" onClick={handleDownload}>
-              <Download className="mr-2 h-4 w-4" /> Download PDF
-            </Button>
-          </motion.div>
+          <ResultCard
+            rows={[
+              { label: "Penghasilan Tahunan", value: formatRupiah(result.annualIncome) },
+              { label: "Nisab (" + result.nisabLabel + ")", value: formatRupiah(result.nisab) },
+            ]}
+            amount={result.zakatAmount}
+            amountLabel="Zakat yang Harus Dibayar"
+            isWajib={result.isWajib}
+            statusLabel={result.isWajib ? "Wajib Zakat" : "Belum Wajib"}
+            onDownload={handleDownload}
+          />
         )}
       </AnimatePresence>
+
+      <MobileCta isActive={isActive} label="Hitung Zakat Penghasilan" disabled={!canCalc} onClick={handleCalc} />
+      <MobilePdfFab isActive={isActive} visible={!!result} onClick={handleDownload} />
     </div>
   );
 }
