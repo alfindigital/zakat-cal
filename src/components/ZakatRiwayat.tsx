@@ -3,9 +3,18 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Trash2, Briefcase, Wallet, Wheat } from "lucide-react";
-import { type ZakatHistory, formatRupiah, removeHistory, clearHistory } from "@/lib/zakat";
+import {
+  type ZakatHistory,
+  formatRupiah,
+  getHistory,
+  removeHistory,
+  restoreHistory,
+  clearHistory,
+  restoreAllHistory,
+} from "@/lib/zakat";
 import ZakatChart from "./ZakatChart";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { toast } from "sonner";
 
 interface Props {
   history: ZakatHistory[];
@@ -18,7 +27,15 @@ const TYPE_ICON: Record<string, typeof Briefcase> = {
   Fitrah: Wheat,
 };
 
-function HistoryItem({ h, onRemove, isMobile }: { h: ZakatHistory; onRemove: () => void; isMobile: boolean }) {
+function HistoryItem({
+  h,
+  onRemove,
+  isMobile,
+}: {
+  h: ZakatHistory;
+  onRemove: () => void;
+  isMobile: boolean;
+}) {
   const [revealed, setRevealed] = useState(false);
   const Icon = TYPE_ICON[h.type] ?? Briefcase;
 
@@ -27,11 +44,12 @@ function HistoryItem({ h, onRemove, isMobile }: { h: ZakatHistory; onRemove: () 
       {/* Delete background, revealed on swipe (mobile only) */}
       {isMobile && (
         <button
+          type="button"
           onClick={onRemove}
           aria-label="Hapus riwayat"
           className="absolute inset-y-0 right-0 w-20 bg-destructive text-destructive-foreground flex items-center justify-center"
         >
-          <Trash2 className="h-5 w-5" />
+          <Trash2 aria-hidden="true" className="h-5 w-5" />
         </button>
       )}
       <motion.div
@@ -44,7 +62,7 @@ function HistoryItem({ h, onRemove, isMobile }: { h: ZakatHistory; onRemove: () 
       >
         <div className="flex items-center gap-3 min-w-0">
           <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-            <Icon className="h-4 w-4 text-primary" />
+            <Icon aria-hidden="true" className="h-4 w-4 text-primary" />
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-2">
@@ -52,7 +70,9 @@ function HistoryItem({ h, onRemove, isMobile }: { h: ZakatHistory; onRemove: () 
                 {h.type}
               </Badge>
             </div>
-            <p className="font-semibold text-sm sm:text-base text-primary truncate mt-0.5">{formatRupiah(h.amount)}</p>
+            <p className="font-semibold text-sm sm:text-base text-primary truncate mt-0.5">
+              {formatRupiah(h.amount)}
+            </p>
             <p className="text-[10px] sm:text-xs text-muted-foreground">{h.date}</p>
           </div>
         </div>
@@ -64,7 +84,7 @@ function HistoryItem({ h, onRemove, isMobile }: { h: ZakatHistory; onRemove: () 
             className="h-10 w-10 shrink-0"
             onClick={onRemove}
           >
-            <Trash2 className="h-4 w-4" />
+            <Trash2 aria-hidden="true" className="h-4 w-4" />
           </Button>
         )}
       </motion.div>
@@ -76,6 +96,46 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
   const isMobile = useIsMobile();
   if (history.length === 0) return null;
 
+  const handleRemove = (item: ZakatHistory) => {
+    // Capture index BEFORE removal so we can restore to the exact same spot.
+    const idx = getHistory().findIndex((h) => h.id === item.id);
+    removeHistory(item.id);
+    onChanged();
+
+    toast.success("Riwayat dihapus", {
+      description: `${item.type} • ${formatRupiah(item.amount)}`,
+      duration: 5000,
+      action: {
+        label: "Urungkan",
+        onClick: () => {
+          restoreHistory(item, idx === -1 ? 0 : idx);
+          onChanged();
+          toast.success("Riwayat dipulihkan");
+        },
+      },
+    });
+  };
+
+  const handleClearAll = () => {
+    const snapshot = getHistory();
+    if (snapshot.length === 0) return;
+    clearHistory();
+    onChanged();
+
+    toast.success("Semua riwayat dihapus", {
+      description: `${snapshot.length} item dihapus`,
+      duration: 6000,
+      action: {
+        label: "Urungkan",
+        onClick: () => {
+          restoreAllHistory(snapshot);
+          onChanged();
+          toast.success("Semua riwayat dipulihkan");
+        },
+      },
+    });
+  };
+
   return (
     <div className="space-y-4 sm:space-y-5">
       <ZakatChart history={history} />
@@ -86,16 +146,15 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
           variant="ghost"
           size="sm"
           className="text-xs sm:text-sm h-9"
-          onClick={() => {
-            clearHistory();
-            onChanged();
-          }}
+          onClick={handleClearAll}
         >
           Hapus Semua
         </Button>
       </div>
       {isMobile && (
-        <p className="text-[11px] text-muted-foreground -mt-2">Geser ke kiri untuk menghapus item</p>
+        <p className="text-[11px] text-muted-foreground -mt-2">
+          Geser ke kiri untuk menghapus item
+        </p>
       )}
       <div className="space-y-2">
         {history.map((h) => (
@@ -103,10 +162,7 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
             key={h.id}
             h={h}
             isMobile={isMobile}
-            onRemove={() => {
-              removeHistory(h.id);
-              onChanged();
-            }}
+            onRemove={() => handleRemove(h)}
           />
         ))}
       </div>
