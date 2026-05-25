@@ -118,8 +118,24 @@ export function removeHistory(id: string) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
 }
 
+// Re-insert a previously removed entry at a specific index (for Undo).
+export function restoreHistory(entry: ZakatHistory, atIndex: number) {
+  const history = getHistory();
+  // Avoid duplicates if user double-clicks undo
+  if (history.some((h) => h.id === entry.id)) return;
+  const idx = Math.max(0, Math.min(atIndex, history.length));
+  history.splice(idx, 0, entry);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(history.slice(0, 50)));
+}
+
 export function clearHistory() {
   localStorage.removeItem(STORAGE_KEY);
+}
+
+// Restore an entire previously cleared list (for Undo "Hapus Semua").
+export function restoreAllHistory(items: ZakatHistory[]) {
+  if (!items?.length) return;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(items.slice(0, 50)));
 }
 
 export function formatRupiah(n: number) {
