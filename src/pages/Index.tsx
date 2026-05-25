@@ -13,7 +13,7 @@ import ZakatRiwayat from "@/components/ZakatRiwayat";
 import { motion, AnimatePresence } from "framer-motion";
 import { Calculator, ExternalLink, Briefcase, Wallet, Wheat, Settings2, Menu, Loader2 } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
@@ -236,6 +236,9 @@ const Index = () => {
               >
                 <SheetHeader>
                   <SheetTitle>Pengaturan Nisab</SheetTitle>
+                  <SheetDescription className="sr-only">
+                    Atur standar nisab dan harga emas atau perak per gram untuk perhitungan zakat.
+                  </SheetDescription>
                 </SheetHeader>
                 <div className="mt-4">
                   <NisabSettings
@@ -262,6 +265,9 @@ const Index = () => {
               <SheetContent side="right" className="w-[85%] sm:max-w-sm overflow-y-auto">
                 <SheetHeader>
                   <SheetTitle>Menu</SheetTitle>
+                  <SheetDescription className="sr-only">
+                    Akses pengaturan nisab dan panduan singkat tentang zakat.
+                  </SheetDescription>
                 </SheetHeader>
                 <div className="mt-6 space-y-6">
                   <div>
@@ -409,18 +415,20 @@ const Index = () => {
             return (
               <button
                 key={t.id}
+                type="button"
                 onClick={() => setActiveTab(t.id)}
                 aria-current={active ? "page" : undefined}
                 aria-label={`Zakat ${t.label}`}
-                className="relative flex flex-1 flex-col items-center justify-center gap-1 min-h-[44px] active:scale-95 transition-transform"
+                className="relative flex flex-1 flex-col items-center justify-center gap-1 min-h-[44px] active:scale-95 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset rounded-md"
               >
-                <Icon className={`h-5 w-5 transition-colors ${active ? "text-primary" : "text-muted-foreground"}`} />
+                <Icon aria-hidden="true" className={`h-5 w-5 transition-colors ${active ? "text-primary" : "text-muted-foreground"}`} />
                 <span className={`text-[11px] font-medium transition-colors ${active ? "text-primary" : "text-muted-foreground"}`}>
                   {t.short}
                 </span>
                 {active && (
                   <motion.span
                     layoutId="bottom-nav-indicator"
+                    aria-hidden="true"
                     className="absolute top-0 h-0.5 w-10 bg-primary rounded-full"
                   />
                 )}

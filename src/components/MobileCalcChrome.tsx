@@ -58,11 +58,14 @@ export function ResultCard({ rows, amount, amountLabel, isWajib, statusLabel, on
       {isMobile ? (
         <>
           <button
+            type="button"
             onClick={() => setOpen((v) => !v)}
-            className="flex items-center justify-between w-full text-xs font-medium text-muted-foreground py-1 hover:text-foreground transition-colors"
+            aria-expanded={open}
+            aria-controls="result-details"
+            className="flex items-center justify-between w-full text-xs font-medium text-muted-foreground py-1 hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
           >
             <span>{open ? "Sembunyikan Detail" : "Lihat Detail"}</span>
-            <ChevronDown className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`} />
+            <ChevronDown aria-hidden="true" className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`} />
           </button>
           <AnimatePresence initial={false}>
             {open && (
@@ -72,6 +75,9 @@ export function ResultCard({ rows, amount, amountLabel, isWajib, statusLabel, on
                 exit={{ height: 0, opacity: 0 }}
                 transition={{ duration: 0.25 }}
                 className="overflow-hidden"
+                id="result-details"
+                role="region"
+                aria-label="Detail perhitungan"
               >
                 <div className="border-t pt-3 space-y-2">
                   {rows.map((r) => (
@@ -146,18 +152,19 @@ export function MobilePdfFab({ isActive, visible, onClick }: MobilePdfFabProps) 
 
   return createPortal(
     <motion.button
+      type="button"
       initial={{ scale: 0, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       exit={{ scale: 0, opacity: 0 }}
       transition={{ type: "spring", stiffness: 300, damping: 22 }}
       onClick={onClick}
-      aria-label="Download PDF"
-      className="md:hidden fixed right-4 z-50 h-14 w-14 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center active:scale-95 transition-transform"
+      aria-label="Download PDF hasil zakat"
+      className="md:hidden fixed right-4 z-50 h-14 w-14 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center active:scale-95 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       style={{
         bottom: "calc(9rem + env(safe-area-inset-bottom, 0px))",
       }}
     >
-      <Download className="h-6 w-6" />
+      <Download aria-hidden="true" className="h-6 w-6" />
     </motion.button>,
     document.body,
   );
