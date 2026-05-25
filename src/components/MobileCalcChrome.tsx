@@ -152,18 +152,19 @@ export function MobilePdfFab({ isActive, visible, onClick }: MobilePdfFabProps) 
 
   return createPortal(
     <motion.button
+      type="button"
       initial={{ scale: 0, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       exit={{ scale: 0, opacity: 0 }}
       transition={{ type: "spring", stiffness: 300, damping: 22 }}
       onClick={onClick}
-      aria-label="Download PDF"
-      className="md:hidden fixed right-4 z-50 h-14 w-14 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center active:scale-95 transition-transform"
+      aria-label="Download PDF hasil zakat"
+      className="md:hidden fixed right-4 z-50 h-14 w-14 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center active:scale-95 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       style={{
         bottom: "calc(9rem + env(safe-area-inset-bottom, 0px))",
       }}
     >
-      <Download className="h-6 w-6" />
+      <Download aria-hidden="true" className="h-6 w-6" />
     </motion.button>,
     document.body,
   );
