@@ -75,6 +75,9 @@ export function ResultCard({ rows, amount, amountLabel, isWajib, statusLabel, on
                 exit={{ height: 0, opacity: 0 }}
                 transition={{ duration: 0.25 }}
                 className="overflow-hidden"
+                id="result-details"
+                role="region"
+                aria-label="Detail perhitungan"
               >
                 <div className="border-t pt-3 space-y-2">
                   {rows.map((r) => (
