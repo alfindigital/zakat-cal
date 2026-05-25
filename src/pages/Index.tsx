@@ -265,6 +265,9 @@ const Index = () => {
               <SheetContent side="right" className="w-[85%] sm:max-w-sm overflow-y-auto">
                 <SheetHeader>
                   <SheetTitle>Menu</SheetTitle>
+                  <SheetDescription className="sr-only">
+                    Akses pengaturan nisab dan panduan singkat tentang zakat.
+                  </SheetDescription>
                 </SheetHeader>
                 <div className="mt-6 space-y-6">
                   <div>
