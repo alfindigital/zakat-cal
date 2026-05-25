@@ -409,18 +409,20 @@ const Index = () => {
             return (
               <button
                 key={t.id}
+                type="button"
                 onClick={() => setActiveTab(t.id)}
                 aria-current={active ? "page" : undefined}
                 aria-label={`Zakat ${t.label}`}
-                className="relative flex flex-1 flex-col items-center justify-center gap-1 min-h-[44px] active:scale-95 transition-transform"
+                className="relative flex flex-1 flex-col items-center justify-center gap-1 min-h-[44px] active:scale-95 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset rounded-md"
               >
-                <Icon className={`h-5 w-5 transition-colors ${active ? "text-primary" : "text-muted-foreground"}`} />
+                <Icon aria-hidden="true" className={`h-5 w-5 transition-colors ${active ? "text-primary" : "text-muted-foreground"}`} />
                 <span className={`text-[11px] font-medium transition-colors ${active ? "text-primary" : "text-muted-foreground"}`}>
                   {t.short}
                 </span>
                 {active && (
                   <motion.span
                     layoutId="bottom-nav-indicator"
+                    aria-hidden="true"
                     className="absolute top-0 h-0.5 w-10 bg-primary rounded-full"
                   />
                 )}
