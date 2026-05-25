@@ -236,6 +236,9 @@ const Index = () => {
               >
                 <SheetHeader>
                   <SheetTitle>Pengaturan Nisab</SheetTitle>
+                  <SheetDescription className="sr-only">
+                    Atur standar nisab dan harga emas atau perak per gram untuk perhitungan zakat.
+                  </SheetDescription>
                 </SheetHeader>
                 <div className="mt-4">
                   <NisabSettings
