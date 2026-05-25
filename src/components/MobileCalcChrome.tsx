@@ -58,11 +58,14 @@ export function ResultCard({ rows, amount, amountLabel, isWajib, statusLabel, on
       {isMobile ? (
         <>
           <button
+            type="button"
             onClick={() => setOpen((v) => !v)}
-            className="flex items-center justify-between w-full text-xs font-medium text-muted-foreground py-1 hover:text-foreground transition-colors"
+            aria-expanded={open}
+            aria-controls="result-details"
+            className="flex items-center justify-between w-full text-xs font-medium text-muted-foreground py-1 hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
           >
             <span>{open ? "Sembunyikan Detail" : "Lihat Detail"}</span>
-            <ChevronDown className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`} />
+            <ChevronDown aria-hidden="true" className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`} />
           </button>
           <AnimatePresence initial={false}>
             {open && (
