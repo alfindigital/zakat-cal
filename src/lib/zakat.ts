@@ -196,17 +196,6 @@ export function restoreAllHistory(items: ZakatHistory[]) {
 }
 
 
-export function clearHistory() {
-  localStorage.removeItem(STORAGE_KEY);
-  emitHistoryChange();
-}
-
-// Restore an entire previously cleared list (for Undo "Hapus Semua").
-export function restoreAllHistory(items: ZakatHistory[]) {
-  if (!items?.length) return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(items.slice(0, 50)));
-  emitHistoryChange();
-}
 
 
 export function formatRupiah(n: number) {
