@@ -180,6 +180,10 @@ const Index = () => {
   const metalPrice = nisabType === "gold" ? goldPrice : silverPrice;
   const refreshHistory = useCallback(() => setHistory(getHistory()), []);
 
+  // Real-time sync: same-tab mutations + cross-tab `storage` events.
+  useEffect(() => subscribeHistory(refreshHistory), [refreshHistory]);
+
+
   // Pull-to-refresh handlers (mobile only)
   const onTouchStart = (e: React.TouchEvent) => {
     if (!isMobile) return;
