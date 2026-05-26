@@ -144,12 +144,32 @@ export function removeHistory(id: string) {
   emitHistoryChange();
 }
 
-// Re-insert a previously removed entry at a specific index (for Undo).
-export function restoreHistory(entry: ZakatHistory, atIndex: number) {
+/**
+ * Re-insert a previously removed entry (Undo).
+ * Uses anchor ids to find the correct slot even if the list mutated since removal:
+ *   1. Insert AFTER `predecessorId` if it still exists.
+ *   2. Otherwise insert BEFORE `successorId` if it still exists.
+ *   3. Otherwise fall back to the clamped original index.
+ */
+export function restoreHistory(
+  entry: ZakatHistory,
+  fallbackIndex: number,
+  anchors?: { predecessorId?: string | null; successorId?: string | null },
+) {
   const history = getHistory();
-  // Avoid duplicates if user double-clicks undo
-  if (history.some((h) => h.id === entry.id)) return;
-  const idx = Math.max(0, Math.min(atIndex, history.length));
+  if (history.some((h) => h.id === entry.id)) return; // already present
+
+  let idx = -1;
+  if (anchors?.predecessorId) {
+    const pIdx = history.findIndex((h) => h.id === anchors.predecessorId);
+    if (pIdx !== -1) idx = pIdx + 1;
+  }
+  if (idx === -1 && anchors?.successorId) {
+    const sIdx = history.findIndex((h) => h.id === anchors.successorId);
+    if (sIdx !== -1) idx = sIdx;
+  }
+  if (idx === -1) idx = Math.max(0, Math.min(fallbackIndex, history.length));
+
   history.splice(idx, 0, entry);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(history.slice(0, 50)));
   emitHistoryChange();
@@ -160,12 +180,22 @@ export function clearHistory() {
   emitHistoryChange();
 }
 
-// Restore an entire previously cleared list (for Undo "Hapus Semua").
+/**
+ * Restore a previously cleared list (Undo "Hapus Semua").
+ * Merges with any items added after the clear so we don't drop new work.
+ * New items are placed at the top (newest-first invariant), snapshot follows.
+ */
 export function restoreAllHistory(items: ZakatHistory[]) {
   if (!items?.length) return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(items.slice(0, 50)));
+  const current = getHistory();
+  const snapshotIds = new Set(items.map((i) => i.id));
+  const additions = current.filter((c) => !snapshotIds.has(c.id));
+  const merged = [...additions, ...items];
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(merged.slice(0, 50)));
   emitHistoryChange();
 }
+
+
 
 
 export function formatRupiah(n: number) {
