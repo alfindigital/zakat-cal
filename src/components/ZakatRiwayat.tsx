@@ -97,8 +97,13 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
   if (history.length === 0) return null;
 
   const handleRemove = (item: ZakatHistory) => {
-    // Capture index BEFORE removal so we can restore to the exact same spot.
-    const idx = getHistory().findIndex((h) => h.id === item.id);
+    // Snapshot index + neighbor ids so Undo can land on the right spot
+    // even if the list mutates afterwards (other deletes, adds, cross-tab sync).
+    const snapshot = getHistory();
+    const idx = snapshot.findIndex((h) => h.id === item.id);
+    const predecessorId = idx > 0 ? snapshot[idx - 1].id : null;
+    const successorId = idx >= 0 && idx < snapshot.length - 1 ? snapshot[idx + 1].id : null;
+
     removeHistory(item.id);
     onChanged();
 
@@ -108,13 +113,14 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
       action: {
         label: "Urungkan",
         onClick: () => {
-          restoreHistory(item, idx === -1 ? 0 : idx);
+          restoreHistory(item, idx === -1 ? 0 : idx, { predecessorId, successorId });
           onChanged();
           toast.success("Riwayat dipulihkan");
         },
       },
     });
   };
+
 
   const handleClearAll = () => {
     const snapshot = getHistory();
