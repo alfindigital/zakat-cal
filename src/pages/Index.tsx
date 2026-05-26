@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { fetchGoldPrice, getHistory, DEFAULT_SILVER_PRICE, type NisabType } from "@/lib/zakat";
+import { fetchGoldPrice, getHistory, subscribeHistory, DEFAULT_SILVER_PRICE, type NisabType } from "@/lib/zakat";
 import ZakatPenghasilan from "@/components/ZakatPenghasilan";
 import ZakatMaal from "@/components/ZakatMaal";
 import ZakatFitrah from "@/components/ZakatFitrah";
