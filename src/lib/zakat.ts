@@ -94,6 +94,30 @@ export interface ZakatHistory {
 }
 
 const STORAGE_KEY = "zakat-history";
+const HISTORY_EVENT = "zakat-history-changed";
+
+function emitHistoryChange() {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new CustomEvent(HISTORY_EVENT));
+}
+
+/**
+ * Subscribe to history changes from this tab (custom event) AND other tabs (storage event).
+ * Returns an unsubscribe function.
+ */
+export function subscribeHistory(cb: () => void): () => void {
+  if (typeof window === "undefined") return () => {};
+  const onStorage = (e: StorageEvent) => {
+    if (e.key === STORAGE_KEY || e.key === null) cb();
+  };
+  const onLocal = () => cb();
+  window.addEventListener("storage", onStorage);
+  window.addEventListener(HISTORY_EVENT, onLocal);
+  return () => {
+    window.removeEventListener("storage", onStorage);
+    window.removeEventListener(HISTORY_EVENT, onLocal);
+  };
+}
 
 export function getHistory(): ZakatHistory[] {
   try {
@@ -111,11 +135,13 @@ export function addHistory(entry: Omit<ZakatHistory, "id" | "date">) {
     date: new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }),
   });
   localStorage.setItem(STORAGE_KEY, JSON.stringify(history.slice(0, 50)));
+  emitHistoryChange();
 }
 
 export function removeHistory(id: string) {
   const history = getHistory().filter((h) => h.id !== id);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+  emitHistoryChange();
 }
 
 // Re-insert a previously removed entry at a specific index (for Undo).
@@ -126,17 +152,21 @@ export function restoreHistory(entry: ZakatHistory, atIndex: number) {
   const idx = Math.max(0, Math.min(atIndex, history.length));
   history.splice(idx, 0, entry);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(history.slice(0, 50)));
+  emitHistoryChange();
 }
 
 export function clearHistory() {
   localStorage.removeItem(STORAGE_KEY);
+  emitHistoryChange();
 }
 
 // Restore an entire previously cleared list (for Undo "Hapus Semua").
 export function restoreAllHistory(items: ZakatHistory[]) {
   if (!items?.length) return;
   localStorage.setItem(STORAGE_KEY, JSON.stringify(items.slice(0, 50)));
+  emitHistoryChange();
 }
+
 
 export function formatRupiah(n: number) {
   return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(n);
