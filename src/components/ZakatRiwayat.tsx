@@ -104,6 +104,9 @@ function HistoryItem({
 
 export default function ZakatRiwayat({ history, onChanged }: Props) {
   const isMobile = useIsMobile();
+  const [showClearDialog, setShowClearDialog] = useState(false);
+  const [clearSnapshot, setClearSnapshot] = useState<ZakatHistory[]>([]);
+
   if (history.length === 0) return null;
 
   const handleRemove = (item: ZakatHistory) => {
@@ -131,20 +134,25 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
     });
   };
 
-
   const handleClearAll = () => {
     const snapshot = getHistory();
     if (snapshot.length === 0) return;
+    setClearSnapshot(snapshot);
+    setShowClearDialog(true);
+  };
+
+  const handleConfirmClear = () => {
+    setShowClearDialog(false);
     clearHistory();
     onChanged();
 
     toast.success("Semua riwayat dihapus", {
-      description: `${snapshot.length} item dihapus`,
+      description: `${clearSnapshot.length} item dihapus`,
       duration: 6000,
       action: {
         label: "Urungkan",
         onClick: () => {
-          restoreAllHistory(snapshot);
+          restoreAllHistory(clearSnapshot);
           onChanged();
           toast.success("Semua riwayat dipulihkan");
         },
@@ -182,6 +190,23 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
           />
         ))}
       </div>
+
+      <AlertDialog open={showClearDialog} onOpenChange={setShowClearDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Hapus Semua Riwayat?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {clearSnapshot.length} item akan dihapus. Tindakan ini dapat diurungkan lewat notifikasi yang muncul.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Batal</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmClear} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Hapus
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
