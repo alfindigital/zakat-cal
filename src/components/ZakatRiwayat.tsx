@@ -50,7 +50,7 @@ function HistoryItem({
   const Icon = TYPE_ICON[h.type] ?? Briefcase;
 
   return (
-    <div className="relative overflow-hidden rounded-lg">
+    <div data-history-id={h.id} className="relative overflow-hidden rounded-lg">
       {/* Delete background, revealed on swipe (mobile only) */}
       {isMobile && (
         <button
