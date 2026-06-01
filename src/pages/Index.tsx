@@ -8,10 +8,15 @@ import { fetchGoldPrice, getHistory, subscribeHistory, DEFAULT_SILVER_PRICE, typ
 import ZakatPenghasilan from "@/components/ZakatPenghasilan";
 import ZakatMaal from "@/components/ZakatMaal";
 import ZakatFitrah from "@/components/ZakatFitrah";
+import ZakatPerniagaan from "@/components/ZakatPerniagaan";
+import ZakatPertanian from "@/components/ZakatPertanian";
+import ZakatPeternakan from "@/components/ZakatPeternakan";
+import ZakatRikaz from "@/components/ZakatRikaz";
+import ZakatMadin from "@/components/ZakatMadin";
 import { DarkModeToggle } from "@/components/DarkModeToggle";
 import ZakatRiwayat from "@/components/ZakatRiwayat";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calculator, Briefcase, Wallet, Wheat, Settings2, Menu, Loader2, Globe, Facebook, Youtube, Twitter, Send } from "lucide-react";
+import { Calculator, Briefcase, Wallet, Wheat, Settings2, Menu, Loader2, Globe, Facebook, Youtube, Twitter, Send, Store, Sprout, Beef, Gem, Mountain } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -104,6 +109,11 @@ const PanduanContent = () => (
           <li><span className="font-semibold text-foreground">Fitrah</span> — 2,5 kg makanan pokok/jiwa, sebelum Idul Fitri</li>
           <li><span className="font-semibold text-foreground">Maal</span> — 2,5% dari harta yang mencapai nisab & haul</li>
           <li><span className="font-semibold text-foreground">Penghasilan</span> — 2,5% dari pendapatan jika total setahun ≥ nisab</li>
+          <li><span className="font-semibold text-foreground">Perniagaan</span> — 2,5% dari (modal + piutang + stok − hutang) setelah haul</li>
+          <li><span className="font-semibold text-foreground">Pertanian</span> — 5% (irigasi) atau 10% (tadah hujan), nisab 653 kg, saat panen</li>
+          <li><span className="font-semibold text-foreground">Peternakan</span> — sesuai tabel nisab unta/sapi/kambing, haul 1 tahun</li>
+          <li><span className="font-semibold text-foreground">Rikaz</span> — 20% dari harta temuan/karun, tanpa nisab & haul</li>
+          <li><span className="font-semibold text-foreground">Ma'din</span> — 2,5% hasil tambang, nisab 85g emas</li>
         </ul>
       </AccordionContent>
     </AccordionItem>
@@ -209,6 +219,11 @@ const Index = () => {
   const TABS = [
     { id: "penghasilan", label: "Penghasilan", short: "Gaji", icon: Briefcase },
     { id: "maal", label: "Maal", short: "Maal", icon: Wallet },
+    { id: "perniagaan", label: "Perniagaan", short: "Dagang", icon: Store },
+    { id: "pertanian", label: "Pertanian", short: "Tani", icon: Sprout },
+    { id: "peternakan", label: "Peternakan", short: "Ternak", icon: Beef },
+    { id: "rikaz", label: "Rikaz", short: "Rikaz", icon: Gem },
+    { id: "madin", label: "Ma'din", short: "Tambang", icon: Mountain },
     { id: "fitrah", label: "Fitrah", short: "Fitrah", icon: Wheat },
   ];
 
@@ -328,11 +343,13 @@ const Index = () => {
           <Card className="overflow-hidden transition-shadow duration-300 hover:shadow-lg border-border/60">
             <CardContent className="px-4 pt-4 sm:px-6 sm:pt-5">
               <Tabs value={activeTab} onValueChange={setActiveTab}>
-                {/* Desktop tabs only */}
-                <TabsList className="w-full hidden md:flex">
-                  <TabsTrigger value="penghasilan" className="flex-1 text-sm font-semibold">Penghasilan</TabsTrigger>
-                  <TabsTrigger value="maal" className="flex-1 text-sm font-semibold">Maal</TabsTrigger>
-                  <TabsTrigger value="fitrah" className="flex-1 text-sm font-semibold">Fitrah</TabsTrigger>
+                {/* Desktop tabs — grid wrap for 8 categories */}
+                <TabsList className="w-full hidden md:grid md:grid-cols-4 h-auto gap-1 p-1">
+                  {TABS.map((t) => (
+                    <TabsTrigger key={t.id} value={t.id} className="text-xs lg:text-sm font-semibold h-9">
+                      {t.label}
+                    </TabsTrigger>
+                  ))}
                 </TabsList>
 
                 {/* Mobile active tab label */}
@@ -355,6 +372,21 @@ const Index = () => {
                     </TabsContent>
                     <TabsContent value="maal" forceMount={activeTab === "maal" ? true : undefined} className={activeTab !== "maal" ? "hidden" : ""}>
                       <ZakatMaal goldPrice={goldPrice} silverPrice={silverPrice} nisabType={nisabType} isActive={activeTab === "maal"} onCalculated={refreshHistory} />
+                    </TabsContent>
+                    <TabsContent value="perniagaan" forceMount={activeTab === "perniagaan" ? true : undefined} className={activeTab !== "perniagaan" ? "hidden" : ""}>
+                      <ZakatPerniagaan goldPrice={goldPrice} isActive={activeTab === "perniagaan"} onCalculated={refreshHistory} />
+                    </TabsContent>
+                    <TabsContent value="pertanian" forceMount={activeTab === "pertanian" ? true : undefined} className={activeTab !== "pertanian" ? "hidden" : ""}>
+                      <ZakatPertanian isActive={activeTab === "pertanian"} onCalculated={refreshHistory} />
+                    </TabsContent>
+                    <TabsContent value="peternakan" forceMount={activeTab === "peternakan" ? true : undefined} className={activeTab !== "peternakan" ? "hidden" : ""}>
+                      <ZakatPeternakan isActive={activeTab === "peternakan"} onCalculated={refreshHistory} />
+                    </TabsContent>
+                    <TabsContent value="rikaz" forceMount={activeTab === "rikaz" ? true : undefined} className={activeTab !== "rikaz" ? "hidden" : ""}>
+                      <ZakatRikaz isActive={activeTab === "rikaz"} onCalculated={refreshHistory} />
+                    </TabsContent>
+                    <TabsContent value="madin" forceMount={activeTab === "madin" ? true : undefined} className={activeTab !== "madin" ? "hidden" : ""}>
+                      <ZakatMadin goldPrice={goldPrice} isActive={activeTab === "madin"} onCalculated={refreshHistory} />
                     </TabsContent>
                     <TabsContent value="fitrah" forceMount={activeTab === "fitrah" ? true : undefined} className={activeTab !== "fitrah" ? "hidden" : ""}>
                       <ZakatFitrah isActive={activeTab === "fitrah"} onCalculated={refreshHistory} />
@@ -436,7 +468,7 @@ const Index = () => {
         style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
         aria-label="Navigasi utama"
       >
-        <div className="flex items-stretch justify-around h-16">
+        <div className="flex items-stretch h-16 overflow-x-auto no-scrollbar">
           {TABS.map((t) => {
             const Icon = t.icon;
             const active = activeTab === t.id;
@@ -447,7 +479,7 @@ const Index = () => {
                 onClick={() => setActiveTab(t.id)}
                 aria-current={active ? "page" : undefined}
                 aria-label={`Zakat ${t.label}`}
-                className="relative flex flex-1 flex-col items-center justify-center gap-1 min-h-[44px] active:scale-95 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset rounded-md"
+                className="relative flex shrink-0 flex-col items-center justify-center gap-1 min-h-[44px] min-w-[68px] px-2 active:scale-95 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset rounded-md"
               >
                 <Icon aria-hidden="true" className={`h-5 w-5 transition-colors ${active ? "text-primary" : "text-muted-foreground"}`} />
                 <span className={`text-[11px] font-medium transition-colors ${active ? "text-primary" : "text-muted-foreground"}`}>
