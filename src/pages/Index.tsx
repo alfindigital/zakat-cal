@@ -109,6 +109,11 @@ const PanduanContent = () => (
           <li><span className="font-semibold text-foreground">Fitrah</span> — 2,5 kg makanan pokok/jiwa, sebelum Idul Fitri</li>
           <li><span className="font-semibold text-foreground">Maal</span> — 2,5% dari harta yang mencapai nisab & haul</li>
           <li><span className="font-semibold text-foreground">Penghasilan</span> — 2,5% dari pendapatan jika total setahun ≥ nisab</li>
+          <li><span className="font-semibold text-foreground">Perniagaan</span> — 2,5% dari (modal + piutang + stok − hutang) setelah haul</li>
+          <li><span className="font-semibold text-foreground">Pertanian</span> — 5% (irigasi) atau 10% (tadah hujan), nisab 653 kg, saat panen</li>
+          <li><span className="font-semibold text-foreground">Peternakan</span> — sesuai tabel nisab unta/sapi/kambing, haul 1 tahun</li>
+          <li><span className="font-semibold text-foreground">Rikaz</span> — 20% dari harta temuan/karun, tanpa nisab & haul</li>
+          <li><span className="font-semibold text-foreground">Ma'din</span> — 2,5% hasil tambang, nisab 85g emas</li>
         </ul>
       </AccordionContent>
     </AccordionItem>
