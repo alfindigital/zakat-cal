@@ -468,7 +468,7 @@ const Index = () => {
         style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
         aria-label="Navigasi utama"
       >
-        <div className="flex items-stretch justify-around h-16">
+        <div className="flex items-stretch h-16 overflow-x-auto no-scrollbar">
           {TABS.map((t) => {
             const Icon = t.icon;
             const active = activeTab === t.id;
@@ -479,7 +479,7 @@ const Index = () => {
                 onClick={() => setActiveTab(t.id)}
                 aria-current={active ? "page" : undefined}
                 aria-label={`Zakat ${t.label}`}
-                className="relative flex flex-1 flex-col items-center justify-center gap-1 min-h-[44px] active:scale-95 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset rounded-md"
+                className="relative flex shrink-0 flex-col items-center justify-center gap-1 min-h-[44px] min-w-[68px] px-2 active:scale-95 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset rounded-md"
               >
                 <Icon aria-hidden="true" className={`h-5 w-5 transition-colors ${active ? "text-primary" : "text-muted-foreground"}`} />
                 <span className={`text-[11px] font-medium transition-colors ${active ? "text-primary" : "text-muted-foreground"}`}>
