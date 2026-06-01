@@ -219,6 +219,11 @@ const Index = () => {
   const TABS = [
     { id: "penghasilan", label: "Penghasilan", short: "Gaji", icon: Briefcase },
     { id: "maal", label: "Maal", short: "Maal", icon: Wallet },
+    { id: "perniagaan", label: "Perniagaan", short: "Dagang", icon: Store },
+    { id: "pertanian", label: "Pertanian", short: "Tani", icon: Sprout },
+    { id: "peternakan", label: "Peternakan", short: "Ternak", icon: Beef },
+    { id: "rikaz", label: "Rikaz", short: "Rikaz", icon: Gem },
+    { id: "madin", label: "Ma'din", short: "Tambang", icon: Mountain },
     { id: "fitrah", label: "Fitrah", short: "Fitrah", icon: Wheat },
   ];
 
