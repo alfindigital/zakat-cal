@@ -343,11 +343,13 @@ const Index = () => {
           <Card className="overflow-hidden transition-shadow duration-300 hover:shadow-lg border-border/60">
             <CardContent className="px-4 pt-4 sm:px-6 sm:pt-5">
               <Tabs value={activeTab} onValueChange={setActiveTab}>
-                {/* Desktop tabs only */}
-                <TabsList className="w-full hidden md:flex">
-                  <TabsTrigger value="penghasilan" className="flex-1 text-sm font-semibold">Penghasilan</TabsTrigger>
-                  <TabsTrigger value="maal" className="flex-1 text-sm font-semibold">Maal</TabsTrigger>
-                  <TabsTrigger value="fitrah" className="flex-1 text-sm font-semibold">Fitrah</TabsTrigger>
+                {/* Desktop tabs — grid wrap for 8 categories */}
+                <TabsList className="w-full hidden md:grid md:grid-cols-4 h-auto gap-1 p-1">
+                  {TABS.map((t) => (
+                    <TabsTrigger key={t.id} value={t.id} className="text-xs lg:text-sm font-semibold h-9">
+                      {t.label}
+                    </TabsTrigger>
+                  ))}
                 </TabsList>
 
                 {/* Mobile active tab label */}
@@ -370,6 +372,21 @@ const Index = () => {
                     </TabsContent>
                     <TabsContent value="maal" forceMount={activeTab === "maal" ? true : undefined} className={activeTab !== "maal" ? "hidden" : ""}>
                       <ZakatMaal goldPrice={goldPrice} silverPrice={silverPrice} nisabType={nisabType} isActive={activeTab === "maal"} onCalculated={refreshHistory} />
+                    </TabsContent>
+                    <TabsContent value="perniagaan" forceMount={activeTab === "perniagaan" ? true : undefined} className={activeTab !== "perniagaan" ? "hidden" : ""}>
+                      <ZakatPerniagaan goldPrice={goldPrice} isActive={activeTab === "perniagaan"} onCalculated={refreshHistory} />
+                    </TabsContent>
+                    <TabsContent value="pertanian" forceMount={activeTab === "pertanian" ? true : undefined} className={activeTab !== "pertanian" ? "hidden" : ""}>
+                      <ZakatPertanian isActive={activeTab === "pertanian"} onCalculated={refreshHistory} />
+                    </TabsContent>
+                    <TabsContent value="peternakan" forceMount={activeTab === "peternakan" ? true : undefined} className={activeTab !== "peternakan" ? "hidden" : ""}>
+                      <ZakatPeternakan isActive={activeTab === "peternakan"} onCalculated={refreshHistory} />
+                    </TabsContent>
+                    <TabsContent value="rikaz" forceMount={activeTab === "rikaz" ? true : undefined} className={activeTab !== "rikaz" ? "hidden" : ""}>
+                      <ZakatRikaz isActive={activeTab === "rikaz"} onCalculated={refreshHistory} />
+                    </TabsContent>
+                    <TabsContent value="madin" forceMount={activeTab === "madin" ? true : undefined} className={activeTab !== "madin" ? "hidden" : ""}>
+                      <ZakatMadin goldPrice={goldPrice} isActive={activeTab === "madin"} onCalculated={refreshHistory} />
                     </TabsContent>
                     <TabsContent value="fitrah" forceMount={activeTab === "fitrah" ? true : undefined} className={activeTab !== "fitrah" ? "hidden" : ""}>
                       <ZakatFitrah isActive={activeTab === "fitrah"} onCalculated={refreshHistory} />
