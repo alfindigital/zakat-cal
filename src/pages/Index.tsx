@@ -8,10 +8,15 @@ import { fetchGoldPrice, getHistory, subscribeHistory, DEFAULT_SILVER_PRICE, typ
 import ZakatPenghasilan from "@/components/ZakatPenghasilan";
 import ZakatMaal from "@/components/ZakatMaal";
 import ZakatFitrah from "@/components/ZakatFitrah";
+import ZakatPerniagaan from "@/components/ZakatPerniagaan";
+import ZakatPertanian from "@/components/ZakatPertanian";
+import ZakatPeternakan from "@/components/ZakatPeternakan";
+import ZakatRikaz from "@/components/ZakatRikaz";
+import ZakatMadin from "@/components/ZakatMadin";
 import { DarkModeToggle } from "@/components/DarkModeToggle";
 import ZakatRiwayat from "@/components/ZakatRiwayat";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calculator, Briefcase, Wallet, Wheat, Settings2, Menu, Loader2, Globe, Facebook, Youtube, Twitter, Send } from "lucide-react";
+import { Calculator, Briefcase, Wallet, Wheat, Settings2, Menu, Loader2, Globe, Facebook, Youtube, Twitter, Send, Store, Sprout, Beef, Gem, Mountain } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
