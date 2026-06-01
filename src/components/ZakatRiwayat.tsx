@@ -12,7 +12,7 @@ import {
   AlertDialogAction,
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
-import { Trash2, Briefcase, Wallet, Wheat } from "lucide-react";
+import { Trash2, Briefcase, Wallet, Wheat, Store, Sprout, Beef, Gem, Mountain } from "lucide-react";
 import {
   type ZakatHistory,
   formatRupiah,
@@ -35,6 +35,11 @@ const TYPE_ICON: Record<string, typeof Briefcase> = {
   Penghasilan: Briefcase,
   Maal: Wallet,
   Fitrah: Wheat,
+  Perniagaan: Store,
+  Pertanian: Sprout,
+  Peternakan: Beef,
+  Rikaz: Gem,
+  Madin: Mountain,
 };
 
 function HistoryItem({
