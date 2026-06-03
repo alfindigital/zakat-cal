@@ -332,7 +332,7 @@ const Index = () => {
         onTouchEnd={onTouchEnd}
         className="mx-auto max-w-2xl w-full px-4 py-5 sm:px-6 sm:py-8 space-y-5 sm:space-y-7 flex-1"
         style={{
-          paddingBottom: "calc(7rem + env(safe-area-inset-bottom, 0px))",
+          paddingBottom: "calc(8rem + env(safe-area-inset-bottom, 0px))",
         }}
       >
         <motion.div
