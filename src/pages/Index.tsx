@@ -413,54 +413,14 @@ const Index = () => {
         </motion.div>
       </main>
 
-      {/* Footer (desktop) */}
-      <footer className="border-t border-border/40 bg-background/60 backdrop-blur-sm hidden md:block">
-        <div className="mx-auto max-w-2xl px-4 py-4 sm:px-6 flex items-center justify-center gap-3 text-sm text-muted-foreground">
-          <span>
-            by{" "}
-            <a
-              href="https://alfindigital.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-semibold text-foreground hover:text-primary transition-colors"
-            >
-              @alfindigital
-            </a>
-          </span>
-          <span className="text-border" aria-hidden="true">|</span>
-          <div className="flex items-center gap-3">
-            <a href="https://alfindigital.com" target="_blank" rel="noopener noreferrer" aria-label="Website" className="hover:text-primary transition-colors">
-              <Globe className="w-4 h-4" />
-            </a>
-            <a href="https://fb.com/alfindigital" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="hover:text-primary transition-colors">
-              <Facebook className="w-4 h-4" />
-            </a>
-            <a href="https://youtube.com/@alfindigital" target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="hover:text-primary transition-colors">
-              <Youtube className="w-4 h-4" />
-            </a>
-            <a href="https://tiktok.com/@alfindigital" target="_blank" rel="noopener noreferrer" aria-label="TikTok" className="hover:text-primary transition-colors">
-              <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4" aria-hidden="true">
-                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5.8 20.1a6.34 6.34 0 0 0 10.86-4.43V8.66a8.16 8.16 0 0 0 4.77 1.52V6.73a4.85 4.85 0 0 1-1.84-.04Z" />
-              </svg>
-            </a>
-            <a href="https://x.com/alfindigital" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)" className="hover:text-primary transition-colors">
-              <Twitter className="w-4 h-4" />
-            </a>
-            <a href="https://t.me/alfidx" target="_blank" rel="noopener noreferrer" aria-label="Telegram" className="hover:text-primary transition-colors">
-              <Send className="w-4 h-4" />
-            </a>
-          </div>
-        </div>
-      </footer>
-
-      {/* Bottom Tab Navigation — floating pill on desktop, full-width bar on mobile */}
+      {/* Bottom Tab Navigation — dark green floating pill on desktop, full-width bar on mobile */}
       <nav
-        className="fixed z-50 left-1/2 -translate-x-1/2 bottom-0 w-full md:bottom-5 md:w-auto md:max-w-[calc(100%-2rem)]"
+        className="fixed z-50 left-1/2 -translate-x-1/2 bottom-0 w-full md:bottom-6 md:w-auto md:max-w-[calc(100%-2rem)]"
         style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
         aria-label="Navigasi kategori zakat"
       >
-        <div className="mx-auto bg-background/90 backdrop-blur-xl border-t border-border/40 md:border md:rounded-full md:shadow-lg md:shadow-black/5 md:px-2">
-          <div className="flex items-stretch h-16 md:h-14 overflow-x-auto no-scrollbar md:overflow-visible justify-center">
+        <div className="mx-auto bg-primary md:rounded-full md:shadow-2xl md:shadow-primary/30 ring-1 ring-primary-foreground/10 md:px-2.5 md:py-1.5">
+          <div className="flex items-stretch h-[68px] md:h-auto overflow-x-auto no-scrollbar md:overflow-visible justify-center">
             {TABS.map((t) => {
               const Icon = t.icon;
               const active = activeTab === t.id;
@@ -472,14 +432,15 @@ const Index = () => {
                   aria-current={active ? "page" : undefined}
                   aria-label={`Zakat ${t.label}`}
                   title={`Zakat ${t.label}`}
-                  className="group relative flex shrink-0 flex-col md:flex-row items-center justify-center gap-1 md:gap-0 min-h-[44px] min-w-[60px] md:min-w-0 md:h-10 md:w-10 md:mx-0.5 px-2 md:px-0 md:rounded-full active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset rounded-md hover:bg-muted/60"
+                  className={`group relative flex shrink-0 flex-col md:flex-row items-center justify-center gap-1 md:gap-0 min-h-[44px] min-w-[64px] md:min-w-0 md:h-12 md:w-12 md:mx-0.5 px-2 md:px-0 md:rounded-full active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground/70 focus-visible:ring-offset-2 focus-visible:ring-offset-primary rounded-md ${active ? "md:bg-primary-foreground" : "hover:bg-primary-foreground/10"}`}
                 >
                   <Icon
                     aria-hidden="true"
-                    className={`h-5 w-5 transition-colors ${active ? "text-primary" : "text-muted-foreground group-hover:text-foreground"}`}
+                    strokeWidth={2.25}
+                    className={`h-6 w-6 md:h-5 md:w-5 transition-colors ${active ? "text-primary-foreground md:text-primary" : "text-primary-foreground/70 group-hover:text-primary-foreground"}`}
                   />
                   <span
-                    className={`md:hidden text-[11px] font-medium transition-colors ${active ? "text-primary" : "text-muted-foreground"}`}
+                    className={`md:hidden text-[11px] font-semibold transition-colors ${active ? "text-primary-foreground" : "text-primary-foreground/70"}`}
                   >
                     {t.short}
                   </span>
@@ -487,7 +448,7 @@ const Index = () => {
                     <motion.span
                       layoutId="bottom-nav-indicator"
                       aria-hidden="true"
-                      className="absolute top-0 md:top-auto md:bottom-0 h-0.5 w-10 md:w-6 bg-primary rounded-full"
+                      className="md:hidden absolute top-0 h-0.5 w-12 bg-primary-foreground rounded-full"
                     />
                   )}
                 </button>
