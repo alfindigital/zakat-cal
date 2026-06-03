@@ -332,7 +332,7 @@ const Index = () => {
         onTouchEnd={onTouchEnd}
         className="mx-auto max-w-2xl w-full px-4 py-5 sm:px-6 sm:py-8 space-y-5 sm:space-y-7 flex-1"
         style={{
-          paddingBottom: isMobile ? "calc(8.5rem + env(safe-area-inset-bottom, 0px))" : undefined,
+          paddingBottom: "calc(7rem + env(safe-area-inset-bottom, 0px))",
         }}
       >
         <motion.div
@@ -343,21 +343,12 @@ const Index = () => {
           <Card className="overflow-hidden transition-shadow duration-300 hover:shadow-lg border-border/60">
             <CardContent className="px-4 pt-4 sm:px-6 sm:pt-5">
               <Tabs value={activeTab} onValueChange={setActiveTab}>
-                {/* Desktop tabs — grid wrap for 8 categories */}
-                <TabsList className="w-full hidden md:grid md:grid-cols-4 h-auto gap-1 p-1">
-                  {TABS.map((t) => (
-                    <TabsTrigger key={t.id} value={t.id} className="text-xs lg:text-sm font-semibold h-9">
-                      {t.label}
-                    </TabsTrigger>
-                  ))}
-                </TabsList>
-
-                {/* Mobile active tab label */}
-                {isMobile && (
-                  <div className="flex items-center justify-between mb-3 -mt-1">
-                    <h2 className="text-base font-bold">Zakat {TABS.find((t) => t.id === activeTab)?.label}</h2>
-                  </div>
-                )}
+                {/* Active tab title (nav lives at bottom for all viewports) */}
+                <div className="flex items-center justify-between mb-3 -mt-1">
+                  <h2 className="text-base sm:text-lg font-bold tracking-tight">
+                    Zakat {TABS.find((t) => t.id === activeTab)?.label}
+                  </h2>
+                </div>
 
                 <AnimatePresence mode="wait">
                   <motion.div
