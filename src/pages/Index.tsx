@@ -453,36 +453,49 @@ const Index = () => {
         </div>
       </footer>
 
-      {/* Mobile Bottom Tab Navigation */}
+      {/* Bottom Tab Navigation — floating pill on desktop, full-width bar on mobile */}
       <nav
-        className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-xl border-t border-border/40"
+        className="fixed z-50 left-1/2 -translate-x-1/2 bottom-0 w-full md:bottom-5 md:w-auto md:max-w-[calc(100%-2rem)]"
         style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
-        aria-label="Navigasi utama"
+        aria-label="Navigasi kategori zakat"
       >
-        <div className="flex items-stretch h-16 overflow-x-auto no-scrollbar">
-          {TABS.map((t) => {
-            const Icon = t.icon;
-            const active = activeTab === t.id;
-            return (
-              <button
-                key={t.id}
-                type="button"
-                onClick={() => setActiveTab(t.id)}
-                aria-current={active ? "page" : undefined}
-                aria-label={`Zakat ${t.label}`}
-                className="relative flex shrink-0 flex-col items-center justify-center gap-1 min-h-[44px] min-w-[68px] px-2 active:scale-95 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset rounded-md"
-              >
-                <Icon aria-hidden="true" className={`h-5 w-5 transition-colors ${active ? "text-primary" : "text-muted-foreground"}`} />
-                <span className={`text-[11px] font-medium transition-colors ${active ? "text-primary" : "text-muted-foreground"}`}>
-                  {t.short}
-                </span>
-                {active && (
-                  <motion.span
-                    layoutId="bottom-nav-indicator"
+        <div className="mx-auto bg-background/90 backdrop-blur-xl border-t border-border/40 md:border md:rounded-full md:shadow-lg md:shadow-black/5 md:px-2">
+          <div className="flex items-stretch h-16 md:h-14 overflow-x-auto no-scrollbar md:overflow-visible justify-center">
+            {TABS.map((t) => {
+              const Icon = t.icon;
+              const active = activeTab === t.id;
+              return (
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => setActiveTab(t.id)}
+                  aria-current={active ? "page" : undefined}
+                  aria-label={`Zakat ${t.label}`}
+                  title={`Zakat ${t.label}`}
+                  className="group relative flex shrink-0 flex-col md:flex-row items-center justify-center gap-1 md:gap-0 min-h-[44px] min-w-[60px] md:min-w-0 md:h-10 md:w-10 md:mx-0.5 px-2 md:px-0 md:rounded-full active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset rounded-md hover:bg-muted/60"
+                >
+                  <Icon
                     aria-hidden="true"
-                    className="absolute top-0 h-0.5 w-10 bg-primary rounded-full"
+                    className={`h-5 w-5 transition-colors ${active ? "text-primary" : "text-muted-foreground group-hover:text-foreground"}`}
                   />
-                )}
+                  <span
+                    className={`md:hidden text-[11px] font-medium transition-colors ${active ? "text-primary" : "text-muted-foreground"}`}
+                  >
+                    {t.short}
+                  </span>
+                  {active && (
+                    <motion.span
+                      layoutId="bottom-nav-indicator"
+                      aria-hidden="true"
+                      className="absolute top-0 md:top-auto md:bottom-0 h-0.5 w-10 md:w-6 bg-primary rounded-full"
+                    />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </nav>
               </button>
             );
           })}
