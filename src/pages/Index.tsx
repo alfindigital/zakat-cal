@@ -413,48 +413,45 @@ const Index = () => {
         </motion.div>
       </main>
 
-      {/* Bottom Tab Navigation — dark green floating pill on desktop, full-width bar on mobile */}
+      {/* Bottom Tab Navigation — sticky full-width dark green bar */}
       <nav
-        className="fixed z-50 left-1/2 -translate-x-1/2 bottom-0 w-full md:bottom-6 md:w-auto md:max-w-[calc(100%-2rem)]"
+        className="fixed z-50 left-0 right-0 bottom-0 bg-primary border-t border-primary-foreground/10 shadow-[0_-4px_20px_-4px_hsl(var(--primary)/0.4)]"
         style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
         aria-label="Navigasi kategori zakat"
       >
-        <div className="mx-auto bg-primary md:rounded-full md:shadow-2xl md:shadow-primary/30 ring-1 ring-primary-foreground/10 md:px-2.5 md:py-1.5">
-          <div className="flex items-stretch h-[68px] md:h-auto overflow-x-auto no-scrollbar md:overflow-visible justify-center">
-            {TABS.map((t) => {
-              const Icon = t.icon;
-              const active = activeTab === t.id;
-              return (
-                <button
-                  key={t.id}
-                  type="button"
-                  onClick={() => setActiveTab(t.id)}
-                  aria-current={active ? "page" : undefined}
-                  aria-label={`Zakat ${t.label}`}
-                  title={`Zakat ${t.label}`}
-                  className={`group relative flex shrink-0 flex-col md:flex-row items-center justify-center gap-1 md:gap-0 min-h-[44px] min-w-[64px] md:min-w-0 md:h-12 md:w-12 md:mx-0.5 px-2 md:px-0 md:rounded-full active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground/70 focus-visible:ring-offset-2 focus-visible:ring-offset-primary rounded-md ${active ? "md:bg-primary-foreground" : "hover:bg-primary-foreground/10"}`}
+        <div className="mx-auto max-w-3xl flex items-stretch h-20 overflow-x-auto no-scrollbar justify-around px-1">
+          {TABS.map((t) => {
+            const Icon = t.icon;
+            const active = activeTab === t.id;
+            return (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => setActiveTab(t.id)}
+                aria-current={active ? "page" : undefined}
+                aria-label={`Zakat ${t.label}`}
+                title={`Zakat ${t.label}`}
+                className="group relative flex flex-1 shrink-0 flex-col items-center justify-center gap-1 min-w-[64px] px-2 active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground/70 focus-visible:ring-inset rounded-md"
+              >
+                <span
+                  className={`flex items-center justify-center h-11 w-11 rounded-full transition-all ${
+                    active ? "bg-primary-foreground" : "group-hover:bg-primary-foreground/10"
+                  }`}
                 >
                   <Icon
                     aria-hidden="true"
                     strokeWidth={2.25}
-                    className={`h-6 w-6 md:h-5 md:w-5 transition-colors ${active ? "text-primary-foreground md:text-primary" : "text-primary-foreground/70 group-hover:text-primary-foreground"}`}
+                    className={`h-7 w-7 transition-colors ${active ? "text-primary" : "text-primary-foreground/80 group-hover:text-primary-foreground"}`}
                   />
-                  <span
-                    className={`md:hidden text-[11px] font-semibold transition-colors ${active ? "text-primary-foreground" : "text-primary-foreground/70"}`}
-                  >
-                    {t.short}
-                  </span>
-                  {active && (
-                    <motion.span
-                      layoutId="bottom-nav-indicator"
-                      aria-hidden="true"
-                      className="md:hidden absolute top-0 h-0.5 w-12 bg-primary-foreground rounded-full"
-                    />
-                  )}
-                </button>
-              );
-            })}
-          </div>
+                </span>
+                <span
+                  className={`text-[11px] font-semibold transition-colors ${active ? "text-primary-foreground" : "text-primary-foreground/70"}`}
+                >
+                  {t.short}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </nav>
     </div>
