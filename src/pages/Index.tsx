@@ -332,7 +332,7 @@ const Index = () => {
         onTouchEnd={onTouchEnd}
         className="mx-auto max-w-2xl w-full px-4 py-5 sm:px-6 sm:py-8 space-y-5 sm:space-y-7 flex-1"
         style={{
-          paddingBottom: isMobile ? "calc(8.5rem + env(safe-area-inset-bottom, 0px))" : undefined,
+          paddingBottom: "calc(7rem + env(safe-area-inset-bottom, 0px))",
         }}
       >
         <motion.div
@@ -343,21 +343,12 @@ const Index = () => {
           <Card className="overflow-hidden transition-shadow duration-300 hover:shadow-lg border-border/60">
             <CardContent className="px-4 pt-4 sm:px-6 sm:pt-5">
               <Tabs value={activeTab} onValueChange={setActiveTab}>
-                {/* Desktop tabs — grid wrap for 8 categories */}
-                <TabsList className="w-full hidden md:grid md:grid-cols-4 h-auto gap-1 p-1">
-                  {TABS.map((t) => (
-                    <TabsTrigger key={t.id} value={t.id} className="text-xs lg:text-sm font-semibold h-9">
-                      {t.label}
-                    </TabsTrigger>
-                  ))}
-                </TabsList>
-
-                {/* Mobile active tab label */}
-                {isMobile && (
-                  <div className="flex items-center justify-between mb-3 -mt-1">
-                    <h2 className="text-base font-bold">Zakat {TABS.find((t) => t.id === activeTab)?.label}</h2>
-                  </div>
-                )}
+                {/* Active tab title (nav lives at bottom for all viewports) */}
+                <div className="flex items-center justify-between mb-3 -mt-1">
+                  <h2 className="text-base sm:text-lg font-bold tracking-tight">
+                    Zakat {TABS.find((t) => t.id === activeTab)?.label}
+                  </h2>
+                </div>
 
                 <AnimatePresence mode="wait">
                   <motion.div
@@ -462,39 +453,47 @@ const Index = () => {
         </div>
       </footer>
 
-      {/* Mobile Bottom Tab Navigation */}
+      {/* Bottom Tab Navigation — floating pill on desktop, full-width bar on mobile */}
       <nav
-        className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-xl border-t border-border/40"
+        className="fixed z-50 left-1/2 -translate-x-1/2 bottom-0 w-full md:bottom-5 md:w-auto md:max-w-[calc(100%-2rem)]"
         style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
-        aria-label="Navigasi utama"
+        aria-label="Navigasi kategori zakat"
       >
-        <div className="flex items-stretch h-16 overflow-x-auto no-scrollbar">
-          {TABS.map((t) => {
-            const Icon = t.icon;
-            const active = activeTab === t.id;
-            return (
-              <button
-                key={t.id}
-                type="button"
-                onClick={() => setActiveTab(t.id)}
-                aria-current={active ? "page" : undefined}
-                aria-label={`Zakat ${t.label}`}
-                className="relative flex shrink-0 flex-col items-center justify-center gap-1 min-h-[44px] min-w-[68px] px-2 active:scale-95 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset rounded-md"
-              >
-                <Icon aria-hidden="true" className={`h-5 w-5 transition-colors ${active ? "text-primary" : "text-muted-foreground"}`} />
-                <span className={`text-[11px] font-medium transition-colors ${active ? "text-primary" : "text-muted-foreground"}`}>
-                  {t.short}
-                </span>
-                {active && (
-                  <motion.span
-                    layoutId="bottom-nav-indicator"
+        <div className="mx-auto bg-background/90 backdrop-blur-xl border-t border-border/40 md:border md:rounded-full md:shadow-lg md:shadow-black/5 md:px-2">
+          <div className="flex items-stretch h-16 md:h-14 overflow-x-auto no-scrollbar md:overflow-visible justify-center">
+            {TABS.map((t) => {
+              const Icon = t.icon;
+              const active = activeTab === t.id;
+              return (
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => setActiveTab(t.id)}
+                  aria-current={active ? "page" : undefined}
+                  aria-label={`Zakat ${t.label}`}
+                  title={`Zakat ${t.label}`}
+                  className="group relative flex shrink-0 flex-col md:flex-row items-center justify-center gap-1 md:gap-0 min-h-[44px] min-w-[60px] md:min-w-0 md:h-10 md:w-10 md:mx-0.5 px-2 md:px-0 md:rounded-full active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset rounded-md hover:bg-muted/60"
+                >
+                  <Icon
                     aria-hidden="true"
-                    className="absolute top-0 h-0.5 w-10 bg-primary rounded-full"
+                    className={`h-5 w-5 transition-colors ${active ? "text-primary" : "text-muted-foreground group-hover:text-foreground"}`}
                   />
-                )}
-              </button>
-            );
-          })}
+                  <span
+                    className={`md:hidden text-[11px] font-medium transition-colors ${active ? "text-primary" : "text-muted-foreground"}`}
+                  >
+                    {t.short}
+                  </span>
+                  {active && (
+                    <motion.span
+                      layoutId="bottom-nav-indicator"
+                      aria-hidden="true"
+                      className="absolute top-0 md:top-auto md:bottom-0 h-0.5 w-10 md:w-6 bg-primary rounded-full"
+                    />
+                  )}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </nav>
     </div>
