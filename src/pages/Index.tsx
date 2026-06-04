@@ -19,6 +19,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Calculator, Briefcase, Wallet, Wheat, Settings2, Menu, Loader2, Store, Sprout, Beef, Gem, Mountain } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
@@ -242,24 +243,21 @@ const Index = () => {
             </h1>
           </div>
           <div className="flex items-center gap-1">
-            {/* Nisab Settings — Bottom Sheet on mobile, popover-ish on desktop */}
-            <Sheet open={nisabSheetOpen} onOpenChange={setNisabSheetOpen}>
-              <SheetTrigger asChild>
+            {/* Nisab Settings — centered Dialog */}
+            <Dialog open={nisabSheetOpen} onOpenChange={setNisabSheetOpen}>
+              <DialogTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-10 w-10" aria-label="Pengaturan Nisab">
                   <Settings2 className="h-5 w-5" />
                 </Button>
-              </SheetTrigger>
-              <SheetContent
-                side={isMobile ? "bottom" : "right"}
-                className={isMobile ? "rounded-t-2xl pb-8" : ""}
-              >
-                <SheetHeader>
-                  <SheetTitle>Pengaturan Nisab</SheetTitle>
-                  <SheetDescription className="sr-only">
+              </DialogTrigger>
+              <DialogContent className="max-w-md max-h-[85vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Pengaturan Nisab</DialogTitle>
+                  <DialogDescription className="sr-only">
                     Atur standar nisab dan harga emas atau perak per gram untuk perhitungan zakat.
-                  </SheetDescription>
-                </SheetHeader>
-                <div className="mt-4">
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="mt-2">
                   <NisabSettings
                     nisabType={nisabType}
                     setNisabType={setNisabType}
@@ -269,8 +267,8 @@ const Index = () => {
                     onSilverChange={handleSilverChange}
                   />
                 </div>
-              </SheetContent>
-            </Sheet>
+              </DialogContent>
+            </Dialog>
 
             <DarkModeToggle />
 
