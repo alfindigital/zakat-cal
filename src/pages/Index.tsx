@@ -16,7 +16,7 @@ import ZakatMadin from "@/components/ZakatMadin";
 import { DarkModeToggle } from "@/components/DarkModeToggle";
 import ZakatRiwayat from "@/components/ZakatRiwayat";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calculator, Briefcase, Wallet, Wheat, Settings2, Menu, Loader2, Store, Sprout, Beef, Gem, Mountain } from "lucide-react";
+import { Calculator, Briefcase, Wallet, Wheat, Settings2, Menu, Loader2, Store, Sprout, Beef, Gem, Mountain, Info } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -146,6 +146,7 @@ const Index = () => {
   const [history, setHistory] = useState(getHistory());
   const [activeTab, setActiveTab] = useState("penghasilan");
   const [nisabSheetOpen, setNisabSheetOpen] = useState(false);
+  const [infoOpen, setInfoOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -270,6 +271,26 @@ const Index = () => {
               </DialogContent>
             </Dialog>
 
+            {/* Info Zakat — centered Dialog */}
+            <Dialog open={infoOpen} onOpenChange={setInfoOpen}>
+              <DialogTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-10 w-10" aria-label="Panduan Zakat">
+                  <Info className="h-5 w-5" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-md max-h-[85vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Panduan Zakat</DialogTitle>
+                  <DialogDescription className="sr-only">
+                    Panduan singkat tentang zakat, syarat, jenis, nisab, dan penerima zakat.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="mt-2">
+                  <PanduanContent />
+                </div>
+              </DialogContent>
+            </Dialog>
+
             <DarkModeToggle />
 
             {/* Hamburger menu — mobile */}
@@ -297,10 +318,6 @@ const Index = () => {
                       onGoldChange={handleGoldChange}
                       onSilverChange={handleSilverChange}
                     />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-semibold mb-2 text-muted-foreground uppercase tracking-wide">Panduan Zakat</h3>
-                    <PanduanContent />
                   </div>
                 </div>
               </SheetContent>
@@ -395,20 +412,6 @@ const Index = () => {
           <ZakatRiwayat history={history} onChanged={refreshHistory} />
         </motion.div>
 
-        {/* Panduan Zakat — hidden on mobile (in hamburger drawer) */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.25 }}
-          className="hidden md:block"
-        >
-          <Card className="border-border/60">
-            <CardContent className="px-4 pt-4 pb-2 sm:px-6 sm:pt-5">
-              <h2 className="text-base font-bold mb-2">Panduan Zakat</h2>
-              <PanduanContent />
-            </CardContent>
-          </Card>
-        </motion.div>
       </main>
 
       {/* Bottom Tab Navigation — sticky full-width dark green bar */}
