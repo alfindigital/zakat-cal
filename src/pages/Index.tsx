@@ -48,10 +48,10 @@ const NisabSettings = ({
         onValueChange={(v) => v && setNisabType(v as NisabType)}
         className="w-full gap-0 rounded-lg border border-border/60 p-0.5"
       >
-        <ToggleGroupItem value="gold" className="flex-1 text-sm h-10 rounded-md data-[state=on]:bg-primary data-[state=on]:text-primary-foreground font-semibold">
+        <ToggleGroupItem value="gold" className="flex-1 text-sm h-10 rounded-md data-[state=on]:bg-primary data-[state=on]:text-primary-foreground font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none">
           🥇 Emas (85g)
         </ToggleGroupItem>
-        <ToggleGroupItem value="silver" className="flex-1 text-sm h-10 rounded-md data-[state=on]:bg-primary data-[state=on]:text-primary-foreground font-semibold">
+        <ToggleGroupItem value="silver" className="flex-1 text-sm h-10 rounded-md data-[state=on]:bg-primary data-[state=on]:text-primary-foreground font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none">
           🥈 Perak (595g)
         </ToggleGroupItem>
       </ToggleGroup>
@@ -65,7 +65,7 @@ const NisabSettings = ({
         pattern="[0-9]*"
         value={goldInput}
         onChange={(e) => onGoldChange(e.target.value.replace(/\D/g, ""))}
-        className="h-12 text-base font-semibold"
+        className="h-12 text-base font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         placeholder="1200000"
       />
     </div>
@@ -78,12 +78,13 @@ const NisabSettings = ({
         pattern="[0-9]*"
         value={silverInput}
         onChange={(e) => onSilverChange(e.target.value.replace(/\D/g, ""))}
-        className="h-12 text-base font-semibold"
+        className="h-12 text-base font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         placeholder="15000"
       />
     </div>
   </div>
 );
+
 
 const PanduanContent = () => (
   <Accordion type="multiple" className="w-full">
