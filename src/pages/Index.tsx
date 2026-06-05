@@ -16,9 +16,9 @@ import ZakatMadin from "@/components/ZakatMadin";
 import { DarkModeToggle } from "@/components/DarkModeToggle";
 import ZakatRiwayat from "@/components/ZakatRiwayat";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calculator, Briefcase, Wallet, Wheat, Settings2, Menu, Loader2, Store, Sprout, Beef, Gem, Mountain, Info } from "lucide-react";
+import { Calculator, Briefcase, Wallet, Wheat, Settings2, Loader2, Store, Sprout, Beef, Gem, Mountain, Info } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -48,10 +48,10 @@ const NisabSettings = ({
         onValueChange={(v) => v && setNisabType(v as NisabType)}
         className="w-full gap-0 rounded-lg border border-border/60 p-0.5"
       >
-        <ToggleGroupItem value="gold" className="flex-1 text-sm h-10 rounded-md data-[state=on]:bg-primary data-[state=on]:text-primary-foreground font-semibold">
+        <ToggleGroupItem value="gold" className="flex-1 text-sm h-10 rounded-md data-[state=on]:bg-primary data-[state=on]:text-primary-foreground font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none">
           🥇 Emas (85g)
         </ToggleGroupItem>
-        <ToggleGroupItem value="silver" className="flex-1 text-sm h-10 rounded-md data-[state=on]:bg-primary data-[state=on]:text-primary-foreground font-semibold">
+        <ToggleGroupItem value="silver" className="flex-1 text-sm h-10 rounded-md data-[state=on]:bg-primary data-[state=on]:text-primary-foreground font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none">
           🥈 Perak (595g)
         </ToggleGroupItem>
       </ToggleGroup>
@@ -65,7 +65,7 @@ const NisabSettings = ({
         pattern="[0-9]*"
         value={goldInput}
         onChange={(e) => onGoldChange(e.target.value.replace(/\D/g, ""))}
-        className="h-12 text-base font-semibold"
+        className="h-12 text-base font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         placeholder="1200000"
       />
     </div>
@@ -78,23 +78,24 @@ const NisabSettings = ({
         pattern="[0-9]*"
         value={silverInput}
         onChange={(e) => onSilverChange(e.target.value.replace(/\D/g, ""))}
-        className="h-12 text-base font-semibold"
+        className="h-12 text-base font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         placeholder="15000"
       />
     </div>
   </div>
 );
 
+
 const PanduanContent = () => (
   <Accordion type="multiple" className="w-full">
     <AccordionItem value="apa">
-      <AccordionTrigger className="text-sm sm:text-base py-2 font-semibold">Apa Itu Zakat?</AccordionTrigger>
+      <AccordionTrigger className="text-sm sm:text-base py-2 font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none rounded-sm">Apa Itu Zakat?</AccordionTrigger>
       <AccordionContent className="text-sm text-muted-foreground leading-relaxed">
         Rukun Islam ke-4: kewajiban mengeluarkan sebagian harta bagi Muslim yang memenuhi syarat, untuk membersihkan harta dan membantu yang membutuhkan.
       </AccordionContent>
     </AccordionItem>
     <AccordionItem value="syarat">
-      <AccordionTrigger className="text-sm sm:text-base py-2 font-semibold">Syarat Wajib</AccordionTrigger>
+      <AccordionTrigger className="text-sm sm:text-base py-2 font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none rounded-sm">Syarat Wajib</AccordionTrigger>
       <AccordionContent className="text-sm text-muted-foreground leading-relaxed">
         <ul className="list-disc list-inside space-y-0.5">
           <li>Muslim, baligh, berakal</li>
@@ -104,7 +105,7 @@ const PanduanContent = () => (
       </AccordionContent>
     </AccordionItem>
     <AccordionItem value="jenis">
-      <AccordionTrigger className="text-sm sm:text-base py-2 font-semibold">Jenis Zakat</AccordionTrigger>
+      <AccordionTrigger className="text-sm sm:text-base py-2 font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none rounded-sm">Jenis Zakat</AccordionTrigger>
       <AccordionContent className="text-sm text-muted-foreground leading-relaxed">
         <ul className="list-disc list-inside space-y-0.5">
           <li><span className="font-semibold text-foreground">Fitrah</span> — 2,5 kg makanan pokok/jiwa, sebelum Idul Fitri</li>
@@ -119,7 +120,7 @@ const PanduanContent = () => (
       </AccordionContent>
     </AccordionItem>
     <AccordionItem value="nisab">
-      <AccordionTrigger className="text-sm sm:text-base py-2 font-semibold">Nisab Emas vs Perak</AccordionTrigger>
+      <AccordionTrigger className="text-sm sm:text-base py-2 font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none rounded-sm">Nisab Emas vs Perak</AccordionTrigger>
       <AccordionContent className="text-sm text-muted-foreground leading-relaxed">
         <ul className="list-disc list-inside space-y-0.5">
           <li><span className="font-semibold text-foreground">Emas</span> — 85 gram emas murni (standar mayoritas ulama)</li>
@@ -128,13 +129,14 @@ const PanduanContent = () => (
       </AccordionContent>
     </AccordionItem>
     <AccordionItem value="asnaf">
-      <AccordionTrigger className="text-sm sm:text-base py-2 font-semibold">8 Penerima Zakat (Asnaf)</AccordionTrigger>
+      <AccordionTrigger className="text-sm sm:text-base py-2 font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none rounded-sm">8 Penerima Zakat (Asnaf)</AccordionTrigger>
       <AccordionContent className="text-sm text-muted-foreground leading-relaxed">
         Fakir, Miskin, Amil, Muallaf, Riqab, Gharimin, Fi Sabilillah, Ibnu Sabil (QS. At-Taubah: 60).
       </AccordionContent>
     </AccordionItem>
   </Accordion>
 );
+
 
 const Index = () => {
   const isMobile = useIsMobile();
@@ -147,7 +149,7 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState("penghasilan");
   const [nisabSheetOpen, setNisabSheetOpen] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+
   const [refreshing, setRefreshing] = useState(false);
 
   // Pull-to-refresh state
@@ -247,7 +249,7 @@ const Index = () => {
             {/* Nisab Settings — centered Dialog */}
             <Dialog open={nisabSheetOpen} onOpenChange={setNisabSheetOpen}>
               <DialogTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-10 w-10" aria-label="Pengaturan Nisab">
+                <Button variant="ghost" size="icon" className="h-11 w-11 sm:h-10 sm:w-10 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" aria-label="Pengaturan Nisab">
                   <Settings2 className="h-5 w-5" />
                 </Button>
               </DialogTrigger>
@@ -274,7 +276,7 @@ const Index = () => {
             {/* Info Zakat — centered Dialog */}
             <Dialog open={infoOpen} onOpenChange={setInfoOpen}>
               <DialogTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-10 w-10" aria-label="Panduan Zakat">
+                <Button variant="ghost" size="icon" className="h-11 w-11 sm:h-10 sm:w-10 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" aria-label="Panduan Zakat">
                   <Info className="h-5 w-5" />
                 </Button>
               </DialogTrigger>
@@ -292,37 +294,8 @@ const Index = () => {
             </Dialog>
 
             <DarkModeToggle />
-
-            {/* Hamburger menu — mobile */}
-            <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-10 w-10 md:hidden" aria-label="Menu">
-                  <Menu className="h-5 w-5" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-[85%] sm:max-w-sm overflow-y-auto">
-                <SheetHeader>
-                  <SheetTitle>Menu</SheetTitle>
-                  <SheetDescription className="sr-only">
-                    Akses pengaturan nisab dan panduan singkat tentang zakat.
-                  </SheetDescription>
-                </SheetHeader>
-                <div className="mt-6 space-y-6">
-                  <div>
-                    <h3 className="text-sm font-semibold mb-2 text-muted-foreground uppercase tracking-wide">Pengaturan</h3>
-                    <NisabSettings
-                      nisabType={nisabType}
-                      setNisabType={setNisabType}
-                      goldInput={goldInput}
-                      silverInput={silverInput}
-                      onGoldChange={handleGoldChange}
-                      onSilverChange={handleSilverChange}
-                    />
-                  </div>
-                </div>
-              </SheetContent>
-            </Sheet>
           </div>
+
         </div>
       </header>
 
