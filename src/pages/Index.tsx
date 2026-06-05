@@ -149,7 +149,7 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState("penghasilan");
   const [nisabSheetOpen, setNisabSheetOpen] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+
   const [refreshing, setRefreshing] = useState(false);
 
   // Pull-to-refresh state
