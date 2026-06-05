@@ -89,13 +89,13 @@ const NisabSettings = ({
 const PanduanContent = () => (
   <Accordion type="multiple" className="w-full">
     <AccordionItem value="apa">
-      <AccordionTrigger className="text-sm sm:text-base py-2 font-semibold">Apa Itu Zakat?</AccordionTrigger>
+      <AccordionTrigger className="text-sm sm:text-base py-2 font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none rounded-sm">Apa Itu Zakat?</AccordionTrigger>
       <AccordionContent className="text-sm text-muted-foreground leading-relaxed">
         Rukun Islam ke-4: kewajiban mengeluarkan sebagian harta bagi Muslim yang memenuhi syarat, untuk membersihkan harta dan membantu yang membutuhkan.
       </AccordionContent>
     </AccordionItem>
     <AccordionItem value="syarat">
-      <AccordionTrigger className="text-sm sm:text-base py-2 font-semibold">Syarat Wajib</AccordionTrigger>
+      <AccordionTrigger className="text-sm sm:text-base py-2 font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none rounded-sm">Syarat Wajib</AccordionTrigger>
       <AccordionContent className="text-sm text-muted-foreground leading-relaxed">
         <ul className="list-disc list-inside space-y-0.5">
           <li>Muslim, baligh, berakal</li>
@@ -105,7 +105,7 @@ const PanduanContent = () => (
       </AccordionContent>
     </AccordionItem>
     <AccordionItem value="jenis">
-      <AccordionTrigger className="text-sm sm:text-base py-2 font-semibold">Jenis Zakat</AccordionTrigger>
+      <AccordionTrigger className="text-sm sm:text-base py-2 font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none rounded-sm">Jenis Zakat</AccordionTrigger>
       <AccordionContent className="text-sm text-muted-foreground leading-relaxed">
         <ul className="list-disc list-inside space-y-0.5">
           <li><span className="font-semibold text-foreground">Fitrah</span> — 2,5 kg makanan pokok/jiwa, sebelum Idul Fitri</li>
@@ -120,7 +120,7 @@ const PanduanContent = () => (
       </AccordionContent>
     </AccordionItem>
     <AccordionItem value="nisab">
-      <AccordionTrigger className="text-sm sm:text-base py-2 font-semibold">Nisab Emas vs Perak</AccordionTrigger>
+      <AccordionTrigger className="text-sm sm:text-base py-2 font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none rounded-sm">Nisab Emas vs Perak</AccordionTrigger>
       <AccordionContent className="text-sm text-muted-foreground leading-relaxed">
         <ul className="list-disc list-inside space-y-0.5">
           <li><span className="font-semibold text-foreground">Emas</span> — 85 gram emas murni (standar mayoritas ulama)</li>
@@ -129,13 +129,14 @@ const PanduanContent = () => (
       </AccordionContent>
     </AccordionItem>
     <AccordionItem value="asnaf">
-      <AccordionTrigger className="text-sm sm:text-base py-2 font-semibold">8 Penerima Zakat (Asnaf)</AccordionTrigger>
+      <AccordionTrigger className="text-sm sm:text-base py-2 font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none rounded-sm">8 Penerima Zakat (Asnaf)</AccordionTrigger>
       <AccordionContent className="text-sm text-muted-foreground leading-relaxed">
         Fakir, Miskin, Amil, Muallaf, Riqab, Gharimin, Fi Sabilillah, Ibnu Sabil (QS. At-Taubah: 60).
       </AccordionContent>
     </AccordionItem>
   </Accordion>
 );
+
 
 const Index = () => {
   const isMobile = useIsMobile();
