@@ -249,7 +249,7 @@ const Index = () => {
             {/* Nisab Settings — centered Dialog */}
             <Dialog open={nisabSheetOpen} onOpenChange={setNisabSheetOpen}>
               <DialogTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-10 w-10" aria-label="Pengaturan Nisab">
+                <Button variant="ghost" size="icon" className="h-11 w-11 sm:h-10 sm:w-10 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" aria-label="Pengaturan Nisab">
                   <Settings2 className="h-5 w-5" />
                 </Button>
               </DialogTrigger>
@@ -276,7 +276,7 @@ const Index = () => {
             {/* Info Zakat — centered Dialog */}
             <Dialog open={infoOpen} onOpenChange={setInfoOpen}>
               <DialogTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-10 w-10" aria-label="Panduan Zakat">
+                <Button variant="ghost" size="icon" className="h-11 w-11 sm:h-10 sm:w-10 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" aria-label="Panduan Zakat">
                   <Info className="h-5 w-5" />
                 </Button>
               </DialogTrigger>
@@ -294,37 +294,8 @@ const Index = () => {
             </Dialog>
 
             <DarkModeToggle />
-
-            {/* Hamburger menu — mobile */}
-            <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-10 w-10 md:hidden" aria-label="Menu">
-                  <Menu className="h-5 w-5" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-[85%] sm:max-w-sm overflow-y-auto">
-                <SheetHeader>
-                  <SheetTitle>Menu</SheetTitle>
-                  <SheetDescription className="sr-only">
-                    Akses pengaturan nisab dan panduan singkat tentang zakat.
-                  </SheetDescription>
-                </SheetHeader>
-                <div className="mt-6 space-y-6">
-                  <div>
-                    <h3 className="text-sm font-semibold mb-2 text-muted-foreground uppercase tracking-wide">Pengaturan</h3>
-                    <NisabSettings
-                      nisabType={nisabType}
-                      setNisabType={setNisabType}
-                      goldInput={goldInput}
-                      silverInput={silverInput}
-                      onGoldChange={handleGoldChange}
-                      onSilverChange={handleSilverChange}
-                    />
-                  </div>
-                </div>
-              </SheetContent>
-            </Sheet>
           </div>
+
         </div>
       </header>
 
