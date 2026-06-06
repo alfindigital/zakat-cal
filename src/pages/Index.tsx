@@ -23,6 +23,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
 
 const NisabSettings = ({
   nisabType,
@@ -287,8 +288,15 @@ const Index = () => {
                     Panduan singkat tentang zakat, syarat, jenis, nisab, dan penerima zakat.
                   </DialogDescription>
                 </DialogHeader>
-                <div className="mt-2">
+                <div className="mt-2 space-y-3">
                   <PanduanContent />
+                  <Link
+                    to="/panduan-zakat"
+                    onClick={() => setInfoOpen(false)}
+                    className="block text-center text-sm font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm py-2"
+                  >
+                    Baca panduan lengkap →
+                  </Link>
                 </div>
               </DialogContent>
             </Dialog>
