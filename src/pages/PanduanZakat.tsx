@@ -66,7 +66,7 @@ export default function PanduanZakat() {
     path: "/panduan-zakat",
   });
   return (
-    <div className="min-h-screen bg-background px-4 py-8 sm:py-12">
+    <div className="min-h-dvh bg-background px-4 py-8 sm:py-12">
       <div className="mx-auto max-w-2xl space-y-6">
         <div className="flex items-center justify-between">
           <Button variant="ghost" size="sm" asChild>

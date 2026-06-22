@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-export const SITE_URL = "https://zakat-aid-calculator.lovable.app";
+export const SITE_URL = "https://zakat-cal.lovable.app";
 export const SITE_NAME = "ZakatCal";
 const OG_IMAGE = `${SITE_URL}/og-image.jpg`;
 

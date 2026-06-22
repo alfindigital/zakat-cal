@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { MotionConfig } from "framer-motion";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Index from "./pages/Index.tsx";
 import PanduanZakat from "./pages/PanduanZakat.tsx";
 import Tentang from "./pages/Tentang.tsx";
@@ -11,6 +12,7 @@ import { ALL_PAGES } from "@/lib/seo";
 const App = () => (
   // Respect the user's reduced-motion preference across all animations.
   <MotionConfig reducedMotion="user">
+    <ErrorBoundary>
     <TooltipProvider>
       <Sonner />
       <BrowserRouter>
@@ -27,6 +29,7 @@ const App = () => (
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
+    </ErrorBoundary>
   </MotionConfig>
 );
 

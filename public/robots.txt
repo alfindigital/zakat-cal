@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://zakat-aid-calculator.lovable.app/sitemap.xml
+Sitemap: https://zakat-cal.lovable.app/sitemap.xml
