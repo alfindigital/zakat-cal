@@ -1,12 +1,17 @@
-import jsPDF from "jspdf";
-import { formatRupiah } from "@/lib/zakat";
+import { formatRupiah, roundZakat } from "@/lib/zakat";
+import { WA_NUMBER } from "@/lib/contact";
 
 interface PdfRow {
   label: string;
   value: string;
 }
 
-export function generateZakatPdf(type: string, rows: PdfRow[], zakatAmount: number, isWajib: boolean) {
+// jsPDF (+ its html2canvas/dompurify deps) is heavy, so it is imported
+// dynamically only when the user actually downloads a PDF. This keeps it out
+// of the initial bundle.
+export async function generateZakatPdf(type: string, rows: PdfRow[], rawAmount: number, isWajib: boolean) {
+  const zakatAmount = roundZakat(rawAmount);
+  const { default: jsPDF } = await import("jspdf");
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth();
   const date = new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
@@ -14,7 +19,7 @@ export function generateZakatPdf(type: string, rows: PdfRow[], zakatAmount: numb
   // Header
   doc.setFontSize(20);
   doc.setFont("helvetica", "bold");
-  doc.text("Kalkulator Zakat", pageWidth / 2, 25, { align: "center" });
+  doc.text("ZakatCal — Kalkulator Zakat", pageWidth / 2, 25, { align: "center" });
 
   doc.setFontSize(12);
   doc.setFont("helvetica", "normal");
@@ -70,7 +75,12 @@ export function generateZakatPdf(type: string, rows: PdfRow[], zakatAmount: numb
   doc.setFontSize(8);
   doc.setTextColor(160);
   doc.setFont("helvetica", "normal");
-  doc.text("Dokumen ini dihasilkan oleh Kalkulator Zakat. Perhitungan bersifat estimasi.", pageWidth / 2, 280, { align: "center" });
+  doc.text(
+    `Tunaikan via WhatsApp: wa.me/${WA_NUMBER}  •  Perhitungan bersifat estimasi.`,
+    pageWidth / 2,
+    280,
+    { align: "center" },
+  );
 
-  doc.save(`zakat-${type.toLowerCase()}-${Date.now()}.pdf`);
+  doc.save(`zakat-${type.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${Date.now()}.pdf`);
 }

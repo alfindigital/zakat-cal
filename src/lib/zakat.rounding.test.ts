@@ -10,6 +10,7 @@ import {
   calcZakatFitrah,
   getNisab,
   DEFAULT_SILVER_PRICE,
+  RICE_OPTIONS,
 } from "./zakat";
 
 const GOLD = 1_000_000; // nisab 85g = 85.000.000
@@ -129,12 +130,18 @@ describe("Fitrah — pembagian 2.5 kg × harga beras", () => {
   it("per orang = 2.5 × harga beras (presisi)", () => {
     const r = calcZakatFitrah(1, 0);
     expect(r.kg).toBe(2.5);
-    expect(r.perPerson).toBeCloseTo(2.5 * 14_000, 6);
-    expect(r.total).toBeCloseTo(2.5 * 14_000, 6);
+    expect(r.perPerson).toBeCloseTo(2.5 * RICE_OPTIONS[0].pricePerKg, 6);
+    expect(r.total).toBeCloseTo(2.5 * RICE_OPTIONS[0].pricePerKg, 6);
   });
 
   it("total = perPerson × jumlahJiwa untuk jumlah besar", () => {
     const r = calcZakatFitrah(1000, 1);
-    expect(r.total).toBeCloseTo(2.5 * 18_000 * 1000, 6);
+    expect(r.total).toBeCloseTo(2.5 * RICE_OPTIONS[1].pricePerKg * 1000, 6);
+  });
+
+  it("harga beras kustom mengganti preset", () => {
+    const r = calcZakatFitrah(2, 0, 30_000);
+    expect(r.pricePerKg).toBe(30_000);
+    expect(r.total).toBeCloseTo(2.5 * 30_000 * 2, 6);
   });
 });

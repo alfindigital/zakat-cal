@@ -10,11 +10,20 @@ interface Props {
   history: ZakatHistory[];
 }
 
+// Distinct hue per zakat type so the pie + legend stay readable for all
+// categories (previously only 3 had colors; the rest collapsed into one green).
 const TYPE_COLORS: Record<string, string> = {
   Penghasilan: "hsl(160, 84%, 28%)",
   Maal: "hsl(200, 70%, 45%)",
-  Fitrah: "hsl(35, 80%, 55%)",
+  Perniagaan: "hsl(265, 60%, 55%)",
+  Pertanian: "hsl(95, 55%, 40%)",
+  Peternakan: "hsl(20, 75%, 50%)",
+  Rikaz: "hsl(330, 65%, 52%)",
+  Madin: "hsl(220, 15%, 45%)",
+  Fitrah: "hsl(35, 85%, 52%)",
+  Fidyah: "hsl(48, 90%, 45%)",
 };
+const FALLBACK_COLOR = "hsl(160, 30%, 50%)";
 
 export default function ZakatChart({ history }: Props) {
   const isMobile = useIsMobile();
@@ -28,7 +37,7 @@ export default function ZakatChart({ history }: Props) {
     return Object.entries(map).map(([type, total]) => ({
       type,
       total,
-      fill: TYPE_COLORS[type] || "hsl(160, 84%, 28%)",
+      fill: TYPE_COLORS[type] || FALLBACK_COLOR,
     }));
   }, [history]);
 

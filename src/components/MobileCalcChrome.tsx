@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, Download } from "lucide-react";
+import { ChevronDown, Download, MessageCircle, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { formatRupiah } from "@/lib/zakat";
+import { formatRupiah, roundZakat, type ZakatType } from "@/lib/zakat";
+import { buildZakatWaHref } from "@/lib/contact";
+import { useRoundUp } from "@/lib/round-context";
+import { track } from "@/lib/analytics";
 
 export interface ResultRow {
   label: string;
@@ -19,11 +22,55 @@ interface Props {
   isWajib?: boolean;
   statusLabel?: string;
   onDownload: () => void;
+  /** Zakat type — drives the prefilled WhatsApp message + analytics. */
+  waType?: ZakatType;
+  /** Shown when status is "not wajib" to explain why. */
+  notWajibHint?: string;
 }
 
-export function ResultCard({ rows, amount, amountLabel, isWajib, statusLabel, onDownload }: Props) {
+export function ResultCard({
+  rows,
+  amount: rawAmount,
+  amountLabel,
+  isWajib,
+  statusLabel,
+  onDownload,
+  waType,
+  notWajibHint,
+}: Props) {
   const isMobile = useIsMobile();
+  const roundUp = useRoundUp();
   const [open, setOpen] = useState(false);
+  // Apply the ihtiyat rounding reactively for the visible amount + CTA.
+  const amount = roundZakat(rawAmount, roundUp);
+  const showWa = !!waType && isWajib && amount > 0;
+
+  const handleShare = async () => {
+    const text = `Estimasi zakat ${waType ?? ""}: ${formatRupiah(amount)} (via ZakatCal)`;
+    track("share", { type: waType ?? "zakat" });
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: "ZakatCal", text, url: typeof location !== "undefined" ? location.href : undefined });
+      } else if (navigator.clipboard) {
+        await navigator.clipboard.writeText(`${text} ${typeof location !== "undefined" ? location.href : ""}`.trim());
+      }
+    } catch {
+      /* user cancelled share — ignore */
+    }
+  };
+
+  const WaCta = showWa ? (
+    <a
+      href={buildZakatWaHref(waType!, amount)}
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={() => track("pay_click", { type: waType! })}
+      className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 h-12 text-base font-semibold text-primary-foreground shadow-sm transition-transform hover:scale-[1.01] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+    >
+      <MessageCircle aria-hidden="true" className="h-5 w-5" />
+      Tunaikan {formatRupiah(amount)}
+    </a>
+  ) : null;
 
   return (
     <motion.div
@@ -52,11 +99,24 @@ export function ResultCard({ rows, amount, amountLabel, isWajib, statusLabel, on
             {formatRupiah(amount)}
           </motion.p>
         </div>
+        {!isWajib && notWajibHint && (
+          <p className="text-xs text-muted-foreground">{notWajibHint}</p>
+        )}
       </div>
+
+      {/* Primary conversion CTA */}
+      {WaCta}
 
       {/* Details: collapsible on mobile, always open on desktop */}
       {isMobile ? (
         <>
+          <button
+            type="button"
+            onClick={handleShare}
+            className="flex items-center justify-center gap-2 w-full rounded-lg border h-10 text-sm font-medium text-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <Share2 aria-hidden="true" className="h-4 w-4" /> Bagikan
+          </button>
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
@@ -99,14 +159,24 @@ export function ResultCard({ rows, amount, amountLabel, isWajib, statusLabel, on
               <span className="font-medium tabular-nums">{r.value}</span>
             </div>
           ))}
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full mt-2 transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]"
-            onClick={onDownload}
-          >
-            <Download className="mr-2 h-4 w-4" /> Download PDF
-          </Button>
+          <div className="flex gap-2 mt-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1 transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]"
+              onClick={onDownload}
+            >
+              <Download className="mr-2 h-4 w-4" /> Download PDF
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1 transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]"
+              onClick={handleShare}
+            >
+              <Share2 className="mr-2 h-4 w-4" /> Bagikan
+            </Button>
+          </div>
         </div>
       )}
     </motion.div>

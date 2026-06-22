@@ -8,7 +8,9 @@ test.describe("Mobile UX — ZakatCal", () => {
     await page.addInitScript(() => {
       try {
         window.localStorage.clear();
-      } catch {}
+      } catch {
+        /* ignore storage errors in init script */
+      }
     });
     await page.goto("/");
     // wait for app shell + bottom nav
@@ -23,29 +25,24 @@ test.describe("Mobile UX — ZakatCal", () => {
 
     // Default: Penghasilan
     await expect(gaji).toHaveAttribute("aria-current", "page");
-    await expect(page.getByRole("heading", { name: "Zakat Penghasilan" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Kalkulator Zakat Penghasilan" })).toBeVisible();
 
     await maal.click();
     await expect(maal).toHaveAttribute("aria-current", "page");
-    await expect(page.getByRole("heading", { name: "Zakat Maal" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Kalkulator Zakat Maal/ })).toBeVisible();
 
     await fitrah.click();
     await expect(fitrah).toHaveAttribute("aria-current", "page");
-    await expect(page.getByRole("heading", { name: "Zakat Fitrah" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Kalkulator Zakat Fitrah" })).toBeVisible();
 
     await gaji.click();
     await expect(gaji).toHaveAttribute("aria-current", "page");
   });
 
-  test("result card collapsible opens and closes on mobile", async ({ page }) => {
-    // Fill Penghasilan inputs to produce a result.
-    // Pick first decimal input on the active panel (gaji bulanan).
+  test("result card appears live and detail collapsible opens/closes", async ({ page }) => {
+    // Calculation is live — typing produces a result without a "Hitung" button.
     const decimalInputs = page.locator('input[inputmode="decimal"]');
-    await decimalInputs.first().fill("15000000");
-
-    // Trigger calculation: tap the bottom CTA button (MobileCta portal).
-    const cta = page.getByRole("button", { name: /^Hitung/i }).last();
-    await cta.click();
+    await decimalInputs.first().fill("15.000.000");
 
     const toggle = page.getByRole("button", { name: /Lihat Detail|Sembunyikan Detail/ });
     await expect(toggle).toBeVisible();
@@ -60,15 +57,16 @@ test.describe("Mobile UX — ZakatCal", () => {
     await expect(toggle).toHaveAttribute("aria-expanded", "false");
   });
 
-  test("chart Pie/Bar toggle switches mobile chart view", async ({ page }) => {
-    // Seed a history entry first so chart renders
+  test("saving to history reveals chart with Pie/Bar toggle", async ({ page }) => {
     const decimalInputs = page.locator('input[inputmode="decimal"]');
-    await decimalInputs.first().fill("15000000");
-    await page.getByRole("button", { name: /^Hitung/i }).last().click();
+    await decimalInputs.first().fill("15.000.000");
 
-    // Chart card
+    // Persist to history via the sticky mobile CTA.
+    await page.getByRole("button", { name: "Simpan ke Riwayat" }).last().click();
+
+    // Chart card (lazy-loaded)
+    await expect(page.getByText("Ringkasan Zakat")).toBeVisible();
     const chartCard = page.locator("text=Ringkasan Zakat").locator("..").locator("..");
-    await expect(chartCard).toBeVisible();
 
     const pieBtn = chartCard.getByRole("radio", { name: "Pie" }).or(
       chartCard.locator('[role="button"]', { hasText: "Pie" }),

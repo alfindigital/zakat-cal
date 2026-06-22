@@ -1,6 +1,6 @@
-// Default prices per gram in IDR (fallback)
-const DEFAULT_GOLD_PRICE = 1_200_000;
-export const DEFAULT_SILVER_PRICE = 15_000;
+// Default prices per gram in IDR (fallback, approx. mid-2026 levels — user editable)
+export const DEFAULT_GOLD_PRICE = 2_000_000;
+export const DEFAULT_SILVER_PRICE = 28_000;
 const NISAB_GOLD_GRAMS = 85;
 const NISAB_SILVER_GRAMS = 595;
 const ZAKAT_RATE = 0.025;
@@ -13,9 +13,24 @@ export function getNisabGrams(type: NisabType) {
 }
 
 export const RICE_OPTIONS = [
-  { label: "Beras Standar", pricePerKg: 14_000 },
-  { label: "Beras Premium", pricePerKg: 18_000 },
+  { label: "Beras Standar", pricePerKg: 16_000 },
+  { label: "Beras Premium", pricePerKg: 22_000 },
 ];
+
+// Generate a stable id even where crypto.randomUUID is unavailable
+// (older browsers / insecure HTTP contexts).
+export function uid(): string {
+  try {
+    if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+      return crypto.randomUUID();
+    }
+  } catch {
+    // fall through
+  }
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+}
+
+export type PriceSource = "manual" | "online" | "default";
 
 export interface GoldPrice {
   price: number;
@@ -23,6 +38,66 @@ export interface GoldPrice {
   isDefault: boolean;
 }
 
+export interface StoredPrices {
+  gold: number;
+  silver: number;
+  date: string;
+  source: PriceSource;
+}
+
+const PRICE_KEY = "zakat-prices";
+
+function todayId(): string {
+  return new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
+}
+
+// Load user-persisted prices (manual override survives reloads). Falls back to
+// sensible defaults when nothing is stored.
+export function loadStoredPrices(): StoredPrices {
+  const fallback: StoredPrices = {
+    gold: DEFAULT_GOLD_PRICE,
+    silver: DEFAULT_SILVER_PRICE,
+    date: todayId(),
+    source: "default",
+  };
+  if (typeof localStorage === "undefined") return fallback;
+  try {
+    const raw = localStorage.getItem(PRICE_KEY);
+    if (!raw) return fallback;
+    const p = JSON.parse(raw) as Partial<StoredPrices>;
+    return {
+      gold: typeof p.gold === "number" && p.gold > 0 ? p.gold : DEFAULT_GOLD_PRICE,
+      silver: typeof p.silver === "number" && p.silver > 0 ? p.silver : DEFAULT_SILVER_PRICE,
+      date: p.date || todayId(),
+      source: p.source || "manual",
+    };
+  } catch {
+    return fallback;
+  }
+}
+
+export function saveStoredPrices(gold: number, silver: number, source: PriceSource = "manual") {
+  if (typeof localStorage === "undefined") return;
+  const data: StoredPrices = { gold, silver, date: todayId(), source };
+  try {
+    localStorage.setItem(PRICE_KEY, JSON.stringify(data));
+  } catch {
+    // storage full / blocked — non-fatal
+  }
+}
+
+export function hasStoredPrices(): boolean {
+  if (typeof localStorage === "undefined") return false;
+  try {
+    return localStorage.getItem(PRICE_KEY) !== null;
+  } catch {
+    return false;
+  }
+}
+
+// Best-effort online refresh of the gold price. Used only when the user
+// explicitly asks (button / pull-to-refresh) — manual values are never
+// silently overwritten on load.
 export async function fetchGoldPrice(): Promise<GoldPrice> {
   try {
     const res = await fetch("https://api.metals.dev/v1/latest?api_key=demo&currency=IDR&unit=gram");
@@ -31,7 +106,7 @@ export async function fetchGoldPrice(): Promise<GoldPrice> {
       if (data?.metals?.gold) {
         return {
           price: Math.round(data.metals.gold),
-          date: new Date().toLocaleDateString("id-ID"),
+          date: todayId(),
           isDefault: false,
         };
       }
@@ -39,7 +114,7 @@ export async function fetchGoldPrice(): Promise<GoldPrice> {
   } catch {
     // fallback
   }
-  return { price: DEFAULT_GOLD_PRICE, date: new Date().toLocaleDateString("id-ID"), isDefault: true };
+  return { price: loadStoredPrices().gold, date: todayId(), isDefault: true };
 }
 
 export function getNisab(metalPrice: number, type: NisabType = "gold") {
@@ -47,13 +122,23 @@ export function getNisab(metalPrice: number, type: NisabType = "gold") {
   return grams * metalPrice;
 }
 
-export function calcZakatPenghasilan(monthlyIncome: number, annualBonus: number, metalPrice: number, nisabType: NisabType = "gold") {
-  const annualIncome = monthlyIncome * 12 + annualBonus;
+export function calcZakatPenghasilan(
+  monthlyIncome: number,
+  annualBonus: number,
+  metalPrice: number,
+  nisabType: NisabType = "gold",
+  monthlyDeduction = 0,
+) {
+  const grossAnnual = monthlyIncome * 12 + annualBonus;
+  // Optional "netto" method: subtract basic-needs deduction before zakat.
+  const deductionAnnual = Math.max(0, monthlyDeduction) * 12;
+  const annualIncome = Math.max(0, grossAnnual - deductionAnnual);
   const nisab = getNisab(metalPrice, nisabType);
   const nisabLabel = nisabType === "gold" ? "85g emas" : "595g perak";
   const isWajib = annualIncome >= nisab;
   const zakatAmount = isWajib ? annualIncome * ZAKAT_RATE : 0;
-  return { annualIncome, nisab, nisabLabel, isWajib, zakatAmount };
+  const zakatMonthly = zakatAmount / 12;
+  return { annualIncome, grossAnnual, nisab, nisabLabel, isWajib, zakatAmount, zakatMonthly };
 }
 
 export function calcZakatMaal(
@@ -79,11 +164,32 @@ export function calcZakatMaal(
   return { totalHarta, hartaBersih, emasValue, perakValue, nisab, nisabLabel, isWajib, zakatAmount };
 }
 
-export function calcZakatFitrah(jumlahJiwa: number, riceIndex: number) {
-  const pricePerKg = RICE_OPTIONS[riceIndex]?.pricePerKg ?? RICE_OPTIONS[0].pricePerKg;
+export function calcZakatFitrah(jumlahJiwa: number, riceIndex: number, customPricePerKg?: number) {
+  const pricePerKg =
+    typeof customPricePerKg === "number" && customPricePerKg > 0
+      ? customPricePerKg
+      : RICE_OPTIONS[riceIndex]?.pricePerKg ?? RICE_OPTIONS[0].pricePerKg;
   const perPerson = FITRAH_KG * pricePerKg;
   const total = perPerson * jumlahJiwa;
-  return { perPerson, total, kg: FITRAH_KG };
+  return { perPerson, total, kg: FITRAH_KG, pricePerKg };
+}
+
+// Pay fitrah directly in cash (e.g. BAZNAS regional tariff) — flat Rp per jiwa.
+export function calcZakatFitrahUang(jumlahJiwa: number, perJiwa: number) {
+  const perPerson = Math.max(0, perJiwa);
+  const total = perPerson * Math.max(0, jumlahJiwa);
+  return { perPerson, total };
+}
+
+// ===== Fidyah (denda puasa yang ditinggalkan) =====
+// 1 mud (~0,75 kg) makanan pokok per hari yang ditinggalkan. Banyak lembaga
+// mematok nilai uang per hari. Default mengikuti takaran beras.
+export const FIDYAH_KG_PER_DAY = 0.75;
+export function calcFidyah(jumlahHari: number, hargaPerHari: number) {
+  const days = Math.max(0, jumlahHari);
+  const perDay = Math.max(0, hargaPerHari);
+  const total = days * perDay;
+  return { days, perDay, total, kgPerDay: FIDYAH_KG_PER_DAY };
 }
 
 // ===== Zakat Perniagaan / Tijarah =====
@@ -188,11 +294,31 @@ export function calcZakatMadin(nilaiHasilTambang: number, goldPrice: number) {
   return { nisab, isWajib, zakatAmount };
 }
 
+export type ZakatType =
+  | "Penghasilan"
+  | "Maal"
+  | "Fitrah"
+  | "Perniagaan"
+  | "Pertanian"
+  | "Peternakan"
+  | "Rikaz"
+  | "Madin"
+  | "Fidyah";
+
+export interface HistoryDetailRow {
+  label: string;
+  value: string;
+}
+
 export interface ZakatHistory {
   id: string;
   date: string;
-  type: "Penghasilan" | "Maal" | "Fitrah" | "Perniagaan" | "Pertanian" | "Peternakan" | "Rikaz" | "Madin";
+  type: ZakatType;
   amount: number;
+  /** Optional snapshot of the calculation breakdown, for re-export / review. */
+  detail?: HistoryDetailRow[];
+  /** Optional user-supplied note/label. */
+  label?: string;
 }
 
 const STORAGE_KEY = "zakat-history";
@@ -233,10 +359,34 @@ export function addHistory(entry: Omit<ZakatHistory, "id" | "date">) {
   const history = getHistory();
   history.unshift({
     ...entry,
-    id: crypto.randomUUID(),
+    amount: roundZakat(entry.amount),
+    id: uid(),
     date: new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }),
   });
   localStorage.setItem(STORAGE_KEY, JSON.stringify(history.slice(0, 50)));
+  emitHistoryChange();
+}
+
+// Replace the whole history list (used by Import). Newest-first invariant kept.
+export function importHistory(items: ZakatHistory[], mode: "merge" | "replace" = "merge") {
+  if (!Array.isArray(items)) return;
+  const sanitized: ZakatHistory[] = items
+    .filter((i) => i && typeof i.amount === "number" && typeof i.type === "string")
+    .map((i) => ({
+      id: typeof i.id === "string" && i.id ? i.id : uid(),
+      date: typeof i.date === "string" ? i.date : todayId(),
+      type: i.type,
+      amount: i.amount,
+      detail: Array.isArray(i.detail) ? i.detail : undefined,
+      label: typeof i.label === "string" ? i.label : undefined,
+    }));
+  let merged: ZakatHistory[] = sanitized;
+  if (mode === "merge") {
+    const current = getHistory();
+    const seen = new Set(current.map((c) => c.id));
+    merged = [...sanitized.filter((s) => !seen.has(s.id)), ...current];
+  }
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(merged.slice(0, 50)));
   emitHistoryChange();
 }
 
@@ -302,4 +452,31 @@ export function restoreAllHistory(items: ZakatHistory[]) {
 
 export function formatRupiah(n: number) {
   return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(n);
+}
+
+// ===== Pembulatan ihtiyat (kehati-hatian) =====
+// Optional: round the final zakat amount UP to the nearest Rp 1.000.
+const ROUNDUP_KEY = "zakat-roundup";
+
+export function loadRoundUp(): boolean {
+  if (typeof localStorage === "undefined") return false;
+  try {
+    return localStorage.getItem(ROUNDUP_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+export function saveRoundUp(on: boolean) {
+  if (typeof localStorage === "undefined") return;
+  try {
+    localStorage.setItem(ROUNDUP_KEY, on ? "1" : "0");
+  } catch {
+    /* ignore */
+  }
+}
+
+export function roundZakat(amount: number, on = loadRoundUp()): number {
+  if (!on || amount <= 0) return amount;
+  return Math.ceil(amount / 1000) * 1000;
 }

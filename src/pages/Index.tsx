@@ -1,10 +1,22 @@
-import { useEffect, useState, useCallback, useRef } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { fetchGoldPrice, getHistory, subscribeHistory, DEFAULT_SILVER_PRICE, type NisabType } from "@/lib/zakat";
+import {
+  fetchGoldPrice,
+  getHistory,
+  subscribeHistory,
+  loadStoredPrices,
+  saveStoredPrices,
+  loadRoundUp,
+  saveRoundUp,
+  getNisab,
+  type NisabType,
+  type PriceSource,
+} from "@/lib/zakat";
+import { RoundUpContext } from "@/lib/round-context";
+import { Switch } from "@/components/ui/switch";
 import ZakatPenghasilan from "@/components/ZakatPenghasilan";
 import ZakatMaal from "@/components/ZakatMaal";
 import ZakatFitrah from "@/components/ZakatFitrah";
@@ -13,17 +25,48 @@ import ZakatPertanian from "@/components/ZakatPertanian";
 import ZakatPeternakan from "@/components/ZakatPeternakan";
 import ZakatRikaz from "@/components/ZakatRikaz";
 import ZakatMadin from "@/components/ZakatMadin";
+import ZakatFidyah from "@/components/ZakatFidyah";
 import { DarkModeToggle } from "@/components/DarkModeToggle";
 import ZakatRiwayat from "@/components/ZakatRiwayat";
+import HaulReminder from "@/components/HaulReminder";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calculator, Briefcase, Wallet, Wheat, Settings2, Loader2, Store, Sprout, Beef, Gem, Mountain, Info } from "lucide-react";
+import { Calculator, Briefcase, Wallet, Wheat, Settings2, Loader2, Store, Sprout, Beef, Gem, Mountain, Info, Moon, LayoutGrid, ShieldCheck, RefreshCw } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { ALL_PAGES, HOME_SEO, getPageBySlug, useSeo, type ZakatPage } from "@/lib/seo";
+import { track } from "@/lib/analytics";
+
+type IconType = typeof Briefcase;
+const TAB_ICONS: Record<string, IconType> = {
+  penghasilan: Briefcase,
+  maal: Wallet,
+  perniagaan: Store,
+  pertanian: Sprout,
+  peternakan: Beef,
+  rikaz: Gem,
+  madin: Mountain,
+  fitrah: Wheat,
+  fidyah: Moon,
+};
+
+// 4 most common types live in the bottom bar; the rest open via "Lainnya".
+const PRIMARY_TABS = ["penghasilan", "maal", "fitrah", "perniagaan"];
+
+const pathForTab = (tab: string) => {
+  if (tab === "penghasilan") return "/";
+  const page = ALL_PAGES.find((p) => p.tab === tab);
+  return page ? `/${page.slug}` : "/";
+};
+const tabForPath = (pathname: string) => {
+  if (pathname === "/" || pathname === "") return "penghasilan";
+  const slug = pathname.replace(/^\//, "");
+  return getPageBySlug(slug)?.tab ?? "penghasilan";
+};
 
 const NisabSettings = ({
   nisabType,
@@ -32,6 +75,11 @@ const NisabSettings = ({
   silverInput,
   onGoldChange,
   onSilverChange,
+  onRefresh,
+  refreshing,
+  priceMeta,
+  roundUp,
+  onRoundUpChange,
 }: {
   nisabType: NisabType;
   setNisabType: (v: NisabType) => void;
@@ -39,6 +87,11 @@ const NisabSettings = ({
   silverInput: string;
   onGoldChange: (v: string) => void;
   onSilverChange: (v: string) => void;
+  onRefresh: () => void;
+  refreshing: boolean;
+  priceMeta: { date: string; source: PriceSource };
+  roundUp: boolean;
+  onRoundUpChange: (v: boolean) => void;
 }) => (
   <div className="space-y-4">
     <div className="space-y-2">
@@ -67,7 +120,7 @@ const NisabSettings = ({
         value={goldInput}
         onChange={(e) => onGoldChange(e.target.value.replace(/\D/g, ""))}
         className="h-12 text-base font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-        placeholder="1200000"
+        placeholder="2000000"
       />
     </div>
     <div className="space-y-2">
@@ -80,12 +133,28 @@ const NisabSettings = ({
         value={silverInput}
         onChange={(e) => onSilverChange(e.target.value.replace(/\D/g, ""))}
         className="h-12 text-base font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-        placeholder="15000"
+        placeholder="28000"
       />
+    </div>
+    <div className="flex items-center justify-between gap-2 pt-1">
+      <p className="text-xs text-muted-foreground">
+        {priceMeta.source === "online" ? "Harga online" : priceMeta.source === "manual" ? "Harga manual" : "Harga default"} • {priceMeta.date}
+      </p>
+      <Button variant="outline" size="sm" onClick={onRefresh} disabled={refreshing} className="h-9 text-xs">
+        <RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${refreshing ? "animate-spin" : ""}`} /> Perbarui online
+      </Button>
+    </div>
+    <p className="text-[11px] text-muted-foreground">Harga yang Anda atur tersimpan di perangkat ini.</p>
+
+    <div className="flex items-center justify-between gap-3 rounded-lg border border-border/60 p-3">
+      <div className="min-w-0">
+        <Label htmlFor="roundup-switch" className="text-sm font-medium">Bulatkan zakat ke atas</Label>
+        <p className="text-[11px] text-muted-foreground">Pembulatan ihtiyat ke Rp 1.000 terdekat.</p>
+      </div>
+      <Switch id="roundup-switch" checked={roundUp} onCheckedChange={onRoundUpChange} />
     </div>
   </div>
 );
-
 
 const PanduanContent = () => (
   <Accordion type="multiple" className="w-full">
@@ -120,84 +189,99 @@ const PanduanContent = () => (
         </ul>
       </AccordionContent>
     </AccordionItem>
-    <AccordionItem value="nisab">
-      <AccordionTrigger className="text-sm sm:text-base py-2 font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none rounded-sm">Nisab Emas vs Perak</AccordionTrigger>
-      <AccordionContent className="text-sm text-muted-foreground leading-relaxed">
-        <ul className="list-disc list-inside space-y-0.5">
-          <li><span className="font-semibold text-foreground">Emas</span> — 85 gram emas murni (standar mayoritas ulama)</li>
-          <li><span className="font-semibold text-foreground">Perak</span> — 595 gram perak murni (nisab lebih rendah, lebih banyak orang wajib zakat)</li>
-        </ul>
-      </AccordionContent>
-    </AccordionItem>
-    <AccordionItem value="asnaf">
-      <AccordionTrigger className="text-sm sm:text-base py-2 font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none rounded-sm">8 Penerima Zakat (Asnaf)</AccordionTrigger>
-      <AccordionContent className="text-sm text-muted-foreground leading-relaxed">
-        Fakir, Miskin, Amil, Muallaf, Riqab, Gharimin, Fi Sabilillah, Ibnu Sabil (QS. At-Taubah: 60).
-      </AccordionContent>
-    </AccordionItem>
   </Accordion>
 );
 
-
 const Index = () => {
   const isMobile = useIsMobile();
-  const [goldPrice, setGoldPrice] = useState(1_200_000);
-  const [goldInput, setGoldInput] = useState("1200000");
-  const [silverPrice, setSilverPrice] = useState(DEFAULT_SILVER_PRICE);
-  const [silverInput, setSilverInput] = useState(String(DEFAULT_SILVER_PRICE));
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const stored = useMemo(() => loadStoredPrices(), []);
+  const [goldPrice, setGoldPrice] = useState(stored.gold);
+  const [goldInput, setGoldInput] = useState(String(stored.gold));
+  const [silverPrice, setSilverPrice] = useState(stored.silver);
+  const [silverInput, setSilverInput] = useState(String(stored.silver));
+  const [priceMeta, setPriceMeta] = useState<{ date: string; source: PriceSource }>({ date: stored.date, source: stored.source });
   const [nisabType, setNisabType] = useState<NisabType>("gold");
+  const [roundUp, setRoundUp] = useState(() => loadRoundUp());
   const [history, setHistory] = useState(getHistory());
-  const [activeTab, setActiveTab] = useState("penghasilan");
   const [nisabSheetOpen, setNisabSheetOpen] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
-
+  const [moreOpen, setMoreOpen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+
+  const activeTab = tabForPath(location.pathname);
+  const activePage: ZakatPage | undefined = ALL_PAGES.find((p) => p.tab === activeTab);
+
+  // Per-route SEO (title/meta/canonical/OG) — home keeps the generic title.
+  const isHome = location.pathname === "/";
+  useSeo({
+    title: isHome ? HOME_SEO.title : activePage?.title ?? HOME_SEO.title,
+    description: isHome ? HOME_SEO.description : activePage?.description ?? HOME_SEO.description,
+    path: location.pathname,
+  });
+
+  const setActiveTab = (tab: string) => {
+    navigate(pathForTab(tab));
+    track("switch_tab", { tab });
+  };
 
   // Pull-to-refresh state
   const mainRef = useRef<HTMLElement | null>(null);
   const touchStartY = useRef<number | null>(null);
   const [pullDistance, setPullDistance] = useState(0);
 
+  const persistPrices = useCallback((gold: number, silver: number, source: PriceSource) => {
+    saveStoredPrices(gold, silver, source);
+    const m = loadStoredPrices();
+    setPriceMeta({ date: m.date, source: m.source });
+  }, []);
+
   const refreshGoldPrice = useCallback(async () => {
     setRefreshing(true);
     try {
       const g = await fetchGoldPrice();
-      setGoldPrice(g.price);
-      setGoldInput(String(g.price));
-      toast.success("Harga emas diperbarui", { description: `Rp ${g.price.toLocaleString("id-ID")} / gram` });
+      if (g.isDefault) {
+        toast.error("Gagal memuat harga online", { description: "Memakai harga tersimpan." });
+      } else {
+        setGoldPrice(g.price);
+        setGoldInput(String(g.price));
+        persistPrices(g.price, silverPrice, "online");
+        toast.success("Harga emas diperbarui", { description: `Rp ${g.price.toLocaleString("id-ID")} / gram` });
+      }
     } catch {
       toast.error("Gagal memuat harga emas");
     } finally {
       setRefreshing(false);
       setPullDistance(0);
     }
-  }, []);
-
-  useEffect(() => {
-    fetchGoldPrice().then((g) => {
-      setGoldPrice(g.price);
-      setGoldInput(String(g.price));
-    });
-  }, []);
+  }, [silverPrice, persistPrices]);
 
   const handleGoldChange = (val: string) => {
     setGoldInput(val);
     const num = Number(val);
-    if (num > 0) setGoldPrice(num);
+    if (num > 0) {
+      setGoldPrice(num);
+      persistPrices(num, silverPrice, "manual");
+    }
   };
 
   const handleSilverChange = (val: string) => {
     setSilverInput(val);
     const num = Number(val);
-    if (num > 0) setSilverPrice(num);
+    if (num > 0) {
+      setSilverPrice(num);
+      persistPrices(goldPrice, num, "manual");
+    }
   };
 
   const metalPrice = nisabType === "gold" ? goldPrice : silverPrice;
+  const currentNisab = getNisab(metalPrice, nisabType);
   const refreshHistory = useCallback(() => setHistory(getHistory()), []);
 
   // Real-time sync: same-tab mutations + cross-tab `storage` events.
   useEffect(() => subscribeHistory(refreshHistory), [refreshHistory]);
-
 
   // Pull-to-refresh handlers (mobile only)
   const onTouchStart = (e: React.TouchEvent) => {
@@ -221,33 +305,71 @@ const Index = () => {
     touchStartY.current = null;
   };
 
-  const TABS = [
-    { id: "penghasilan", label: "Penghasilan", short: "Gaji", icon: Briefcase },
-    { id: "maal", label: "Maal", short: "Maal", icon: Wallet },
-    { id: "perniagaan", label: "Perniagaan", short: "Dagang", icon: Store },
-    { id: "pertanian", label: "Pertanian", short: "Tani", icon: Sprout },
-    { id: "peternakan", label: "Peternakan", short: "Ternak", icon: Beef },
-    { id: "rikaz", label: "Rikaz", short: "Rikaz", icon: Gem },
-    { id: "madin", label: "Ma'din", short: "Tambang", icon: Mountain },
-    { id: "fitrah", label: "Fitrah", short: "Fitrah", icon: Wheat },
-  ];
+  const renderCalc = (tab: string) => {
+    const isActive = activeTab === tab;
+    switch (tab) {
+      case "penghasilan":
+        return <ZakatPenghasilan metalPrice={metalPrice} nisabType={nisabType} isActive={isActive} onCalculated={refreshHistory} />;
+      case "maal":
+        return <ZakatMaal goldPrice={goldPrice} silverPrice={silverPrice} nisabType={nisabType} isActive={isActive} onCalculated={refreshHistory} />;
+      case "perniagaan":
+        return <ZakatPerniagaan goldPrice={goldPrice} isActive={isActive} onCalculated={refreshHistory} />;
+      case "pertanian":
+        return <ZakatPertanian isActive={isActive} onCalculated={refreshHistory} />;
+      case "peternakan":
+        return <ZakatPeternakan isActive={isActive} onCalculated={refreshHistory} />;
+      case "rikaz":
+        return <ZakatRikaz isActive={isActive} onCalculated={refreshHistory} />;
+      case "madin":
+        return <ZakatMadin goldPrice={goldPrice} isActive={isActive} onCalculated={refreshHistory} />;
+      case "fitrah":
+        return <ZakatFitrah isActive={isActive} onCalculated={refreshHistory} />;
+      case "fidyah":
+        return <ZakatFidyah isActive={isActive} onCalculated={refreshHistory} />;
+      default:
+        return null;
+    }
+  };
+
+  const NavButton = ({ tab, label, short }: { tab: string; label: string; short: string }) => {
+    const Icon = TAB_ICONS[tab] ?? Briefcase;
+    const active = activeTab === tab;
+    return (
+      <button
+        type="button"
+        onClick={() => setActiveTab(tab)}
+        aria-current={active ? "page" : undefined}
+        aria-label={`Zakat ${label}`}
+        title={`Zakat ${label}`}
+        className="group relative flex flex-1 shrink-0 flex-col items-center justify-center gap-1 min-w-[60px] px-1 active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground/70 focus-visible:ring-inset rounded-md"
+      >
+        <span className={`flex items-center justify-center h-10 w-10 rounded-full transition-all ${active ? "bg-primary-foreground" : "group-hover:bg-primary-foreground/10"}`}>
+          <Icon aria-hidden="true" strokeWidth={2.25} className={`h-6 w-6 transition-colors ${active ? "text-primary" : "text-primary-foreground group-hover:text-primary-foreground"}`} />
+        </span>
+        <span className={`text-[11px] font-semibold transition-colors ${active ? "text-primary-foreground" : "text-primary-foreground/90"}`}>
+          {short}
+        </span>
+      </button>
+    );
+  };
+
+  const moreActive = !PRIMARY_TABS.includes(activeTab);
 
   return (
+    <RoundUpContext.Provider value={roundUp}>
     <div className="min-h-screen bg-background flex flex-col">
       {/* Sticky Header */}
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/40">
         <div className="mx-auto max-w-2xl flex items-center justify-between px-4 py-3 sm:px-6 sm:py-4 gap-2">
-          <div className="flex items-center gap-2.5 min-w-0">
+          <Link to="/" className="flex items-center gap-2.5 min-w-0 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label="ZakatCal — beranda">
             <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
               <Calculator className="w-5 h-5 text-primary" />
             </div>
-            <h1 className="text-xl font-extrabold tracking-tight sm:text-2xl truncate">
+            <span className="text-xl font-extrabold tracking-tight sm:text-2xl truncate">
               Zakat<span className="text-primary">Cal</span>
-              <span className="sr-only"> — Kalkulator Zakat Modern</span>
-            </h1>
-          </div>
+            </span>
+          </Link>
           <div className="flex items-center gap-1">
-            {/* Nisab Settings — centered Dialog */}
             <Dialog open={nisabSheetOpen} onOpenChange={setNisabSheetOpen}>
               <DialogTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-11 w-11 sm:h-10 sm:w-10 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" aria-label="Pengaturan Nisab">
@@ -269,12 +391,16 @@ const Index = () => {
                     silverInput={silverInput}
                     onGoldChange={handleGoldChange}
                     onSilverChange={handleSilverChange}
+                    onRefresh={refreshGoldPrice}
+                    refreshing={refreshing}
+                    priceMeta={priceMeta}
+                    roundUp={roundUp}
+                    onRoundUpChange={(v) => { setRoundUp(v); saveRoundUp(v); }}
                   />
                 </div>
               </DialogContent>
             </Dialog>
 
-            {/* Info Zakat — centered Dialog */}
             <Dialog open={infoOpen} onOpenChange={setInfoOpen}>
               <DialogTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-11 w-11 sm:h-10 sm:w-10 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" aria-label="Panduan Zakat">
@@ -290,29 +416,26 @@ const Index = () => {
                 </DialogHeader>
                 <div className="mt-2 space-y-3">
                   <PanduanContent />
-                  <Link
-                    to="/panduan-zakat"
-                    onClick={() => setInfoOpen(false)}
-                    className="block text-center text-sm font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm py-2"
-                  >
-                    Baca panduan lengkap →
-                  </Link>
+                  <div className="flex flex-col gap-1.5">
+                    <Link to="/panduan-zakat" onClick={() => setInfoOpen(false)} className="block text-center text-sm font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm py-2">
+                      Baca panduan lengkap →
+                    </Link>
+                    <Link to="/tentang" onClick={() => setInfoOpen(false)} className="block text-center text-sm font-medium text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm py-1">
+                      Tentang & Disclaimer
+                    </Link>
+                  </div>
                 </div>
               </DialogContent>
             </Dialog>
 
             <DarkModeToggle />
           </div>
-
         </div>
       </header>
 
       {/* Pull-to-refresh indicator (mobile) */}
       {isMobile && (pullDistance > 0 || refreshing) && (
-        <div
-          className="flex items-center justify-center text-xs text-muted-foreground overflow-hidden"
-          style={{ height: refreshing ? 48 : pullDistance }}
-        >
+        <div className="flex items-center justify-center text-xs text-muted-foreground overflow-hidden" style={{ height: refreshing ? 48 : pullDistance }}>
           <div className="flex items-center gap-2">
             <Loader2 className={`h-4 w-4 ${refreshing || pullDistance > 60 ? "animate-spin" : ""}`} />
             <span>{refreshing ? "Memuat harga emas..." : pullDistance > 60 ? "Lepas untuk refresh" : "Tarik untuk refresh"}</span>
@@ -327,116 +450,165 @@ const Index = () => {
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
         className="mx-auto max-w-2xl w-full px-4 py-5 sm:px-6 sm:py-8 space-y-5 sm:space-y-7 flex-1"
-        style={{
-          paddingBottom: "calc(8rem + env(safe-area-inset-bottom, 0px))",
-        }}
+        style={{ paddingBottom: "calc(8rem + env(safe-area-inset-bottom, 0px))" }}
       >
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
+        {/* Nisab strip — transparency on the value driving every calculation */}
+        <button
+          type="button"
+          onClick={() => setNisabSheetOpen(true)}
+          className="w-full text-left rounded-xl border border-border/60 bg-card px-4 py-3 flex items-center justify-between gap-3 hover:border-primary/40 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          aria-label="Ubah pengaturan nisab dan harga emas"
         >
+          <div className="min-w-0">
+            <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Nisab saat ini</p>
+            <p className="text-sm sm:text-base font-bold tabular-nums truncate">
+              {new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(currentNisab)}
+              <span className="text-muted-foreground font-normal"> · {nisabType === "gold" ? "85g emas" : "595g perak"}</span>
+            </p>
+          </div>
+          <div className="text-right shrink-0">
+            <p className="text-[11px] text-muted-foreground">
+              {nisabType === "gold" ? "Emas" : "Perak"} Rp {(metalPrice).toLocaleString("id-ID")}/gr
+            </p>
+            <p className="text-[10px] text-muted-foreground">
+              {priceMeta.source === "online" ? "online" : priceMeta.source === "manual" ? "manual" : "default"} · {priceMeta.date}
+            </p>
+          </div>
+        </button>
+
+        {/* Desktop top tabs */}
+        <nav aria-label="Kategori zakat" className="hidden md:flex flex-wrap gap-1.5">
+          {ALL_PAGES.map((p) => {
+            const Icon = TAB_ICONS[p.tab] ?? Briefcase;
+            const active = activeTab === p.tab;
+            return (
+              <button
+                key={p.tab}
+                type="button"
+                onClick={() => setActiveTab(p.tab)}
+                aria-current={active ? "page" : undefined}
+                className={`inline-flex items-center gap-1.5 rounded-lg px-3 h-9 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${active ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/70 hover:text-foreground"}`}
+              >
+                <Icon aria-hidden="true" className="h-4 w-4" /> {p.label}
+              </button>
+            );
+          })}
+        </nav>
+
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
           <Card className="overflow-hidden transition-shadow duration-300 hover:shadow-lg border-border/60">
             <CardContent className="px-4 pt-4 sm:px-6 sm:pt-5">
-              <Tabs value={activeTab} onValueChange={setActiveTab}>
-                {/* Active tab title (nav lives at bottom for all viewports) */}
-                <div className="flex items-center justify-between mb-3 -mt-1">
-                  <h2 className="text-base sm:text-lg font-bold tracking-tight">
-                    Zakat {TABS.find((t) => t.id === activeTab)?.label}
-                  </h2>
-                </div>
+              <div className="mb-1">
+                <h1 className="text-lg sm:text-xl font-bold tracking-tight">
+                  {activePage?.h1 ?? "Kalkulator Zakat"}
+                </h1>
+                {activePage?.intro && (
+                  <p className="text-xs sm:text-sm text-muted-foreground mt-1 leading-relaxed">{activePage.intro}</p>
+                )}
+              </div>
 
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={activeTab}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.25, ease: "easeInOut" }}
-                  >
-                    <TabsContent value="penghasilan" forceMount={activeTab === "penghasilan" ? true : undefined} className={activeTab !== "penghasilan" ? "hidden" : ""}>
-                      <ZakatPenghasilan metalPrice={metalPrice} nisabType={nisabType} isActive={activeTab === "penghasilan"} onCalculated={refreshHistory} />
-                    </TabsContent>
-                    <TabsContent value="maal" forceMount={activeTab === "maal" ? true : undefined} className={activeTab !== "maal" ? "hidden" : ""}>
-                      <ZakatMaal goldPrice={goldPrice} silverPrice={silverPrice} nisabType={nisabType} isActive={activeTab === "maal"} onCalculated={refreshHistory} />
-                    </TabsContent>
-                    <TabsContent value="perniagaan" forceMount={activeTab === "perniagaan" ? true : undefined} className={activeTab !== "perniagaan" ? "hidden" : ""}>
-                      <ZakatPerniagaan goldPrice={goldPrice} isActive={activeTab === "perniagaan"} onCalculated={refreshHistory} />
-                    </TabsContent>
-                    <TabsContent value="pertanian" forceMount={activeTab === "pertanian" ? true : undefined} className={activeTab !== "pertanian" ? "hidden" : ""}>
-                      <ZakatPertanian isActive={activeTab === "pertanian"} onCalculated={refreshHistory} />
-                    </TabsContent>
-                    <TabsContent value="peternakan" forceMount={activeTab === "peternakan" ? true : undefined} className={activeTab !== "peternakan" ? "hidden" : ""}>
-                      <ZakatPeternakan isActive={activeTab === "peternakan"} onCalculated={refreshHistory} />
-                    </TabsContent>
-                    <TabsContent value="rikaz" forceMount={activeTab === "rikaz" ? true : undefined} className={activeTab !== "rikaz" ? "hidden" : ""}>
-                      <ZakatRikaz isActive={activeTab === "rikaz"} onCalculated={refreshHistory} />
-                    </TabsContent>
-                    <TabsContent value="madin" forceMount={activeTab === "madin" ? true : undefined} className={activeTab !== "madin" ? "hidden" : ""}>
-                      <ZakatMadin goldPrice={goldPrice} isActive={activeTab === "madin"} onCalculated={refreshHistory} />
-                    </TabsContent>
-                    <TabsContent value="fitrah" forceMount={activeTab === "fitrah" ? true : undefined} className={activeTab !== "fitrah" ? "hidden" : ""}>
-                      <ZakatFitrah isActive={activeTab === "fitrah"} onCalculated={refreshHistory} />
-                    </TabsContent>
-                  </motion.div>
-                </AnimatePresence>
-              </Tabs>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeTab}
+                  initial={{ opacity: 0, x: 16 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -16 }}
+                  transition={{ duration: 0.25, ease: "easeInOut" }}
+                  className="mt-3"
+                >
+                  {renderCalc(activeTab)}
+                </motion.div>
+              </AnimatePresence>
             </CardContent>
           </Card>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.15 }}
-        >
+        {/* Privacy reassurance */}
+        <p className="flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground">
+          <ShieldCheck aria-hidden="true" className="h-3.5 w-3.5 text-primary" />
+          Perhitungan 100% di perangkat Anda — tidak ada data yang dikirim.
+        </p>
+
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.15 }}>
           <ZakatRiwayat history={history} onChanged={refreshHistory} />
         </motion.div>
 
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.2 }}>
+          <HaulReminder />
+        </motion.div>
+
+        {/* Per-route SEO content (unique, crawlable text per zakat type) */}
+        {activePage && activePage.sections.length > 0 && (
+          <section className="space-y-4 rounded-xl border border-border/60 bg-card p-4 sm:p-5">
+            <h2 className="text-base sm:text-lg font-bold">Tentang {activePage.h1.replace("Kalkulator ", "")}</h2>
+            {activePage.sections.map((s) => (
+              <div key={s.heading} className="space-y-1">
+                <h3 className="text-sm font-semibold">{s.heading}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{s.body}</p>
+              </div>
+            ))}
+            <div className="flex flex-wrap gap-3 pt-1 text-sm">
+              <Link to="/panduan-zakat" className="font-semibold text-primary hover:underline">Panduan lengkap zakat →</Link>
+              <Link to="/tentang" className="font-medium text-muted-foreground hover:text-foreground">Tentang & disclaimer</Link>
+            </div>
+          </section>
+        )}
       </main>
 
-      {/* Bottom Tab Navigation — sticky full-width dark green bar */}
+      {/* Bottom Tab Navigation (mobile) — 4 primary + Lainnya */}
       <nav
-        className="fixed z-50 left-0 right-0 bottom-0 bg-primary border-t border-primary-foreground/10 shadow-[0_-4px_20px_-4px_hsl(var(--primary)/0.4)]"
+        className="md:hidden fixed z-50 left-0 right-0 bottom-0 bg-primary border-t border-primary-foreground/10 shadow-[0_-4px_20px_-4px_hsl(var(--primary)/0.4)]"
         style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
-        aria-label="Navigasi kategori zakat"
+        aria-label="Navigasi utama"
       >
-        <div className="mx-auto max-w-3xl flex items-stretch h-20 overflow-x-auto no-scrollbar justify-around px-1">
-          {TABS.map((t) => {
-            const Icon = t.icon;
-            const active = activeTab === t.id;
-            return (
+        <div className="mx-auto max-w-3xl flex items-stretch h-20 justify-around px-1">
+          <NavButton tab="penghasilan" label="Penghasilan" short="Gaji" />
+          <NavButton tab="maal" label="Maal" short="Maal" />
+          <NavButton tab="fitrah" label="Fitrah" short="Fitrah" />
+          <NavButton tab="perniagaan" label="Perniagaan" short="Dagang" />
+
+          <Drawer open={moreOpen} onOpenChange={setMoreOpen}>
+            <DrawerTrigger asChild>
               <button
-                key={t.id}
                 type="button"
-                onClick={() => setActiveTab(t.id)}
-                aria-current={active ? "page" : undefined}
-                aria-label={`Zakat ${t.label}`}
-                title={`Zakat ${t.label}`}
-                className="group relative flex flex-1 shrink-0 flex-col items-center justify-center gap-1 min-w-[64px] px-2 active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground/70 focus-visible:ring-inset rounded-md"
+                aria-label="Kategori zakat lainnya"
+                aria-current={moreActive ? "page" : undefined}
+                className="group relative flex flex-1 shrink-0 flex-col items-center justify-center gap-1 min-w-[60px] px-1 active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground/70 focus-visible:ring-inset rounded-md"
               >
-                <span
-                  className={`flex items-center justify-center h-11 w-11 rounded-full transition-all ${
-                    active ? "bg-primary-foreground" : "group-hover:bg-primary-foreground/10"
-                  }`}
-                >
-                  <Icon
-                    aria-hidden="true"
-                    strokeWidth={2.25}
-                    className={`h-7 w-7 transition-colors ${active ? "text-primary" : "text-primary-foreground/80 group-hover:text-primary-foreground"}`}
-                  />
+                <span className={`flex items-center justify-center h-10 w-10 rounded-full transition-all ${moreActive ? "bg-primary-foreground" : "group-hover:bg-primary-foreground/10"}`}>
+                  <LayoutGrid aria-hidden="true" strokeWidth={2.25} className={`h-6 w-6 ${moreActive ? "text-primary" : "text-primary-foreground"}`} />
                 </span>
-                <span
-                  className={`text-[11px] font-semibold transition-colors ${active ? "text-primary-foreground" : "text-primary-foreground/70"}`}
-                >
-                  {t.short}
-                </span>
+                <span className={`text-[11px] font-semibold ${moreActive ? "text-primary-foreground" : "text-primary-foreground/90"}`}>Lainnya</span>
               </button>
-            );
-          })}
+            </DrawerTrigger>
+            <DrawerContent>
+              <DrawerHeader>
+                <DrawerTitle>Semua Kategori</DrawerTitle>
+              </DrawerHeader>
+              <div className="grid grid-cols-3 gap-3 px-4 pb-8">
+                {ALL_PAGES.map((p) => {
+                  const Icon = TAB_ICONS[p.tab] ?? Briefcase;
+                  const active = activeTab === p.tab;
+                  return (
+                    <button
+                      key={p.tab}
+                      type="button"
+                      onClick={() => { setActiveTab(p.tab); setMoreOpen(false); }}
+                      aria-current={active ? "page" : undefined}
+                      className={`flex flex-col items-center justify-center gap-1.5 rounded-xl border p-3 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${active ? "border-primary bg-primary/10" : "border-border/60 hover:bg-muted"}`}
+                    >
+                      <Icon aria-hidden="true" className={`h-6 w-6 ${active ? "text-primary" : "text-foreground"}`} />
+                      <span className="text-xs font-medium">{p.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </DrawerContent>
+          </Drawer>
         </div>
       </nav>
     </div>
+    </RoundUpContext.Provider>
   );
 };
 

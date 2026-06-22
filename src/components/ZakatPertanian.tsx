@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -6,8 +6,10 @@ import { Label } from "@/components/ui/label";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { calcZakatPertanian, formatRupiah, addHistory, type IrrigationType } from "@/lib/zakat";
 import { generateZakatPdf } from "@/lib/pdf-generator";
-import { formatNumberInput, parseFormattedNumber } from "@/lib/format";
+import { track } from "@/lib/analytics";
+import { formatNumberInput, parseFormattedNumber, formatQuantityInput, parseQuantity, formattedChange } from "@/lib/format";
 import { ResultCard, MobileCta, MobilePdfFab } from "./MobileCalcChrome";
+import { toast } from "sonner";
 
 interface Props {
   isActive: boolean;
@@ -18,24 +20,36 @@ export default function ZakatPertanian({ isActive, onCalculated }: Props) {
   const [hasilKg, setHasilKg] = useState("");
   const [hargaKg, setHargaKg] = useState("");
   const [irr, setIrr] = useState<IrrigationType>("tadah_hujan");
-  const [result, setResult] = useState<ReturnType<typeof calcZakatPertanian> | null>(null);
 
-  const hasilN = parseFormattedNumber(hasilKg);
+  const hasilN = parseQuantity(hasilKg);
   const hargaN = parseFormattedNumber(hargaKg);
   const canCalc = hasilN > 0 && hargaN > 0;
 
-  const handleCalc = () => {
-    if (!canCalc) return;
-    const r = calcZakatPertanian(hasilN, hargaN, irr);
-    setResult(r);
-    if (r.zakatAmount > 0) {
-      addHistory({ type: "Pertanian", amount: r.zakatAmount });
-      onCalculated();
-    }
+  const result = useMemo(
+    () => (canCalc ? calcZakatPertanian(hasilN, hargaN, irr) : null),
+    [canCalc, hasilN, hargaN, irr],
+  );
+
+  const detailRows = result
+    ? [
+        { label: "Nilai Panen", value: formatRupiah(result.totalValue) },
+        { label: "Nisab", value: `${result.nisabKg} kg` },
+        { label: "Kadar", value: `${(result.rate * 100).toFixed(0)}%` },
+        { label: "Zakat (kg)", value: `${result.zakatKg.toLocaleString("id-ID")} kg` },
+      ]
+    : [];
+
+  const handleSave = () => {
+    if (!result || result.zakatAmount <= 0) return;
+    addHistory({ type: "Pertanian", amount: result.zakatAmount, detail: detailRows });
+    onCalculated();
+    track("save", { type: "Pertanian" });
+    toast.success("Tersimpan ke riwayat");
   };
 
   const handleDownload = () => {
     if (!result) return;
+    track("download_pdf", { type: "Pertanian" });
     generateZakatPdf("Pertanian", [
       { label: "Hasil Panen", value: `${hasilN.toLocaleString("id-ID")} kg` },
       { label: "Harga per kg", value: formatRupiah(hargaN) },
@@ -43,7 +57,7 @@ export default function ZakatPertanian({ isActive, onCalculated }: Props) {
       { label: "Jenis Pengairan", value: irr === "tadah_hujan" ? "Tadah Hujan (10%)" : "Irigasi/Biaya (5%)" },
       { label: "Nisab", value: `${result.nisabKg} kg` },
       { label: "Zakat (kg)", value: `${result.zakatKg.toLocaleString("id-ID")} kg` },
-    ], result.zakatAmount, result.isWajib);
+    ], result.zakatAmount, result.isWajib).catch(() => toast.error("Gagal membuat PDF"));
   };
 
   return (
@@ -63,36 +77,33 @@ export default function ZakatPertanian({ isActive, onCalculated }: Props) {
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="tani-hasil" className="text-sm">Hasil Panen (kg)</Label>
-          <Input id="tani-hasil" type="text" inputMode="decimal" pattern="[0-9]*" placeholder="0"
-            value={hasilKg} onChange={(e) => setHasilKg(formatNumberInput(e.target.value))} className="h-12 sm:h-10 text-base" />
+          <Input id="tani-hasil" type="text" inputMode="decimal" placeholder="0"
+            value={hasilKg} onChange={(e) => formattedChange(e, setHasilKg, formatQuantityInput)} className="h-12 sm:h-10 text-base" />
         </div>
         <div className="space-y-2">
           <Label htmlFor="tani-harga" className="text-sm">Harga per kg (Rp)</Label>
           <Input id="tani-harga" type="text" inputMode="decimal" pattern="[0-9]*" placeholder="0"
-            value={hargaKg} onChange={(e) => setHargaKg(formatNumberInput(e.target.value))} className="h-12 sm:h-10 text-base" />
+            value={hargaKg} onChange={(e) => formattedChange(e, setHargaKg, formatNumberInput)} className="h-12 sm:h-10 text-base" />
         </div>
       </div>
-      <Button onClick={handleCalc} disabled={!canCalc} className="w-full h-11 hidden md:inline-flex">
-        Hitung Zakat Pertanian
+      <Button onClick={handleSave} disabled={!result || result.zakatAmount <= 0} className="w-full h-11 hidden md:inline-flex">
+        Simpan ke Riwayat
       </Button>
       <AnimatePresence>
         {result && (
           <ResultCard
-            rows={[
-              { label: "Nilai Panen", value: formatRupiah(result.totalValue) },
-              { label: "Nisab", value: `${result.nisabKg} kg` },
-              { label: "Kadar", value: `${(result.rate * 100).toFixed(0)}%` },
-              { label: "Zakat (kg)", value: `${result.zakatKg.toLocaleString("id-ID")} kg` },
-            ]}
+            rows={detailRows}
             amount={result.zakatAmount}
             amountLabel="Zakat yang Harus Dibayar"
             isWajib={result.isWajib}
             statusLabel={result.isWajib ? "Wajib Zakat" : "Belum Wajib"}
+            notWajibHint={`Hasil panen belum mencapai nisab ${result.nisabKg} kg.`}
             onDownload={handleDownload}
+            waType="Pertanian"
           />
         )}
       </AnimatePresence>
-      <MobileCta isActive={isActive} label="Hitung Zakat Pertanian" disabled={!canCalc} onClick={handleCalc} />
+      <MobileCta isActive={isActive} label="Simpan ke Riwayat" disabled={!result || result.zakatAmount <= 0} onClick={handleSave} />
       <MobilePdfFab isActive={isActive} visible={!!result} onClick={handleDownload} />
     </div>
   );

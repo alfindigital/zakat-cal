@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="ZakatCal">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1aa06a"/>
+      <stop offset="1" stop-color="#0f7a4f"/>
+    </linearGradient>
+  </defs>
+  <!-- Full-bleed background (safe for maskable: content stays within center) -->
+  <rect width="512" height="512" rx="104" fill="url(#bg)"/>
+  <!-- Calculator body -->
+  <rect x="146" y="104" width="220" height="304" rx="34" fill="#ffffff"/>
+  <!-- Display -->
+  <rect x="176" y="138" width="160" height="64" rx="14" fill="#0f7a4f"/>
+  <!-- Buttons (3 x 3 grid) -->
+  <g fill="#1aa06a">
+    <circle cx="196" cy="250" r="17"/>
+    <circle cx="256" cy="250" r="17"/>
+    <circle cx="316" cy="250" r="17"/>
+    <circle cx="196" cy="312" r="17"/>
+    <circle cx="256" cy="312" r="17"/>
+    <circle cx="316" cy="312" r="17"/>
+    <circle cx="196" cy="374" r="17"/>
+    <circle cx="256" cy="374" r="17"/>
+  </g>
+  <!-- Accent "equals" button in brand gold -->
+  <circle cx="316" cy="374" r="17" fill="#e0a325"/>
+</svg>

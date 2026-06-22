@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { DarkModeToggle } from "@/components/DarkModeToggle";
 import { ArrowLeft } from "lucide-react";
+import { useSeo } from "@/lib/seo";
 
 const sections = [
   {
@@ -58,6 +59,12 @@ const sections = [
 ];
 
 export default function PanduanZakat() {
+  useSeo({
+    title: "Panduan Zakat Lengkap — Syarat, Jenis, Nisab & 8 Asnaf | ZakatCal",
+    description:
+      "Panduan zakat lengkap: pengertian, syarat wajib, jenis-jenis zakat, nisab & kadar, 8 golongan penerima zakat (asnaf), dan waktu pembayaran.",
+    path: "/panduan-zakat",
+  });
   return (
     <div className="min-h-screen bg-background px-4 py-8 sm:py-12">
       <div className="mx-auto max-w-2xl space-y-6">

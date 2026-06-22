@@ -1,12 +1,14 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { calcZakatRikaz, formatRupiah, addHistory } from "@/lib/zakat";
 import { generateZakatPdf } from "@/lib/pdf-generator";
-import { formatNumberInput, parseFormattedNumber } from "@/lib/format";
+import { track } from "@/lib/analytics";
+import { formatNumberInput, parseFormattedNumber, formattedChange } from "@/lib/format";
 import { ResultCard, MobileCta, MobilePdfFab } from "./MobileCalcChrome";
+import { toast } from "sonner";
 
 interface Props {
   isActive: boolean;
@@ -15,27 +17,34 @@ interface Props {
 
 export default function ZakatRikaz({ isActive, onCalculated }: Props) {
   const [nilai, setNilai] = useState("");
-  const [result, setResult] = useState<ReturnType<typeof calcZakatRikaz> | null>(null);
 
   const nilaiN = parseFormattedNumber(nilai);
   const canCalc = nilaiN > 0;
 
-  const handleCalc = () => {
-    if (!canCalc) return;
-    const r = calcZakatRikaz(nilaiN);
-    setResult(r);
-    if (r.zakatAmount > 0) {
-      addHistory({ type: "Rikaz", amount: r.zakatAmount });
-      onCalculated();
-    }
+  const result = useMemo(() => (canCalc ? calcZakatRikaz(nilaiN) : null), [canCalc, nilaiN]);
+
+  const detailRows = result
+    ? [
+        { label: "Nilai Harta", value: formatRupiah(nilaiN) },
+        { label: "Kadar", value: "20%" },
+      ]
+    : [];
+
+  const handleSave = () => {
+    if (!result || result.zakatAmount <= 0) return;
+    addHistory({ type: "Rikaz", amount: result.zakatAmount, detail: detailRows });
+    onCalculated();
+    track("save", { type: "Rikaz" });
+    toast.success("Tersimpan ke riwayat");
   };
 
   const handleDownload = () => {
     if (!result) return;
+    track("download_pdf", { type: "Rikaz" });
     generateZakatPdf("Rikaz", [
       { label: "Nilai Harta Temuan", value: formatRupiah(nilaiN) },
       { label: "Kadar", value: "20% (tanpa nisab, tanpa haul)" },
-    ], result.zakatAmount, result.isWajib);
+    ], result.zakatAmount, result.isWajib).catch(() => toast.error("Gagal membuat PDF"));
   };
 
   return (
@@ -46,27 +55,25 @@ export default function ZakatRikaz({ isActive, onCalculated }: Props) {
       <div className="space-y-2">
         <Label htmlFor="rikaz-nilai" className="text-sm">Nilai Harta yang Ditemukan (Rp)</Label>
         <Input id="rikaz-nilai" type="text" inputMode="decimal" pattern="[0-9]*" placeholder="0"
-          value={nilai} onChange={(e) => setNilai(formatNumberInput(e.target.value))} className="h-12 sm:h-10 text-base" />
+          value={nilai} onChange={(e) => formattedChange(e, setNilai, formatNumberInput)} className="h-12 sm:h-10 text-base" />
       </div>
-      <Button onClick={handleCalc} disabled={!canCalc} className="w-full h-11 hidden md:inline-flex">
-        Hitung Zakat Rikaz
+      <Button onClick={handleSave} disabled={!result || result.zakatAmount <= 0} className="w-full h-11 hidden md:inline-flex">
+        Simpan ke Riwayat
       </Button>
       <AnimatePresence>
         {result && (
           <ResultCard
-            rows={[
-              { label: "Nilai Harta", value: formatRupiah(nilaiN) },
-              { label: "Kadar", value: "20%" },
-            ]}
+            rows={detailRows}
             amount={result.zakatAmount}
             amountLabel="Zakat yang Harus Dibayar"
             isWajib={result.isWajib}
             statusLabel={result.isWajib ? "Wajib Zakat" : "Belum Wajib"}
             onDownload={handleDownload}
+            waType="Rikaz"
           />
         )}
       </AnimatePresence>
-      <MobileCta isActive={isActive} label="Hitung Zakat Rikaz" disabled={!canCalc} onClick={handleCalc} />
+      <MobileCta isActive={isActive} label="Simpan ke Riwayat" disabled={!result || result.zakatAmount <= 0} onClick={handleSave} />
       <MobilePdfFab isActive={isActive} visible={!!result} onClick={handleDownload} />
     </div>
   );

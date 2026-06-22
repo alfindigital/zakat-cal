@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { lazy, Suspense, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -12,7 +12,7 @@ import {
   AlertDialogAction,
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
-import { Trash2, Briefcase, Wallet, Wheat, Store, Sprout, Beef, Gem, Mountain } from "lucide-react";
+import { Trash2, Briefcase, Wallet, Wheat, Store, Sprout, Beef, Gem, Mountain, Moon, Download, Upload, FileDown } from "lucide-react";
 import {
   type ZakatHistory,
   formatRupiah,
@@ -21,8 +21,11 @@ import {
   restoreHistory,
   clearHistory,
   restoreAllHistory,
+  importHistory,
 } from "@/lib/zakat";
-import ZakatChart from "./ZakatChart";
+import { generateZakatPdf } from "@/lib/pdf-generator";
+// Recharts is heavy — load the chart lazily so it stays out of the initial bundle.
+const ZakatChart = lazy(() => import("./ZakatChart"));
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
 
@@ -40,15 +43,18 @@ const TYPE_ICON: Record<string, typeof Briefcase> = {
   Peternakan: Beef,
   Rikaz: Gem,
   Madin: Mountain,
+  Fidyah: Moon,
 };
 
 function HistoryItem({
   h,
   onRemove,
+  onExportPdf,
   isMobile,
 }: {
   h: ZakatHistory;
   onRemove: () => void;
+  onExportPdf: () => void;
   isMobile: boolean;
 }) {
   const [revealed, setRevealed] = useState(false);
@@ -92,15 +98,28 @@ function HistoryItem({
           </div>
         </div>
         {!isMobile && (
-          <Button
-            aria-label="Hapus riwayat"
-            variant="ghost"
-            size="icon"
-            className="h-10 w-10 shrink-0"
-            onClick={onRemove}
-          >
-            <Trash2 aria-hidden="true" className="h-4 w-4" />
-          </Button>
+          <div className="flex items-center gap-1 shrink-0">
+            {h.detail && h.detail.length > 0 && (
+              <Button
+                aria-label="Unduh PDF riwayat"
+                variant="ghost"
+                size="icon"
+                className="h-10 w-10"
+                onClick={onExportPdf}
+              >
+                <FileDown aria-hidden="true" className="h-4 w-4" />
+              </Button>
+            )}
+            <Button
+              aria-label="Hapus riwayat"
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10"
+              onClick={onRemove}
+            >
+              <Trash2 aria-hidden="true" className="h-4 w-4" />
+            </Button>
+          </div>
         )}
       </motion.div>
     </div>
@@ -111,12 +130,16 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
   const isMobile = useIsMobile();
   const [showClearDialog, setShowClearDialog] = useState(false);
   const [clearSnapshot, setClearSnapshot] = useState<ZakatHistory[]>([]);
+  const fileRef = useRef<HTMLInputElement | null>(null);
+
+  const yearTotal = useMemo(() => {
+    const year = String(new Date().getFullYear());
+    return history.filter((h) => h.date.includes(year)).reduce((s, h) => s + h.amount, 0);
+  }, [history]);
 
   if (history.length === 0) return null;
 
   const handleRemove = (item: ZakatHistory) => {
-    // Snapshot index + neighbor ids so Undo can land on the right spot
-    // even if the list mutates afterwards (other deletes, adds, cross-tab sync).
     const snapshot = getHistory();
     const idx = snapshot.findIndex((h) => h.id === item.id);
     const predecessorId = idx > 0 ? snapshot[idx - 1].id : null;
@@ -137,6 +160,45 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
         },
       },
     });
+  };
+
+  const handleExportPdf = (item: ZakatHistory) => {
+    generateZakatPdf(item.type, item.detail ?? [], item.amount, true).catch(() =>
+      toast.error("Gagal membuat PDF"),
+    );
+  };
+
+  const handleExportJson = () => {
+    try {
+      const blob = new Blob([JSON.stringify(getHistory(), null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `riwayat-zakat-${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success("Riwayat diekspor");
+    } catch {
+      toast.error("Gagal mengekspor riwayat");
+    }
+  };
+
+  const handleImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(String(reader.result));
+        importHistory(Array.isArray(data) ? data : [], "merge");
+        onChanged();
+        toast.success("Riwayat diimpor");
+      } catch {
+        toast.error("File tidak valid");
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = "";
   };
 
   const handleClearAll = () => {
@@ -167,18 +229,32 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
 
   return (
     <div className="space-y-4 sm:space-y-5">
-      <ZakatChart history={history} />
+      <Suspense fallback={<div className="h-[180px] rounded-xl border bg-card animate-pulse" />}>
+        <ZakatChart history={history} />
+      </Suspense>
 
-      <div className="flex items-center justify-between">
+      {/* Total zakat tahun berjalan */}
+      <div className="rounded-xl border bg-card p-4 flex items-center justify-between">
+        <div>
+          <p className="text-xs text-muted-foreground">Total Zakat Anda Tahun {new Date().getFullYear()}</p>
+          <p className="text-xl font-bold text-primary tabular-nums mt-0.5">{formatRupiah(yearTotal)}</p>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between gap-2 flex-wrap">
         <h2 className="text-base sm:text-lg font-semibold">Riwayat Perhitungan</h2>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="text-xs sm:text-sm h-9"
-          onClick={handleClearAll}
-        >
-          Hapus Semua
-        </Button>
+        <div className="flex items-center gap-1">
+          <Button variant="ghost" size="sm" className="text-xs h-9" onClick={handleExportJson} aria-label="Ekspor riwayat">
+            <Download className="h-4 w-4 sm:mr-1" /><span className="hidden sm:inline">Ekspor</span>
+          </Button>
+          <Button variant="ghost" size="sm" className="text-xs h-9" onClick={() => fileRef.current?.click()} aria-label="Impor riwayat">
+            <Upload className="h-4 w-4 sm:mr-1" /><span className="hidden sm:inline">Impor</span>
+          </Button>
+          <input ref={fileRef} type="file" accept="application/json,.json" className="hidden" onChange={handleImportFile} />
+          <Button variant="ghost" size="sm" className="text-xs sm:text-sm h-9" onClick={handleClearAll}>
+            Hapus Semua
+          </Button>
+        </div>
       </div>
       {isMobile && (
         <p className="text-[11px] text-muted-foreground -mt-2">
@@ -192,6 +268,7 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
             h={h}
             isMobile={isMobile}
             onRemove={() => handleRemove(h)}
+            onExportPdf={() => handleExportPdf(h)}
           />
         ))}
       </div>

@@ -24,7 +24,9 @@ async function seedHistory(page: import("@playwright/test").Page, items: SeedIte
     ({ key, data }) => {
       try {
         window.localStorage.setItem(key, JSON.stringify(data));
-      } catch {}
+      } catch {
+        /* ignore storage errors in init script */
+      }
     },
     { key: STORAGE_KEY, data: items },
   );

@@ -1,12 +1,14 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { calcZakatMadin, formatRupiah, addHistory } from "@/lib/zakat";
 import { generateZakatPdf } from "@/lib/pdf-generator";
-import { formatNumberInput, parseFormattedNumber } from "@/lib/format";
+import { track } from "@/lib/analytics";
+import { formatNumberInput, parseFormattedNumber, formattedChange } from "@/lib/format";
 import { ResultCard, MobileCta, MobilePdfFab } from "./MobileCalcChrome";
+import { toast } from "sonner";
 
 interface Props {
   goldPrice: number;
@@ -16,28 +18,36 @@ interface Props {
 
 export default function ZakatMadin({ goldPrice, isActive, onCalculated }: Props) {
   const [nilai, setNilai] = useState("");
-  const [result, setResult] = useState<ReturnType<typeof calcZakatMadin> | null>(null);
 
   const nilaiN = parseFormattedNumber(nilai);
   const canCalc = nilaiN > 0;
 
-  const handleCalc = () => {
-    if (!canCalc) return;
-    const r = calcZakatMadin(nilaiN, goldPrice);
-    setResult(r);
-    if (r.zakatAmount > 0) {
-      addHistory({ type: "Madin", amount: r.zakatAmount });
-      onCalculated();
-    }
+  const result = useMemo(() => (canCalc ? calcZakatMadin(nilaiN, goldPrice) : null), [canCalc, nilaiN, goldPrice]);
+
+  const detailRows = result
+    ? [
+        { label: "Nilai Tambang", value: formatRupiah(nilaiN) },
+        { label: "Nisab (85g emas)", value: formatRupiah(result.nisab) },
+        { label: "Kadar", value: "2,5%" },
+      ]
+    : [];
+
+  const handleSave = () => {
+    if (!result || result.zakatAmount <= 0) return;
+    addHistory({ type: "Madin", amount: result.zakatAmount, detail: detailRows });
+    onCalculated();
+    track("save", { type: "Madin" });
+    toast.success("Tersimpan ke riwayat");
   };
 
   const handleDownload = () => {
     if (!result) return;
+    track("download_pdf", { type: "Madin" });
     generateZakatPdf("Ma'din", [
       { label: "Nilai Hasil Tambang", value: formatRupiah(nilaiN) },
       { label: "Nisab (85g emas)", value: formatRupiah(result.nisab) },
       { label: "Kadar", value: "2,5%" },
-    ], result.zakatAmount, result.isWajib);
+    ], result.zakatAmount, result.isWajib).catch(() => toast.error("Gagal membuat PDF"));
   };
 
   return (
@@ -48,28 +58,26 @@ export default function ZakatMadin({ goldPrice, isActive, onCalculated }: Props)
       <div className="space-y-2">
         <Label htmlFor="madin-nilai" className="text-sm">Nilai Hasil Tambang (Rp)</Label>
         <Input id="madin-nilai" type="text" inputMode="decimal" pattern="[0-9]*" placeholder="0"
-          value={nilai} onChange={(e) => setNilai(formatNumberInput(e.target.value))} className="h-12 sm:h-10 text-base" />
+          value={nilai} onChange={(e) => formattedChange(e, setNilai, formatNumberInput)} className="h-12 sm:h-10 text-base" />
       </div>
-      <Button onClick={handleCalc} disabled={!canCalc} className="w-full h-11 hidden md:inline-flex">
-        Hitung Zakat Ma'din
+      <Button onClick={handleSave} disabled={!result || result.zakatAmount <= 0} className="w-full h-11 hidden md:inline-flex">
+        Simpan ke Riwayat
       </Button>
       <AnimatePresence>
         {result && (
           <ResultCard
-            rows={[
-              { label: "Nilai Tambang", value: formatRupiah(nilaiN) },
-              { label: "Nisab (85g emas)", value: formatRupiah(result.nisab) },
-              { label: "Kadar", value: "2,5%" },
-            ]}
+            rows={detailRows}
             amount={result.zakatAmount}
             amountLabel="Zakat yang Harus Dibayar"
             isWajib={result.isWajib}
             statusLabel={result.isWajib ? "Wajib Zakat" : "Belum Wajib"}
+            notWajibHint={`Nilai hasil tambang belum mencapai nisab ${formatRupiah(result.nisab)}.`}
             onDownload={handleDownload}
+            waType="Madin"
           />
         )}
       </AnimatePresence>
-      <MobileCta isActive={isActive} label="Hitung Zakat Ma'din" disabled={!canCalc} onClick={handleCalc} />
+      <MobileCta isActive={isActive} label="Simpan ke Riwayat" disabled={!result || result.zakatAmount <= 0} onClick={handleSave} />
       <MobilePdfFab isActive={isActive} visible={!!result} onClick={handleDownload} />
     </div>
   );

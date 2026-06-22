@@ -3,6 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <!-- Apply theme before paint to avoid a flash of the wrong color scheme. -->
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem("theme");
+          if (t === "dark" || (!t && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+            document.documentElement.classList.add("dark");
+          }
+        } catch (e) {}
+      })();
+    </script>
     <title>ZakatCal - Kalkulator Zakat Online Gratis</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -10,7 +21,32 @@
     <meta name="author" content="alfindigital" />
     <meta name="keywords" content="zakatcal, kalkulator zakat, zakat penghasilan, zakat maal, zakat fitrah, hitung zakat online">
     <link rel="canonical" href="https://zakat-aid-calculator.lovable.app" />
-    <link rel="icon" href="/favicon.png" type="image/png" />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.png" type="image/png" sizes="512x512" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#168a5e" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0c1f17" media="(prefers-color-scheme: dark)" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="ZakatCal" />
+
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-PS503MBQ3B"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-PS503MBQ3B');
+    </script>
+
+    <!-- Microsoft Clarity -->
+    <script type="text/javascript">
+      (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+      })(window, document, "clarity", "script", "xayrscg37n");
+    </script>
 
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://zakat-aid-calculator.lovable.app" />
@@ -81,6 +117,38 @@
           "acceptedAnswer": {
             "@type": "Answer",
             "text": "Fakir, Miskin, Amil, Muallaf, Riqab, Gharimin, Fi Sabilillah, dan Ibnu Sabil (QS. At-Taubah: 60)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Bagaimana cara menghitung zakat perniagaan?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Jumlahkan modal kerja, piutang lancar, dan nilai stok dagang, lalu kurangi hutang dagang jangka pendek. Jika hasilnya mencapai nisab 85g emas dan telah berlalu satu haul, keluarkan 2,5%."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Berapa kadar zakat pertanian?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "10% untuk lahan tadah hujan (tanpa biaya pengairan) dan 5% untuk lahan berpengairan biaya. Nisabnya 653 kg hasil panen, dibayar saat panen tanpa menunggu haul."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Bolehkah zakat fitrah dibayar dengan uang?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Menurut sebagian ulama (mazhab Hanafi dan praktik BAZNAS), zakat fitrah boleh dibayar dengan uang senilai 2,5 kg makanan pokok sesuai tarif yang ditetapkan di daerah setempat."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Apa itu fidyah dan siapa yang membayarnya?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Fidyah adalah denda bagi yang meninggalkan puasa Ramadhan dan tidak mampu menggantinya, seperti orang tua renta atau penderita sakit menahun. Besarnya sekitar 0,75 kg makanan pokok per hari atau senilai uang."
           }
         }
       ]
