@@ -99,6 +99,11 @@ export default function PanduanZakat() {
             </Card>
           ))}
         </div>
+
+        <div className="flex flex-wrap justify-center gap-4 pt-2 text-sm">
+          <Link to="/" className="font-semibold text-primary hover:underline">← Kembali ke kalkulator</Link>
+          <Link to="/tentang" className="font-medium text-muted-foreground hover:text-foreground">Tentang &amp; Disclaimer</Link>
+        </div>
       </div>
     </div>
   );

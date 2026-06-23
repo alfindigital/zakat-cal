@@ -2,7 +2,6 @@ import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import {
   fetchGoldPrice,
   getHistory,
@@ -12,9 +11,11 @@ import {
   loadRoundUp,
   saveRoundUp,
   getNisab,
+  formatRupiah,
   type NisabType,
   type PriceSource,
 } from "@/lib/zakat";
+import { getHaulReminders, haulEndDate, daysUntil } from "@/lib/haul";
 import { RoundUpContext } from "@/lib/round-context";
 import { Switch } from "@/components/ui/switch";
 import ZakatPenghasilan from "@/components/ZakatPenghasilan";
@@ -30,10 +31,10 @@ import { DarkModeToggle } from "@/components/DarkModeToggle";
 import ZakatRiwayat from "@/components/ZakatRiwayat";
 import HaulReminder from "@/components/HaulReminder";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calculator, Briefcase, Wallet, Wheat, Settings2, Loader2, Store, Sprout, Beef, Gem, Mountain, Info, Moon, LayoutGrid, ShieldCheck, RefreshCw } from "lucide-react";
+import { Calculator, Briefcase, Wallet, Wheat, Settings2, Loader2, Store, Sprout, Beef, Gem, Mountain, Info, Moon, LayoutGrid, ShieldCheck, RefreshCw, CalendarClock } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
@@ -54,8 +55,11 @@ const TAB_ICONS: Record<string, IconType> = {
   fidyah: Moon,
 };
 
-// 4 most common types live in the bottom bar; the rest open via "Lainnya".
+// 4 most common types are always visible (top on desktop, bottom bar on mobile);
+// the rest open via the shared "Lainnya" drawer — identical structure everywhere.
 const PRIMARY_TABS = ["penghasilan", "maal", "fitrah", "perniagaan"];
+
+const labelForTab = (tab: string) => ALL_PAGES.find((p) => p.tab === tab)?.label ?? tab;
 
 const pathForTab = (tab: string) => {
   if (tab === "penghasilan") return "/";
@@ -156,44 +160,7 @@ const NisabSettings = ({
   </div>
 );
 
-const PanduanContent = () => (
-  <Accordion type="multiple" className="w-full">
-    <AccordionItem value="apa">
-      <AccordionTrigger className="text-sm sm:text-base py-2 font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none rounded-sm">Apa Itu Zakat?</AccordionTrigger>
-      <AccordionContent className="text-sm text-muted-foreground leading-relaxed">
-        Rukun Islam ke-4: kewajiban mengeluarkan sebagian harta bagi Muslim yang memenuhi syarat, untuk membersihkan harta dan membantu yang membutuhkan.
-      </AccordionContent>
-    </AccordionItem>
-    <AccordionItem value="syarat">
-      <AccordionTrigger className="text-sm sm:text-base py-2 font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none rounded-sm">Syarat Wajib</AccordionTrigger>
-      <AccordionContent className="text-sm text-muted-foreground leading-relaxed">
-        <ul className="list-disc list-inside space-y-0.5">
-          <li>Muslim, baligh, berakal</li>
-          <li>Harta mencapai nisab (setara 85g emas atau 595g perak)</li>
-          <li>Harta dimiliki penuh selama 1 tahun hijriyah (haul)</li>
-        </ul>
-      </AccordionContent>
-    </AccordionItem>
-    <AccordionItem value="jenis">
-      <AccordionTrigger className="text-sm sm:text-base py-2 font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none rounded-sm">Jenis Zakat</AccordionTrigger>
-      <AccordionContent className="text-sm text-muted-foreground leading-relaxed">
-        <ul className="list-disc list-inside space-y-0.5">
-          <li><span className="font-semibold text-foreground">Fitrah</span> — 2,5 kg makanan pokok/jiwa, sebelum Idul Fitri</li>
-          <li><span className="font-semibold text-foreground">Maal</span> — 2,5% dari harta yang mencapai nisab & haul</li>
-          <li><span className="font-semibold text-foreground">Penghasilan</span> — 2,5% dari pendapatan jika total setahun ≥ nisab</li>
-          <li><span className="font-semibold text-foreground">Perniagaan</span> — 2,5% dari (modal + piutang + stok − hutang) setelah haul</li>
-          <li><span className="font-semibold text-foreground">Pertanian</span> — 5% (irigasi) atau 10% (tadah hujan), nisab 653 kg, saat panen</li>
-          <li><span className="font-semibold text-foreground">Peternakan</span> — sesuai tabel nisab unta/sapi/kambing, haul 1 tahun</li>
-          <li><span className="font-semibold text-foreground">Rikaz</span> — 20% dari harta temuan/karun, tanpa nisab & haul</li>
-          <li><span className="font-semibold text-foreground">Ma'din</span> — 2,5% hasil tambang, nisab 85g emas</li>
-        </ul>
-      </AccordionContent>
-    </AccordionItem>
-  </Accordion>
-);
-
 const Index = () => {
-  const isMobile = useIsMobile();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -206,11 +173,11 @@ const Index = () => {
   const [nisabType, setNisabType] = useState<NisabType>("gold");
   const [roundUp, setRoundUp] = useState(() => loadRoundUp());
   const [history, setHistory] = useState(getHistory());
-  const [nisabSheetOpen, setNisabSheetOpen] = useState(false);
-  const [infoOpen, setInfoOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
+  const isMobile = useIsMobile();
   const activeTab = tabForPath(location.pathname);
   const activePage: ZakatPage | undefined = ALL_PAGES.find((p) => p.tab === activeTab);
 
@@ -283,6 +250,20 @@ const Index = () => {
   // Real-time sync: same-tab mutations + cross-tab `storage` events.
   useEffect(() => subscribeHistory(refreshHistory), [refreshHistory]);
 
+  // In-app reminder: alert once on load when any haul is due/overdue.
+  const haulAlerted = useRef(false);
+  useEffect(() => {
+    if (haulAlerted.current) return;
+    const due = getHaulReminders().filter((r) => daysUntil(haulEndDate(r.startDate)) <= 0);
+    if (due.length > 0) {
+      haulAlerted.current = true;
+      toast.info("Haul jatuh tempo", {
+        description: `${due.length} harta sudah mencapai haul — saatnya menghitung zakat.`,
+        duration: 8000,
+      });
+    }
+  }, []);
+
   // Pull-to-refresh handlers (mobile only)
   const onTouchStart = (e: React.TouchEvent) => {
     if (!isMobile) return;
@@ -331,7 +312,7 @@ const Index = () => {
     }
   };
 
-  const NavButton = ({ tab, label, short }: { tab: string; label: string; short: string }) => {
+  const NavButton = ({ tab, short }: { tab: string; short: string }) => {
     const Icon = TAB_ICONS[tab] ?? Briefcase;
     const active = activeTab === tab;
     return (
@@ -339,8 +320,8 @@ const Index = () => {
         type="button"
         onClick={() => setActiveTab(tab)}
         aria-current={active ? "page" : undefined}
-        aria-label={`Zakat ${label}`}
-        title={`Zakat ${label}`}
+        aria-label={`Zakat ${labelForTab(tab)}`}
+        title={`Zakat ${labelForTab(tab)}`}
         className="group relative flex flex-1 shrink-0 flex-col items-center justify-center gap-1 min-w-[60px] px-1 active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground/70 focus-visible:ring-inset rounded-md"
       >
         <span className={`flex items-center justify-center h-10 w-10 rounded-full transition-all ${active ? "bg-primary-foreground" : "group-hover:bg-primary-foreground/10"}`}>
@@ -354,6 +335,10 @@ const Index = () => {
   };
 
   const moreActive = !PRIMARY_TABS.includes(activeTab);
+
+  // Shared desktop pill styling for primary tabs + the "Lainnya" trigger.
+  const desktopPill = (active: boolean) =>
+    `inline-flex items-center gap-1.5 rounded-lg px-3 h-9 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${active ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/70 hover:text-foreground"}`;
 
   return (
     <RoundUpContext.Provider value={roundUp}>
@@ -370,20 +355,33 @@ const Index = () => {
             </span>
           </Link>
           <div className="flex items-center gap-1">
-            <Dialog open={nisabSheetOpen} onOpenChange={setNisabSheetOpen}>
+            {/* Settings: nisab, prices, rounding, haul reminder */}
+            <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
               <DialogTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-11 w-11 sm:h-10 sm:w-10 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" aria-label="Pengaturan Nisab">
+                <Button variant="ghost" size="icon" className="h-11 w-11 sm:h-10 sm:w-10 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" aria-label="Pengaturan">
                   <Settings2 className="h-5 w-5" />
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-md max-h-[85vh] overflow-y-auto">
                 <DialogHeader>
-                  <DialogTitle>Pengaturan Nisab</DialogTitle>
+                  <DialogTitle>Pengaturan</DialogTitle>
                   <DialogDescription className="sr-only">
-                    Atur standar nisab dan harga emas atau perak per gram untuk perhitungan zakat.
+                    Atur nisab, harga emas/perak, pembulatan zakat, dan pengingat haul.
                   </DialogDescription>
                 </DialogHeader>
-                <div className="mt-2">
+                <div className="mt-2 space-y-5">
+                  {/* Current nisab (moved here to keep the home clean) */}
+                  <div className="rounded-lg border border-border/60 bg-muted/40 p-3">
+                    <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Nisab saat ini</p>
+                    <p className="text-base font-bold tabular-nums">
+                      {formatRupiah(currentNisab)}
+                      <span className="text-muted-foreground font-normal"> · {nisabType === "gold" ? "85g emas" : "595g perak"}</span>
+                    </p>
+                    <p className="text-[11px] text-muted-foreground">
+                      {nisabType === "gold" ? "Emas" : "Perak"} Rp {metalPrice.toLocaleString("id-ID")}/gr · {priceMeta.source === "online" ? "online" : priceMeta.source === "manual" ? "manual" : "default"} · {priceMeta.date}
+                    </p>
+                  </div>
+
                   <NisabSettings
                     nisabType={nisabType}
                     setNisabType={setNisabType}
@@ -397,36 +395,22 @@ const Index = () => {
                     roundUp={roundUp}
                     onRoundUpChange={(v) => { setRoundUp(v); saveRoundUp(v); }}
                   />
-                </div>
-              </DialogContent>
-            </Dialog>
 
-            <Dialog open={infoOpen} onOpenChange={setInfoOpen}>
-              <DialogTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-11 w-11 sm:h-10 sm:w-10 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" aria-label="Panduan Zakat">
-                  <Info className="h-5 w-5" />
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-md max-h-[85vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle>Panduan Zakat</DialogTitle>
-                  <DialogDescription className="sr-only">
-                    Panduan singkat tentang zakat, syarat, jenis, nisab, dan penerima zakat.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="mt-2 space-y-3">
-                  <PanduanContent />
-                  <div className="flex flex-col gap-1.5">
-                    <Link to="/panduan-zakat" onClick={() => setInfoOpen(false)} className="block text-center text-sm font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm py-2">
-                      Baca panduan lengkap →
-                    </Link>
-                    <Link to="/tentang" onClick={() => setInfoOpen(false)} className="block text-center text-sm font-medium text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm py-1">
-                      Tentang & Disclaimer
-                    </Link>
+                  {/* Haul reminder (moved here to keep the home clean) */}
+                  <div className="border-t pt-4">
+                    <h3 className="text-sm font-semibold flex items-center gap-2 mb-2">
+                      <CalendarClock className="h-4 w-4 text-primary" /> Pengingat Haul
+                    </h3>
+                    <HaulReminder embedded />
                   </div>
                 </div>
               </DialogContent>
             </Dialog>
+
+            {/* Info: go straight to the full guide page (no popup) */}
+            <Button asChild variant="ghost" size="icon" className="h-11 w-11 sm:h-10 sm:w-10 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" aria-label="Panduan Zakat">
+              <Link to="/panduan-zakat"><Info className="h-5 w-5" /></Link>
+            </Button>
 
             <DarkModeToggle />
           </div>
@@ -452,47 +436,20 @@ const Index = () => {
         className="mx-auto max-w-2xl w-full px-4 py-5 sm:px-6 sm:py-8 space-y-5 sm:space-y-7 flex-1"
         style={{ paddingBottom: "calc(8rem + env(safe-area-inset-bottom, 0px))" }}
       >
-        {/* Nisab strip — transparency on the value driving every calculation */}
-        <button
-          type="button"
-          onClick={() => setNisabSheetOpen(true)}
-          className="w-full text-left rounded-xl border border-border/60 bg-card px-4 py-3 flex items-center justify-between gap-3 hover:border-primary/40 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          aria-label="Ubah pengaturan nisab dan harga emas"
-        >
-          <div className="min-w-0">
-            <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Nisab saat ini</p>
-            <p className="text-sm sm:text-base font-bold tabular-nums truncate">
-              {new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(currentNisab)}
-              <span className="text-muted-foreground font-normal"> · {nisabType === "gold" ? "85g emas" : "595g perak"}</span>
-            </p>
-          </div>
-          <div className="text-right shrink-0">
-            <p className="text-[11px] text-muted-foreground">
-              {nisabType === "gold" ? "Emas" : "Perak"} Rp {(metalPrice).toLocaleString("id-ID")}/gr
-            </p>
-            <p className="text-[10px] text-muted-foreground">
-              {priceMeta.source === "online" ? "online" : priceMeta.source === "manual" ? "manual" : "default"} · {priceMeta.date}
-            </p>
-          </div>
-        </button>
-
-        {/* Desktop top tabs */}
+        {/* Desktop nav — same structure as mobile: 4 primary + Lainnya */}
         <nav aria-label="Kategori zakat" className="hidden md:flex flex-wrap gap-1.5">
-          {ALL_PAGES.map((p) => {
-            const Icon = TAB_ICONS[p.tab] ?? Briefcase;
-            const active = activeTab === p.tab;
+          {PRIMARY_TABS.map((tab) => {
+            const Icon = TAB_ICONS[tab] ?? Briefcase;
+            const active = activeTab === tab;
             return (
-              <button
-                key={p.tab}
-                type="button"
-                onClick={() => setActiveTab(p.tab)}
-                aria-current={active ? "page" : undefined}
-                className={`inline-flex items-center gap-1.5 rounded-lg px-3 h-9 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${active ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/70 hover:text-foreground"}`}
-              >
-                <Icon aria-hidden="true" className="h-4 w-4" /> {p.label}
+              <button key={tab} type="button" onClick={() => setActiveTab(tab)} aria-current={active ? "page" : undefined} className={desktopPill(active)}>
+                <Icon aria-hidden="true" className="h-4 w-4" /> {labelForTab(tab)}
               </button>
             );
           })}
+          <button type="button" onClick={() => setMoreOpen(true)} aria-haspopup="dialog" aria-current={moreActive ? "page" : undefined} className={desktopPill(moreActive)}>
+            <LayoutGrid aria-hidden="true" className="h-4 w-4" /> {moreActive ? `Lainnya · ${labelForTab(activeTab)}` : "Lainnya"}
+          </button>
         </nav>
 
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
@@ -533,21 +490,21 @@ const Index = () => {
           <ZakatRiwayat history={history} onChanged={refreshHistory} />
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.2 }}>
-          <HaulReminder />
-        </motion.div>
-
-        {/* Per-route SEO content (unique, crawlable text per zakat type) */}
+        {/* Per-route SEO content — visually distinct (tinted bg + serif type) */}
         {activePage && activePage.sections.length > 0 && (
-          <section className="space-y-4 rounded-xl border border-border/60 bg-card p-4 sm:p-5">
-            <h2 className="text-base sm:text-lg font-bold">Tentang {activePage.h1.replace("Kalkulator ", "")}</h2>
-            {activePage.sections.map((s) => (
-              <div key={s.heading} className="space-y-1">
-                <h3 className="text-sm font-semibold">{s.heading}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{s.body}</p>
-              </div>
-            ))}
-            <div className="flex flex-wrap gap-3 pt-1 text-sm">
+          <section className="rounded-2xl border border-border/60 bg-secondary p-5 sm:p-6 font-serif space-y-4">
+            <h2 className="text-xl font-bold text-foreground tracking-tight">
+              Tentang {activePage.h1.replace("Kalkulator ", "")}
+            </h2>
+            <div className="space-y-3">
+              {activePage.sections.map((s) => (
+                <article key={s.heading} className="rounded-xl bg-card border border-border/50 p-4">
+                  <h3 className="font-bold text-foreground mb-1.5">{s.heading}</h3>
+                  <p className="text-[15px] text-muted-foreground leading-relaxed">{s.body}</p>
+                </article>
+              ))}
+            </div>
+            <div className="flex flex-wrap gap-3 pt-1 text-sm font-sans">
               <Link to="/panduan-zakat" className="font-semibold text-primary hover:underline">Panduan lengkap zakat →</Link>
               <Link to="/tentang" className="font-medium text-muted-foreground hover:text-foreground">Tentang & disclaimer</Link>
             </div>
@@ -555,58 +512,59 @@ const Index = () => {
         )}
       </main>
 
-      {/* Bottom Tab Navigation (mobile) — 4 primary + Lainnya */}
+      {/* Bottom Tab Navigation (mobile) — same set as desktop: 4 primary + Lainnya */}
       <nav
         className="md:hidden fixed z-50 left-0 right-0 bottom-0 bg-primary border-t border-primary-foreground/10 shadow-[0_-4px_20px_-4px_hsl(var(--primary)/0.4)]"
         style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
         aria-label="Navigasi utama"
       >
         <div className="mx-auto max-w-3xl flex items-stretch h-20 justify-around px-1">
-          <NavButton tab="penghasilan" label="Penghasilan" short="Gaji" />
-          <NavButton tab="maal" label="Maal" short="Maal" />
-          <NavButton tab="fitrah" label="Fitrah" short="Fitrah" />
-          <NavButton tab="perniagaan" label="Perniagaan" short="Dagang" />
-
-          <Drawer open={moreOpen} onOpenChange={setMoreOpen}>
-            <DrawerTrigger asChild>
-              <button
-                type="button"
-                aria-label="Kategori zakat lainnya"
-                aria-current={moreActive ? "page" : undefined}
-                className="group relative flex flex-1 shrink-0 flex-col items-center justify-center gap-1 min-w-[60px] px-1 active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground/70 focus-visible:ring-inset rounded-md"
-              >
-                <span className={`flex items-center justify-center h-10 w-10 rounded-full transition-all ${moreActive ? "bg-primary-foreground" : "group-hover:bg-primary-foreground/10"}`}>
-                  <LayoutGrid aria-hidden="true" strokeWidth={2.25} className={`h-6 w-6 ${moreActive ? "text-primary" : "text-primary-foreground"}`} />
-                </span>
-                <span className={`text-[11px] font-semibold ${moreActive ? "text-primary-foreground" : "text-primary-foreground/90"}`}>Lainnya</span>
-              </button>
-            </DrawerTrigger>
-            <DrawerContent>
-              <DrawerHeader>
-                <DrawerTitle>Semua Kategori</DrawerTitle>
-              </DrawerHeader>
-              <div className="grid grid-cols-3 gap-3 px-4 pb-8">
-                {ALL_PAGES.map((p) => {
-                  const Icon = TAB_ICONS[p.tab] ?? Briefcase;
-                  const active = activeTab === p.tab;
-                  return (
-                    <button
-                      key={p.tab}
-                      type="button"
-                      onClick={() => { setActiveTab(p.tab); setMoreOpen(false); }}
-                      aria-current={active ? "page" : undefined}
-                      className={`flex flex-col items-center justify-center gap-1.5 rounded-xl border p-3 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${active ? "border-primary bg-primary/10" : "border-border/60 hover:bg-muted"}`}
-                    >
-                      <Icon aria-hidden="true" className={`h-6 w-6 ${active ? "text-primary" : "text-foreground"}`} />
-                      <span className="text-xs font-medium">{p.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </DrawerContent>
-          </Drawer>
+          <NavButton tab="penghasilan" short="Gaji" />
+          <NavButton tab="maal" short="Maal" />
+          <NavButton tab="fitrah" short="Fitrah" />
+          <NavButton tab="perniagaan" short="Dagang" />
+          <button
+            type="button"
+            onClick={() => setMoreOpen(true)}
+            aria-haspopup="dialog"
+            aria-label="Kategori zakat lainnya"
+            aria-current={moreActive ? "page" : undefined}
+            className="group relative flex flex-1 shrink-0 flex-col items-center justify-center gap-1 min-w-[60px] px-1 active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground/70 focus-visible:ring-inset rounded-md"
+          >
+            <span className={`flex items-center justify-center h-10 w-10 rounded-full transition-all ${moreActive ? "bg-primary-foreground" : "group-hover:bg-primary-foreground/10"}`}>
+              <LayoutGrid aria-hidden="true" strokeWidth={2.25} className={`h-6 w-6 ${moreActive ? "text-primary" : "text-primary-foreground"}`} />
+            </span>
+            <span className={`text-[11px] font-semibold ${moreActive ? "text-primary-foreground" : "text-primary-foreground/90"}`}>Lainnya</span>
+          </button>
         </div>
       </nav>
+
+      {/* Shared "Lainnya" drawer — opened from both desktop pill and mobile bar */}
+      <Drawer open={moreOpen} onOpenChange={setMoreOpen}>
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>Semua Kategori</DrawerTitle>
+          </DrawerHeader>
+          <div className="grid grid-cols-3 gap-3 px-4 pb-8 w-full max-w-md mx-auto">
+            {ALL_PAGES.map((p) => {
+              const Icon = TAB_ICONS[p.tab] ?? Briefcase;
+              const active = activeTab === p.tab;
+              return (
+                <button
+                  key={p.tab}
+                  type="button"
+                  onClick={() => { setActiveTab(p.tab); setMoreOpen(false); }}
+                  aria-current={active ? "page" : undefined}
+                  className={`flex flex-col items-center justify-center gap-1.5 rounded-xl border p-3 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${active ? "border-primary bg-primary/10" : "border-border/60 hover:bg-muted"}`}
+                >
+                  <Icon aria-hidden="true" className={`h-6 w-6 ${active ? "text-primary" : "text-foreground"}`} />
+                  <span className="text-xs font-medium">{p.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </DrawerContent>
+      </Drawer>
     </div>
     </RoundUpContext.Provider>
   );
