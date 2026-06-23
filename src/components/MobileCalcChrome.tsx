@@ -196,10 +196,9 @@ export function MobileCta({ isActive, label, disabled, onClick }: MobileCtaProps
 
   return createPortal(
     <div
-      className="md:hidden fixed left-0 right-0 z-40 bg-background/85 backdrop-blur-xl border-t border-border/40 px-4 pt-3"
+      className="md:hidden fixed left-0 right-0 z-40 bg-background/85 backdrop-blur-xl border-t border-border/40 px-4 pt-3 pb-3"
       style={{
-        bottom: "calc(4rem + env(safe-area-inset-bottom, 0px))",
-        paddingBottom: "0.75rem",
+        bottom: "calc(5.5rem + env(safe-area-inset-bottom, 0px))",
       }}
     >
       <Button onClick={onClick} disabled={disabled} className="w-full h-12 text-base font-semibold">

@@ -434,7 +434,7 @@ const Index = () => {
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
         className="mx-auto max-w-2xl w-full px-4 py-5 sm:px-6 sm:py-8 space-y-5 sm:space-y-7 flex-1"
-        style={{ paddingBottom: "calc(8rem + env(safe-area-inset-bottom, 0px))" }}
+        style={{ paddingBottom: "calc(12rem + env(safe-area-inset-bottom, 0px))" }}
       >
         {/* Desktop nav — same structure as mobile: 4 primary + Lainnya */}
         <nav aria-label="Kategori zakat" className="hidden md:flex flex-wrap gap-1.5">
