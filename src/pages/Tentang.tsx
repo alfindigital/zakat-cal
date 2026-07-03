@@ -1,9 +1,8 @@
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { DarkModeToggle } from "@/components/DarkModeToggle";
-import { ArrowLeft, MessageCircle, ShieldCheck } from "lucide-react";
-import { WA_BASE } from "@/lib/contact";
+import { ArrowLeft, Send } from "lucide-react";
+import { TELEGRAM_BASE, TELEGRAM_HANDLE } from "@/lib/contact";
 import { useSeo, SITE_URL } from "@/lib/seo";
 
 export default function Tentang() {
@@ -27,13 +26,13 @@ export default function Tentang() {
           <Button variant="ghost" size="sm" asChild>
             <Link to="/"><ArrowLeft className="mr-2 h-4 w-4" />Kembali</Link>
           </Button>
-          <DarkModeToggle />
         </div>
 
         <div className="text-center space-y-2">
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Tentang ZakatCal</h1>
           <p className="text-muted-foreground">Kalkulator zakat online gratis, akurat, dan menjaga privasi.</p>
         </div>
+
 
         <Card>
           <CardHeader className="pb-2"><CardTitle className="text-lg">Metodologi Perhitungan</CardTitle></CardHeader>
