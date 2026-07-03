@@ -446,6 +446,20 @@ const Index = () => {
             <DarkModeToggle />
           </div>
         </div>
+        {/* Live nisab pill — surfaces today's threshold without opening settings.
+            Clickable so users can adjust the price source in one tap. */}
+        <div className="mx-auto max-w-2xl px-4 pb-2 sm:px-6 -mt-1">
+          <button
+            type="button"
+            onClick={() => setSettingsOpen(true)}
+            className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-muted/50 px-3 py-1 text-[11px] font-medium text-muted-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            aria-label="Nisab saat ini — ketuk untuk mengubah harga"
+          >
+            <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary animate-pulse" aria-hidden="true" />
+            Nisab hari ini: <span className="font-semibold text-foreground tabular-nums">{formatRupiah(currentNisab)}</span>
+            <span className="text-muted-foreground/70">· {nisabType === "gold" ? "85g emas" : "595g perak"}</span>
+          </button>
+        </div>
       </header>
 
       {/* Pull-to-refresh indicator (mobile) */}
