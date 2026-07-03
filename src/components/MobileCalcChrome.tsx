@@ -9,6 +9,7 @@ import { formatRupiah, roundZakat, type ZakatType } from "@/lib/zakat";
 import { buildZakatWaHref } from "@/lib/contact";
 import { useRoundUp } from "@/lib/round-context";
 import { track } from "@/lib/analytics";
+import { LembagaZakatCta } from "./LembagaZakatCta";
 
 export interface ResultRow {
   label: string;
@@ -106,6 +107,11 @@ export function ResultCard({
 
       {/* Primary conversion CTA */}
       {WaCta}
+
+      {/* Legitimate zakat institutions — only show once the calc says wajib. */}
+      {showWa && <LembagaZakatCta waType={waType} />}
+
+
 
       {/* Details: collapsible on mobile, always open on desktop */}
       {isMobile ? (
