@@ -43,6 +43,7 @@ import { toast } from "sonner";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ALL_PAGES, HOME_SEO, getPageBySlug, useSeo, type ZakatPage } from "@/lib/seo";
 import { track } from "@/lib/analytics";
+import { loadMazhab, saveMazhab, MAZHAB_NOTES, type Mazhab } from "@/lib/mazhab";
 
 type IconType = typeof Briefcase;
 const TAB_ICONS: Record<string, IconType> = {
