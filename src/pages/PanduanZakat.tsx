@@ -68,12 +68,12 @@ export default function PanduanZakat() {
   return (
     <div className="min-h-dvh bg-background px-4 py-8 sm:py-12">
       <div className="mx-auto max-w-2xl space-y-6">
-        <div className="flex items-center justify-between">
+        <div>
           <Button variant="ghost" size="sm" asChild>
             <Link to="/"><ArrowLeft className="mr-2 h-4 w-4" />Kembali</Link>
           </Button>
-          <DarkModeToggle />
         </div>
+
 
         <div className="text-center space-y-2">
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Panduan Zakat</h1>
