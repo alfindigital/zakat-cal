@@ -107,7 +107,9 @@ export default function ZakatFitrah({ isActive, onCalculated }: Props) {
             💵 Uang (tarif daerah)
           </ToggleGroupItem>
         </ToggleGroup>
+        <p className="text-[11px] text-muted-foreground leading-snug">{MAZHAB_NOTES[loadMazhab()].fitrah}</p>
       </div>
+
 
       <div className="grid gap-4 sm:gap-4 sm:grid-cols-2">
         <div className="space-y-2">
