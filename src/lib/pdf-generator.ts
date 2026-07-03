@@ -76,11 +76,12 @@ export async function generateZakatPdf(type: string, rows: PdfRow[], rawAmount: 
   doc.setTextColor(160);
   doc.setFont("helvetica", "normal");
   doc.text(
-    `Tunaikan via WhatsApp: wa.me/${WA_NUMBER}  •  Perhitungan bersifat estimasi.`,
+    `Tunaikan via Telegram: t.me/${WA_NUMBER}  •  Perhitungan bersifat estimasi.`,
     pageWidth / 2,
     280,
     { align: "center" },
   );
+
 
   doc.save(`zakat-${type.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${Date.now()}.pdf`);
 }
