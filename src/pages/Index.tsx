@@ -182,11 +182,42 @@ const Index = () => {
   const activePage: ZakatPage | undefined = ALL_PAGES.find((p) => p.tab === activeTab);
 
   // Per-route SEO (title/meta/canonical/OG) — home keeps the generic title.
+  // Also emits per-page JSON-LD (BreadcrumbList + HowTo) so category routes
+  // qualify for rich results and are quotable by AI search.
   const isHome = location.pathname === "/";
+  const routeJsonLd = useMemo(() => {
+    if (!activePage || isHome) return null;
+    const url = `https://zakat-cal.lovable.app/${activePage.slug}`;
+    const graph: object[] = [
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Beranda", item: "https://zakat-cal.lovable.app/" },
+          { "@type": "ListItem", position: 2, name: activePage.label, item: url },
+        ],
+      },
+    ];
+    if (activePage.sections.length > 0) {
+      graph.push({
+        "@type": "HowTo",
+        name: activePage.h1,
+        description: activePage.intro,
+        step: activePage.sections.map((s, i) => ({
+          "@type": "HowToStep",
+          position: i + 1,
+          name: s.heading,
+          text: s.body,
+        })),
+      });
+    }
+    return { "@context": "https://schema.org", "@graph": graph };
+  }, [activePage, isHome]);
+
   useSeo({
     title: isHome ? HOME_SEO.title : activePage?.title ?? HOME_SEO.title,
     description: isHome ? HOME_SEO.description : activePage?.description ?? HOME_SEO.description,
     path: location.pathname,
+    jsonLd: routeJsonLd,
   });
 
   const setActiveTab = (tab: string) => {
