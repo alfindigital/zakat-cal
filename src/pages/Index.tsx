@@ -628,7 +628,13 @@ const Index = () => {
             </div>
           </section>
         )}
+
+        {/* Privacy footer note */}
+        <p className="pt-6 pb-2 text-center text-xs text-muted-foreground">
+          Perhitungan 100% di perangkat Anda — tidak ada data yang dikirim.
+        </p>
       </main>
+
 
       {/* Bottom Tab Navigation (mobile) — same set as desktop: 4 primary + Lainnya */}
       <nav
