@@ -481,6 +481,8 @@ const Index = () => {
                     priceMeta={priceMeta}
                     roundUp={roundUp}
                     onRoundUpChange={(v) => { setRoundUp(v); saveRoundUp(v); }}
+                    mazhab={mazhab}
+                    onMazhabChange={handleMazhabChange}
                   />
 
                   {/* Haul reminder (moved here to keep the home clean) */}
