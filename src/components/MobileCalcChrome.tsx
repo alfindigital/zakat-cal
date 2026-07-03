@@ -5,7 +5,7 @@ import { ChevronDown, Download, MessageCircle, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { formatRupiah, roundZakat, type ZakatType } from "@/lib/zakat";
+import { formatRupiah, roundZakat, buildShareUrl, type ZakatType } from "@/lib/zakat";
 import { buildZakatWaHref } from "@/lib/contact";
 import { useRoundUp } from "@/lib/round-context";
 import { track } from "@/lib/analytics";
@@ -47,17 +47,24 @@ export function ResultCard({
   const showWa = !!waType && isWajib && amount > 0;
 
   const handleShare = async () => {
+    const shareUrl =
+      waType && amount > 0 && typeof location !== "undefined"
+        ? buildShareUrl(location.href, { type: waType, amount, label: amountLabel })
+        : typeof location !== "undefined"
+          ? location.href
+          : undefined;
     const text = `Estimasi zakat ${waType ?? ""}: ${formatRupiah(amount)} (via ZakatCal)`;
     track("share", { type: waType ?? "zakat" });
     try {
       if (navigator.share) {
-        await navigator.share({ title: "ZakatCal", text, url: typeof location !== "undefined" ? location.href : undefined });
+        await navigator.share({ title: "ZakatCal", text, url: shareUrl });
       } else if (navigator.clipboard) {
-        await navigator.clipboard.writeText(`${text} ${typeof location !== "undefined" ? location.href : ""}`.trim());
+        await navigator.clipboard.writeText(`${text} ${shareUrl ?? ""}`.trim());
       }
     } catch {
       /* user cancelled share — ignore */
     }
+
   };
 
   const WaCta = showWa ? (

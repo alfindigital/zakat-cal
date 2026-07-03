@@ -12,6 +12,8 @@ import {
   saveRoundUp,
   getNisab,
   formatRupiah,
+  migrateStorage,
+  decodeSharedResult,
   type NisabType,
   type PriceSource,
 } from "@/lib/zakat";
@@ -294,6 +296,32 @@ const Index = () => {
       });
     }
   }, []);
+
+  // One-time storage migration on app mount (idempotent).
+  useEffect(() => {
+    migrateStorage();
+  }, []);
+
+  // Parse ?share=... deep-link and greet the visitor with the shared result.
+  const sharedGreeted = useRef(false);
+  useEffect(() => {
+    if (sharedGreeted.current) return;
+    const params = new URLSearchParams(location.search);
+    const token = params.get("share");
+    if (!token) return;
+    const shared = decodeSharedResult(token);
+    if (!shared) return;
+    sharedGreeted.current = true;
+    toast.success(`Hasil zakat dibagikan: ${shared.type}`, {
+      description: `${formatRupiah(shared.amount)}${shared.label ? ` — ${shared.label}` : ""}`,
+      duration: 8000,
+    });
+    // Clean the URL so refresh doesn't re-toast.
+    const cleaned = new URL(window.location.href);
+    cleaned.searchParams.delete("share");
+    window.history.replaceState({}, "", cleaned.pathname + cleaned.search + cleaned.hash);
+  }, [location.search]);
+
 
   // Pull-to-refresh handlers (mobile only)
   const onTouchStart = (e: React.TouchEvent) => {
