@@ -542,15 +542,15 @@ const Index = () => {
           })}
           <button
             type="button"
-            onClick={() => setMoreOpen((v) => !v)}
-            aria-expanded={moreOpen}
+            onClick={() => setMoreExpanded((v) => !v)}
+            aria-expanded={moreExpanded}
             aria-current={moreActive ? "page" : undefined}
-            className={desktopPill(moreActive || moreOpen)}
+            className={desktopPill(moreActive || moreExpanded)}
           >
             <LayoutGrid aria-hidden="true" className="h-4 w-4" /> {moreActive ? `Lainnya · ${labelForTab(activeTab)}` : "Lainnya"}
           </button>
           <AnimatePresence initial={false}>
-            {moreOpen && ALL_PAGES.filter((p) => !PRIMARY_TABS.includes(p.tab)).map((p) => {
+            {moreExpanded && ALL_PAGES.filter((p) => !PRIMARY_TABS.includes(p.tab)).map((p) => {
               const Icon = TAB_ICONS[p.tab] ?? Briefcase;
               const active = activeTab === p.tab;
               return (
@@ -570,6 +570,7 @@ const Index = () => {
               );
             })}
           </AnimatePresence>
+
         </nav>
 
 
