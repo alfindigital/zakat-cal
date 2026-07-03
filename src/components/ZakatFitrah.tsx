@@ -11,6 +11,8 @@ import { track } from "@/lib/analytics";
 import { formatNumberInput, parseFormattedNumber, formattedChange } from "@/lib/format";
 import { ResultCard, MobileCta, MobilePdfFab } from "./MobileCalcChrome";
 import { toast } from "sonner";
+import { getIdulFitriInfo } from "@/lib/ramadhan";
+import { CalendarClock } from "lucide-react";
 
 interface Props {
   isActive: boolean;
@@ -66,8 +68,29 @@ export default function ZakatFitrah({ isActive, onCalculated }: Props) {
     generateZakatPdf("Fitrah", detailRows, result.total, true).catch(() => toast.error("Gagal membuat PDF"));
   };
 
+  // Countdown ke 1 Syawal — hanya tampil bila dalam 60 hari agar tidak
+  // mengganggu di luar musim Ramadhan.
+  const idulFitri = useMemo(() => getIdulFitriInfo(), []);
+  const showCountdown = idulFitri && idulFitri.daysLeft >= 0 && idulFitri.daysLeft <= 60;
+
   return (
     <div className="space-y-4 sm:space-y-6">
+      {showCountdown && (
+        <div className="rounded-lg border border-primary/30 bg-primary/5 p-3 flex items-center gap-3">
+          <CalendarClock aria-hidden="true" className="h-5 w-5 text-primary shrink-0" />
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-semibold text-foreground">
+              {idulFitri!.daysLeft === 0
+                ? "Hari ini 1 Syawal — segera tunaikan sebelum shalat Ied"
+                : `Idul Fitri ${idulFitri!.hijriYear} H — H-${idulFitri!.daysLeft} hari lagi`}
+            </p>
+            <p className="text-[11px] text-muted-foreground">
+              Zakat fitrah wajib ditunaikan sebelum shalat Idul Fitri.
+            </p>
+          </div>
+        </div>
+      )}
+
       <div className="space-y-2">
         <Label className="text-sm text-muted-foreground font-medium">Cara Membayar</Label>
         <ToggleGroup
