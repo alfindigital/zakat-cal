@@ -173,7 +173,7 @@ const NisabSettings = ({
         <RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${refreshing ? "animate-spin" : ""}`} /> Perbarui online
       </Button>
     </div>
-    <p className="text-[11px] text-muted-foreground">Harga yang Anda atur tersimpan di perangkat ini.</p>
+    
 
     <div className="flex items-center justify-between gap-3 rounded-lg border border-border/60 p-3">
       <div className="min-w-0">
