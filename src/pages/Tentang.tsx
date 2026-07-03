@@ -53,7 +53,7 @@ export default function Tentang() {
         </Card>
 
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-lg flex items-center gap-2"><ShieldCheck className="h-5 w-5 text-primary" />Privasi</CardTitle></CardHeader>
+          <CardHeader className="pb-2"><CardTitle className="text-lg">Privasi</CardTitle></CardHeader>
           <CardContent className="space-y-2 text-sm text-muted-foreground leading-relaxed">
             <p>Semua perhitungan dilakukan sepenuhnya di perangkat Anda (browser). Angka penghasilan dan harta yang Anda masukkan <span className="text-foreground font-medium">tidak pernah dikirim ke server mana pun</span>. Riwayat hanya disimpan di penyimpanan lokal perangkat dan bisa Anda ekspor/hapus kapan saja.</p>
           </CardContent>
@@ -69,11 +69,13 @@ export default function Tentang() {
         <div className="rounded-xl border bg-card p-5 text-center space-y-3">
           <p className="text-sm text-muted-foreground">Ingin menunaikan atau bertanya tentang penyaluran zakat?</p>
           <Button asChild className="h-11">
-            <a href={WA_BASE} target="_blank" rel="noopener noreferrer">
-              <MessageCircle className="mr-2 h-4 w-4" /> Hubungi via WhatsApp
+            <a href={TELEGRAM_BASE} target="_blank" rel="noopener noreferrer">
+              <Send className="mr-2 h-4 w-4" /> Hubungi via Telegram
             </a>
           </Button>
+          <p className="text-xs text-muted-foreground">t.me/{TELEGRAM_HANDLE}</p>
         </div>
+
       </div>
     </div>
   );
