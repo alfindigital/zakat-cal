@@ -12,6 +12,7 @@ import { formatNumberInput, parseFormattedNumber, formattedChange } from "@/lib/
 import { ResultCard, MobileCta, MobilePdfFab } from "./MobileCalcChrome";
 import { toast } from "sonner";
 import { getIdulFitriInfo } from "@/lib/ramadhan";
+import { loadMazhab, MAZHAB_NOTES } from "@/lib/mazhab";
 import { CalendarClock } from "lucide-react";
 
 interface Props {
