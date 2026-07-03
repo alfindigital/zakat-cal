@@ -105,34 +105,35 @@ export default function HaulReminder({ embedded = false }: Props) {
         </ul>
       )}
 
-      <div className="grid gap-2 sm:grid-cols-[1fr_auto] sm:items-end">
+      <div className="space-y-2">
         <div className="grid gap-2 sm:grid-cols-2">
-          <div className="space-y-1.5">
+          <div className="space-y-1.5 min-w-0">
             <Label htmlFor="haul-label" className="text-xs">Nama harta (opsional)</Label>
             <Input
               id="haul-label"
               value={label}
               onChange={(e) => setLabel(e.target.value)}
               placeholder="mis. Tabungan"
-              className="h-10 text-sm"
+              className="h-10 text-sm w-full"
               maxLength={40}
             />
           </div>
-          <div className="space-y-1.5">
+          <div className="space-y-1.5 min-w-0">
             <Label htmlFor="haul-date" className="text-xs">Tanggal mulai (capai nisab)</Label>
             <Input
               id="haul-date"
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="h-10 text-sm"
+              className="h-10 text-sm w-full"
             />
           </div>
         </div>
-        <Button onClick={handleAdd} disabled={!date} className="h-10">
-          <Plus className="h-4 w-4 mr-1" /> Tambah
+        <Button onClick={handleAdd} disabled={!date} className="h-10 w-full sm:w-auto">
+          <Plus className="h-4 w-4 mr-1" /> Tambah pengingat
         </Button>
       </div>
+
     </div>
   );
 
