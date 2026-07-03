@@ -3,12 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <!-- Apply theme before paint to avoid a flash of the wrong color scheme. -->
+    <!-- Apply theme before paint to avoid a flash of the wrong color scheme. Default: light. -->
     <script>
       (function () {
         try {
-          var t = localStorage.getItem("theme");
-          if (t === "dark" || (!t && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+          if (localStorage.getItem("theme") === "dark") {
             document.documentElement.classList.add("dark");
           }
         } catch (e) {}

@@ -204,7 +204,9 @@ const Index = () => {
   }, []);
   const [history, setHistory] = useState(getHistory());
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [moreOpen, setMoreOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false); // mobile drawer
+  const [moreExpanded, setMoreExpanded] = useState(false); // desktop inline expansion
+
   const [refreshing, setRefreshing] = useState(false);
 
   const isMobile = useIsMobile();
@@ -504,21 +506,8 @@ const Index = () => {
             <DarkModeToggle />
           </div>
         </div>
-        {/* Live nisab pill — surfaces today's threshold without opening settings.
-            Clickable so users can adjust the price source in one tap. */}
-        <div className="mx-auto max-w-2xl px-4 pb-2 sm:px-6 -mt-1">
-          <button
-            type="button"
-            onClick={() => setSettingsOpen(true)}
-            className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-muted/50 px-3 py-1 text-[11px] font-medium text-muted-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            aria-label="Nisab saat ini — ketuk untuk mengubah harga"
-          >
-            <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary animate-pulse" aria-hidden="true" />
-            Nisab hari ini: <span className="font-semibold text-foreground tabular-nums">{formatRupiah(currentNisab)}</span>
-            <span className="text-muted-foreground/70">· {nisabType === "gold" ? "85g emas" : "595g perak"}</span>
-          </button>
-        </div>
       </header>
+
 
       {/* Pull-to-refresh indicator (mobile) */}
       {isMobile && (pullDistance > 0 || refreshing) && (
@@ -539,7 +528,8 @@ const Index = () => {
         className="mx-auto max-w-2xl w-full px-4 py-5 sm:px-6 sm:py-8 space-y-5 sm:space-y-7 flex-1"
         style={{ paddingBottom: "calc(12rem + env(safe-area-inset-bottom, 0px))" }}
       >
-        {/* Desktop nav — same structure as mobile: 4 primary + Lainnya */}
+        {/* Desktop nav — 4 primary + Lainnya. On desktop, "Lainnya" expands the
+            remaining categories inline (not a bottom drawer). Mobile still uses the drawer. */}
         <nav aria-label="Kategori zakat" className="hidden md:flex flex-wrap gap-1.5">
           {PRIMARY_TABS.map((tab) => {
             const Icon = TAB_ICONS[tab] ?? Briefcase;
@@ -550,10 +540,39 @@ const Index = () => {
               </button>
             );
           })}
-          <button type="button" onClick={() => setMoreOpen(true)} aria-haspopup="dialog" aria-current={moreActive ? "page" : undefined} className={desktopPill(moreActive)}>
+          <button
+            type="button"
+            onClick={() => setMoreExpanded((v) => !v)}
+            aria-expanded={moreExpanded}
+            aria-current={moreActive ? "page" : undefined}
+            className={desktopPill(moreActive || moreExpanded)}
+          >
             <LayoutGrid aria-hidden="true" className="h-4 w-4" /> {moreActive ? `Lainnya · ${labelForTab(activeTab)}` : "Lainnya"}
           </button>
+          <AnimatePresence initial={false}>
+            {moreExpanded && ALL_PAGES.filter((p) => !PRIMARY_TABS.includes(p.tab)).map((p) => {
+              const Icon = TAB_ICONS[p.tab] ?? Briefcase;
+              const active = activeTab === p.tab;
+              return (
+                <motion.button
+                  key={p.tab}
+                  type="button"
+                  initial={{ opacity: 0, x: -8, scale: 0.95 }}
+                  animate={{ opacity: 1, x: 0, scale: 1 }}
+                  exit={{ opacity: 0, x: -8, scale: 0.95 }}
+                  transition={{ duration: 0.18 }}
+                  onClick={() => { setActiveTab(p.tab); }}
+                  aria-current={active ? "page" : undefined}
+                  className={desktopPill(active)}
+                >
+                  <Icon aria-hidden="true" className="h-4 w-4" /> {p.label}
+                </motion.button>
+              );
+            })}
+          </AnimatePresence>
+
         </nav>
+
 
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
           <Card className="overflow-hidden transition-shadow duration-300 hover:shadow-lg border-border/60">

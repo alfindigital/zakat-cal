@@ -3,10 +3,10 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 export function DarkModeToggle() {
+  // Default: light mode. Only follow user's explicit past choice — never OS preference.
   const [dark, setDark] = useState(() => {
     if (typeof window === "undefined") return false;
-    return localStorage.getItem("theme") === "dark" ||
-      (!localStorage.getItem("theme") && window.matchMedia("(prefers-color-scheme: dark)").matches);
+    return localStorage.getItem("theme") === "dark";
   });
 
   useEffect(() => {
