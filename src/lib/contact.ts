@@ -1,15 +1,20 @@
-// Local number 089619093961 → international wa.me format (62...).
-export const WA_NUMBER = "6289619093961";
+// Contact channel — Telegram: t.me/alfindigital
+export const TELEGRAM_HANDLE = "alfindigital";
+export const TELEGRAM_BASE = `https://t.me/${TELEGRAM_HANDLE}`;
 
-export const WA_BASE = `https://wa.me/${WA_NUMBER}`;
+// Kept for compatibility (still linked from a few places); points to Telegram now.
+export const WA_NUMBER = TELEGRAM_HANDLE;
+export const WA_BASE = TELEGRAM_BASE;
 
 import { formatRupiah, type ZakatType } from "@/lib/zakat";
 
-// Build a WhatsApp deep-link with a prefilled, friendly Indonesian message that
-// states the zakat type and the calculated amount, so the amil can follow up.
+// Telegram deep-link with a prefilled message. Telegram supports ?text= via
+// t.me/<user>?text=... (rendered as a pre-typed message when the app opens).
 export function buildZakatWaHref(type: ZakatType, amount: number): string {
   const msg =
     `Assalamualaikum, saya ingin menunaikan Zakat ${type} ` +
     `sebesar ${formatRupiah(amount)}. Mohon informasinya. (via ZakatCal)`;
-  return `${WA_BASE}?text=${encodeURIComponent(msg)}`;
+  return `${TELEGRAM_BASE}?text=${encodeURIComponent(msg)}`;
 }
+
+export const buildZakatTelegramHref = buildZakatWaHref;
