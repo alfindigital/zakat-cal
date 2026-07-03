@@ -626,10 +626,6 @@ const Index = () => {
                 </article>
               ))}
             </div>
-            <div className="flex flex-wrap gap-3 pt-1 text-sm font-sans">
-              <Link to="/panduan-zakat" className="font-semibold text-primary hover:underline">Panduan lengkap zakat →</Link>
-              <Link to="/tentang" className="font-medium text-muted-foreground hover:text-foreground">Tentang & disclaimer</Link>
-            </div>
           </section>
         )}
       </main>
