@@ -480,3 +480,70 @@ export function roundZakat(amount: number, on = loadRoundUp()): number {
   if (!on || amount <= 0) return amount;
   return Math.ceil(amount / 1000) * 1000;
 }
+
+// ===== LocalStorage schema versioning =====
+// Bumped whenever the on-disk shape of any zakat-* key changes so we can run
+// future migrations safely. `migrateStorage` is idempotent and cheap; safe to
+// call on every app mount.
+export const SCHEMA_VERSION = 1;
+const SCHEMA_KEY = "zakat-schema-version";
+
+export function migrateStorage(): number {
+  if (typeof localStorage === "undefined") return SCHEMA_VERSION;
+  try {
+    const raw = localStorage.getItem(SCHEMA_KEY);
+    const current = raw ? Number(raw) : 0;
+    if (current === SCHEMA_VERSION) return current;
+    // v0 -> v1: no destructive change; just stamp the version so future
+    // migrations know the baseline shape.
+    localStorage.setItem(SCHEMA_KEY, String(SCHEMA_VERSION));
+    return SCHEMA_VERSION;
+  } catch {
+    return SCHEMA_VERSION;
+  }
+}
+
+// ===== Shareable result deep-links =====
+// Encoded into a single `?share=` query param so a user can send a link that,
+// when opened, greets the recipient with the exact zakat total and type.
+export interface SharedResult {
+  type: ZakatType;
+  amount: number;
+  label?: string;
+}
+
+export function encodeSharedResult(r: SharedResult): string {
+  const payload = { t: r.type, a: Math.round(r.amount), l: r.label };
+  try {
+    // btoa is safe for our ASCII-only JSON payload here.
+    return btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+  } catch {
+    return "";
+  }
+}
+
+export function decodeSharedResult(token: string): SharedResult | null {
+  if (!token) return null;
+  try {
+    const json = decodeURIComponent(escape(atob(token)));
+    const p = JSON.parse(json);
+    if (!p || typeof p.t !== "string" || typeof p.a !== "number") return null;
+    return { type: p.t as ZakatType, amount: p.a, label: typeof p.l === "string" ? p.l : undefined };
+  } catch {
+    return null;
+  }
+}
+
+export function buildShareUrl(base: string, r: SharedResult): string {
+  const token = encodeSharedResult(r);
+  if (!token) return base;
+  try {
+    const url = new URL(base, typeof location !== "undefined" ? location.href : "https://example.com");
+    url.searchParams.set("share", token);
+    return url.toString();
+  } catch {
+    const sep = base.includes("?") ? "&" : "?";
+    return `${base}${sep}share=${encodeURIComponent(token)}`;
+  }
+}
+
