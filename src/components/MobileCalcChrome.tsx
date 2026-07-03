@@ -5,7 +5,7 @@ import { ChevronDown, Download, MessageCircle, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { formatRupiah, roundZakat, type ZakatType } from "@/lib/zakat";
+import { formatRupiah, roundZakat, buildShareUrl, type ZakatType } from "@/lib/zakat";
 import { buildZakatWaHref } from "@/lib/contact";
 import { useRoundUp } from "@/lib/round-context";
 import { track } from "@/lib/analytics";
