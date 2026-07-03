@@ -43,6 +43,7 @@ import { toast } from "sonner";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ALL_PAGES, HOME_SEO, getPageBySlug, useSeo, type ZakatPage } from "@/lib/seo";
 import { track } from "@/lib/analytics";
+import { loadMazhab, saveMazhab, MAZHAB_NOTES, type Mazhab } from "@/lib/mazhab";
 
 type IconType = typeof Briefcase;
 const TAB_ICONS: Record<string, IconType> = {
@@ -86,6 +87,8 @@ const NisabSettings = ({
   priceMeta,
   roundUp,
   onRoundUpChange,
+  mazhab,
+  onMazhabChange,
 }: {
   nisabType: NisabType;
   setNisabType: (v: NisabType) => void;
@@ -98,8 +101,28 @@ const NisabSettings = ({
   priceMeta: { date: string; source: PriceSource };
   roundUp: boolean;
   onRoundUpChange: (v: boolean) => void;
+  mazhab: Mazhab;
+  onMazhabChange: (m: Mazhab) => void;
 }) => (
   <div className="space-y-4">
+    <div className="space-y-2">
+      <Label className="text-sm text-muted-foreground font-medium">Mazhab / Preferensi Fiqh</Label>
+      <ToggleGroup
+        type="single"
+        value={mazhab}
+        onValueChange={(v) => v && onMazhabChange(v as Mazhab)}
+        className="w-full gap-0 rounded-lg border border-border/60 p-0.5"
+      >
+        <ToggleGroupItem value="jumhur" className="flex-1 text-sm h-10 rounded-md data-[state=on]:bg-primary data-[state=on]:text-primary-foreground font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none">
+          Jumhur
+        </ToggleGroupItem>
+        <ToggleGroupItem value="hanafi" className="flex-1 text-sm h-10 rounded-md data-[state=on]:bg-primary data-[state=on]:text-primary-foreground font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none">
+          Hanafi
+        </ToggleGroupItem>
+      </ToggleGroup>
+      <p className="text-[11px] text-muted-foreground leading-snug">{MAZHAB_NOTES[mazhab].maal}</p>
+    </div>
+
     <div className="space-y-2">
       <Label className="text-sm text-muted-foreground font-medium">Standar Nisab</Label>
       <ToggleGroup
@@ -174,6 +197,11 @@ const Index = () => {
   const [priceMeta, setPriceMeta] = useState<{ date: string; source: PriceSource }>({ date: stored.date, source: stored.source });
   const [nisabType, setNisabType] = useState<NisabType>("gold");
   const [roundUp, setRoundUp] = useState(() => loadRoundUp());
+  const [mazhab, setMazhab] = useState<Mazhab>(() => loadMazhab());
+  const handleMazhabChange = useCallback((m: Mazhab) => {
+    setMazhab(m);
+    saveMazhab(m);
+  }, []);
   const [history, setHistory] = useState(getHistory());
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
@@ -453,6 +481,8 @@ const Index = () => {
                     priceMeta={priceMeta}
                     roundUp={roundUp}
                     onRoundUpChange={(v) => { setRoundUp(v); saveRoundUp(v); }}
+                    mazhab={mazhab}
+                    onMazhabChange={handleMazhabChange}
                   />
 
                   {/* Haul reminder (moved here to keep the home clean) */}
