@@ -197,6 +197,11 @@ const Index = () => {
   const [priceMeta, setPriceMeta] = useState<{ date: string; source: PriceSource }>({ date: stored.date, source: stored.source });
   const [nisabType, setNisabType] = useState<NisabType>("gold");
   const [roundUp, setRoundUp] = useState(() => loadRoundUp());
+  const [mazhab, setMazhab] = useState<Mazhab>(() => loadMazhab());
+  const handleMazhabChange = useCallback((m: Mazhab) => {
+    setMazhab(m);
+    saveMazhab(m);
+  }, []);
   const [history, setHistory] = useState(getHistory());
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
