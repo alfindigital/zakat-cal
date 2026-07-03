@@ -204,7 +204,9 @@ const Index = () => {
   }, []);
   const [history, setHistory] = useState(getHistory());
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [moreOpen, setMoreOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false); // mobile drawer
+  const [moreExpanded, setMoreExpanded] = useState(false); // desktop inline expansion
+
   const [refreshing, setRefreshing] = useState(false);
 
   const isMobile = useIsMobile();
