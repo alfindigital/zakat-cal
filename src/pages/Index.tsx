@@ -86,6 +86,8 @@ const NisabSettings = ({
   priceMeta,
   roundUp,
   onRoundUpChange,
+  mazhab,
+  onMazhabChange,
 }: {
   nisabType: NisabType;
   setNisabType: (v: NisabType) => void;
@@ -98,8 +100,28 @@ const NisabSettings = ({
   priceMeta: { date: string; source: PriceSource };
   roundUp: boolean;
   onRoundUpChange: (v: boolean) => void;
+  mazhab: Mazhab;
+  onMazhabChange: (m: Mazhab) => void;
 }) => (
   <div className="space-y-4">
+    <div className="space-y-2">
+      <Label className="text-sm text-muted-foreground font-medium">Mazhab / Preferensi Fiqh</Label>
+      <ToggleGroup
+        type="single"
+        value={mazhab}
+        onValueChange={(v) => v && onMazhabChange(v as Mazhab)}
+        className="w-full gap-0 rounded-lg border border-border/60 p-0.5"
+      >
+        <ToggleGroupItem value="jumhur" className="flex-1 text-sm h-10 rounded-md data-[state=on]:bg-primary data-[state=on]:text-primary-foreground font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none">
+          Jumhur
+        </ToggleGroupItem>
+        <ToggleGroupItem value="hanafi" className="flex-1 text-sm h-10 rounded-md data-[state=on]:bg-primary data-[state=on]:text-primary-foreground font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none">
+          Hanafi
+        </ToggleGroupItem>
+      </ToggleGroup>
+      <p className="text-[11px] text-muted-foreground leading-snug">{MAZHAB_NOTES[mazhab].maal}</p>
+    </div>
+
     <div className="space-y-2">
       <Label className="text-sm text-muted-foreground font-medium">Standar Nisab</Label>
       <ToggleGroup
