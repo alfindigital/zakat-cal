@@ -10,6 +10,8 @@ import {
   saveStoredPrices,
   loadRoundUp,
   saveRoundUp,
+  loadAutoUpdate,
+  saveAutoUpdate,
   getNisab,
   formatRupiah,
   migrateStorage,
@@ -89,6 +91,8 @@ const NisabSettings = ({
   onRoundUpChange,
   mazhab,
   onMazhabChange,
+  autoUpdate,
+  onAutoUpdateChange,
 }: {
   nisabType: NisabType;
   setNisabType: (v: NisabType) => void;
@@ -103,6 +107,8 @@ const NisabSettings = ({
   onRoundUpChange: (v: boolean) => void;
   mazhab: Mazhab;
   onMazhabChange: (m: Mazhab) => void;
+  autoUpdate: boolean;
+  onAutoUpdateChange: (v: boolean) => void;
 }) => (
   <div className="space-y-4">
     <div className="space-y-2">
@@ -139,8 +145,23 @@ const NisabSettings = ({
         </ToggleGroupItem>
       </ToggleGroup>
     </div>
+    <div className="flex items-center justify-between gap-3 rounded-lg border border-border/60 p-3">
+      <div className="min-w-0">
+        <Label htmlFor="autoupdate-switch" className="text-sm font-medium">Auto-update harga emas</Label>
+        <p className="text-[11px] text-muted-foreground">Ambil harga terbaru dari internet. Matikan untuk isi manual.</p>
+      </div>
+      <Switch id="autoupdate-switch" checked={autoUpdate} onCheckedChange={onAutoUpdateChange} />
+    </div>
+
     <div className="space-y-2">
-      <Label htmlFor="gold-price-sheet" className="text-sm text-muted-foreground font-medium">Harga Emas per gram (Rp)</Label>
+      <div className="flex items-center justify-between gap-2">
+        <Label htmlFor="gold-price-sheet" className="text-sm text-muted-foreground font-medium">Harga Emas per gram (Rp)</Label>
+        {autoUpdate && (
+          <Button variant="outline" size="sm" onClick={onRefresh} disabled={refreshing} className="h-8 text-xs">
+            <RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${refreshing ? "animate-spin" : ""}`} /> Perbarui
+          </Button>
+        )}
+      </div>
       <Input
         id="gold-price-sheet"
         type="text"
@@ -148,9 +169,15 @@ const NisabSettings = ({
         pattern="[0-9]*"
         value={goldInput}
         onChange={(e) => onGoldChange(e.target.value.replace(/\D/g, ""))}
-        className="h-12 text-base font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        disabled={autoUpdate}
+        className="h-12 text-base font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed"
         placeholder="2000000"
       />
+      <p className="text-[11px] text-muted-foreground">
+        {autoUpdate
+          ? `Otomatis dari internet · ${priceMeta.source === "online" ? "online" : "belum berhasil, isi manual bila perlu"} · ${priceMeta.date}`
+          : `Manual · ${priceMeta.date}`}
+      </p>
     </div>
     <div className="space-y-2">
       <Label htmlFor="silver-price-sheet" className="text-sm text-muted-foreground font-medium">Harga Perak per gram (Rp)</Label>
@@ -164,14 +191,6 @@ const NisabSettings = ({
         className="h-12 text-base font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         placeholder="28000"
       />
-    </div>
-    <div className="flex items-center justify-between gap-2 pt-1">
-      <p className="text-xs text-muted-foreground">
-        {priceMeta.source === "online" ? "Harga online" : priceMeta.source === "manual" ? "Harga manual" : "Harga default"} • {priceMeta.date}
-      </p>
-      <Button variant="outline" size="sm" onClick={onRefresh} disabled={refreshing} className="h-9 text-xs">
-        <RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${refreshing ? "animate-spin" : ""}`} /> Perbarui online
-      </Button>
     </div>
     
 
@@ -197,6 +216,7 @@ const Index = () => {
   const [priceMeta, setPriceMeta] = useState<{ date: string; source: PriceSource }>({ date: stored.date, source: stored.source });
   const [nisabType, setNisabType] = useState<NisabType>("gold");
   const [roundUp, setRoundUp] = useState(() => loadRoundUp());
+  const [autoUpdate, setAutoUpdate] = useState(() => loadAutoUpdate());
   const [mazhab, setMazhab] = useState<Mazhab>(() => loadMazhab());
   const handleMazhabChange = useCallback((m: Mazhab) => {
     setMazhab(m);
@@ -331,6 +351,18 @@ const Index = () => {
   useEffect(() => {
     migrateStorage();
   }, []);
+
+  // Auto-fetch latest gold price on mount when auto-update is enabled and the
+  // stored price wasn't already refreshed today.
+  const autoFetchedRef = useRef(false);
+  useEffect(() => {
+    if (autoFetchedRef.current) return;
+    if (!autoUpdate) return;
+    autoFetchedRef.current = true;
+    refreshGoldPrice();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoUpdate]);
+
 
   // Parse ?share=... deep-link and greet the visitor with the shared result.
   const sharedGreeted = useRef(false);
@@ -467,7 +499,7 @@ const Index = () => {
                       <span className="text-muted-foreground font-normal"> · {nisabType === "gold" ? "85g emas" : "595g perak"}</span>
                     </p>
                     <p className="text-[11px] text-muted-foreground">
-                      {nisabType === "gold" ? "Emas" : "Perak"} Rp {metalPrice.toLocaleString("id-ID")}/gr · {priceMeta.source === "online" ? "online" : priceMeta.source === "manual" ? "manual" : "default"} · {priceMeta.date}
+                      {nisabType === "gold" ? "Emas" : "Perak"} Rp {metalPrice.toLocaleString("id-ID")}/gr{priceMeta.source === "online" ? " · online" : priceMeta.source === "manual" ? " · manual" : ""} · {priceMeta.date}
                     </p>
                   </div>
 
@@ -485,7 +517,14 @@ const Index = () => {
                     onRoundUpChange={(v) => { setRoundUp(v); saveRoundUp(v); }}
                     mazhab={mazhab}
                     onMazhabChange={handleMazhabChange}
+                    autoUpdate={autoUpdate}
+                    onAutoUpdateChange={(v) => {
+                      setAutoUpdate(v);
+                      saveAutoUpdate(v);
+                      if (v) refreshGoldPrice();
+                    }}
                   />
+
 
                   {/* Haul reminder (moved here to keep the home clean) */}
                   <div className="border-t pt-4">
