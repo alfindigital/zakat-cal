@@ -493,11 +493,12 @@ export function formatRupiah(n: number) {
 const ROUNDUP_KEY = "zakat-roundup";
 
 export function loadRoundUp(): boolean {
-  if (typeof localStorage === "undefined") return false;
+  if (typeof localStorage === "undefined") return true;
   try {
-    return localStorage.getItem(ROUNDUP_KEY) === "1";
+    const v = localStorage.getItem(ROUNDUP_KEY);
+    return v === null ? true : v === "1";
   } catch {
-    return false;
+    return true;
   }
 }
 
