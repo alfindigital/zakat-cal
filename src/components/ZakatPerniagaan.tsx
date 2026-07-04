@@ -7,7 +7,7 @@ import { calcZakatPerniagaan, formatRupiah, addHistory } from "@/lib/zakat";
 import { generateZakatPdf } from "@/lib/pdf-generator";
 import { track } from "@/lib/analytics";
 import { formatNumberInput, parseFormattedNumber, formattedChange } from "@/lib/format";
-import { ResultCard, MobileCta, MobilePdfFab } from "./MobileCalcChrome";
+import { ResultCard, MobilePdfFab } from "./MobileCalcChrome";
 import { toast } from "sonner";
 
 interface Props {
@@ -84,7 +84,7 @@ export default function ZakatPerniagaan({ goldPrice, isActive, onCalculated }: P
       <p className="text-xs text-muted-foreground">
         <strong>Modal kerja</strong> = kas/uang usaha. <strong>Piutang lancar</strong> = tagihan yang akan tertagih. <strong>Stok dagang</strong> = nilai barang dagangan. <strong>Hutang dagang</strong> = kewajiban jangka pendek usaha.
       </p>
-      <Button onClick={handleSave} disabled={!result || result.zakatAmount <= 0} className="w-full h-11 hidden md:inline-flex">
+      <Button onClick={handleSave} disabled={!result || result.zakatAmount <= 0} className="w-full h-11">
         Simpan ke Riwayat
       </Button>
       <AnimatePresence>
@@ -101,7 +101,6 @@ export default function ZakatPerniagaan({ goldPrice, isActive, onCalculated }: P
           />
         )}
       </AnimatePresence>
-      <MobileCta isActive={isActive} label="Simpan ke Riwayat" disabled={!result || result.zakatAmount <= 0} onClick={handleSave} />
       <MobilePdfFab isActive={isActive} visible={!!result} onClick={handleDownload} />
     </div>
   );

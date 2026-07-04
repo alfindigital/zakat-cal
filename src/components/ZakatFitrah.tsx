@@ -9,7 +9,7 @@ import { calcZakatFitrah, calcZakatFitrahUang, formatRupiah, addHistory, RICE_OP
 import { generateZakatPdf } from "@/lib/pdf-generator";
 import { track } from "@/lib/analytics";
 import { formatNumberInput, parseFormattedNumber, formattedChange } from "@/lib/format";
-import { ResultCard, MobileCta, MobilePdfFab } from "./MobileCalcChrome";
+import { ResultCard, MobilePdfFab } from "./MobileCalcChrome";
 import { toast } from "sonner";
 import { getIdulFitriInfo } from "@/lib/ramadhan";
 import { loadMazhab, MAZHAB_NOTES } from "@/lib/mazhab";
@@ -175,7 +175,7 @@ export default function ZakatFitrah({ isActive, onCalculated }: Props) {
         </div>
       )}
 
-      <Button onClick={handleSave} disabled={!canCalc} className="w-full h-11 hidden md:inline-flex">
+      <Button onClick={handleSave} disabled={!canCalc} className="w-full h-11">
         Simpan ke Riwayat
       </Button>
 
@@ -193,7 +193,6 @@ export default function ZakatFitrah({ isActive, onCalculated }: Props) {
         )}
       </AnimatePresence>
 
-      <MobileCta isActive={isActive} label="Simpan ke Riwayat" disabled={!canCalc} onClick={handleSave} />
       <MobilePdfFab isActive={isActive} visible={!!result} onClick={handleDownload} />
     </div>
   );

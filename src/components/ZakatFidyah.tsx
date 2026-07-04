@@ -7,7 +7,7 @@ import { calcFidyah, formatRupiah, addHistory } from "@/lib/zakat";
 import { generateZakatPdf } from "@/lib/pdf-generator";
 import { track } from "@/lib/analytics";
 import { formatNumberInput, parseFormattedNumber, formattedChange } from "@/lib/format";
-import { ResultCard, MobileCta, MobilePdfFab } from "./MobileCalcChrome";
+import { ResultCard, MobilePdfFab } from "./MobileCalcChrome";
 import { toast } from "sonner";
 
 interface Props {
@@ -65,7 +65,7 @@ export default function ZakatFidyah({ isActive, onCalculated }: Props) {
             value={harga} onChange={(e) => formattedChange(e, setHarga, formatNumberInput)} className="h-12 sm:h-10 text-base" />
         </div>
       </div>
-      <Button onClick={handleSave} disabled={!canCalc} className="w-full h-11 hidden md:inline-flex">
+      <Button onClick={handleSave} disabled={!canCalc} className="w-full h-11">
         Simpan ke Riwayat
       </Button>
       <AnimatePresence>
@@ -81,7 +81,6 @@ export default function ZakatFidyah({ isActive, onCalculated }: Props) {
           />
         )}
       </AnimatePresence>
-      <MobileCta isActive={isActive} label="Simpan ke Riwayat" disabled={!canCalc} onClick={handleSave} />
       <MobilePdfFab isActive={isActive} visible={!!result} onClick={handleDownload} />
     </div>
   );

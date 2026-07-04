@@ -8,7 +8,7 @@ import { calcZakatPertanian, formatRupiah, addHistory, type IrrigationType } fro
 import { generateZakatPdf } from "@/lib/pdf-generator";
 import { track } from "@/lib/analytics";
 import { formatNumberInput, parseFormattedNumber, formatQuantityInput, parseQuantity, formattedChange } from "@/lib/format";
-import { ResultCard, MobileCta, MobilePdfFab } from "./MobileCalcChrome";
+import { ResultCard, MobilePdfFab } from "./MobileCalcChrome";
 import { toast } from "sonner";
 
 interface Props {
@@ -86,7 +86,7 @@ export default function ZakatPertanian({ isActive, onCalculated }: Props) {
             value={hargaKg} onChange={(e) => formattedChange(e, setHargaKg, formatNumberInput)} className="h-12 sm:h-10 text-base" />
         </div>
       </div>
-      <Button onClick={handleSave} disabled={!result || result.zakatAmount <= 0} className="w-full h-11 hidden md:inline-flex">
+      <Button onClick={handleSave} disabled={!result || result.zakatAmount <= 0} className="w-full h-11">
         Simpan ke Riwayat
       </Button>
       <AnimatePresence>
@@ -103,7 +103,6 @@ export default function ZakatPertanian({ isActive, onCalculated }: Props) {
           />
         )}
       </AnimatePresence>
-      <MobileCta isActive={isActive} label="Simpan ke Riwayat" disabled={!result || result.zakatAmount <= 0} onClick={handleSave} />
       <MobilePdfFab isActive={isActive} visible={!!result} onClick={handleDownload} />
     </div>
   );
