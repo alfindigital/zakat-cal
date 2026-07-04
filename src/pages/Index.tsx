@@ -487,7 +487,7 @@ const Index = () => {
                       <span className="text-muted-foreground font-normal"> · {nisabType === "gold" ? "85g emas" : "595g perak"}</span>
                     </p>
                     <p className="text-[11px] text-muted-foreground">
-                      {nisabType === "gold" ? "Emas" : "Perak"} Rp {metalPrice.toLocaleString("id-ID")}/gr · {priceMeta.source === "online" ? "online" : priceMeta.source === "manual" ? "manual" : "default"} · {priceMeta.date}
+                      {nisabType === "gold" ? "Emas" : "Perak"} Rp {metalPrice.toLocaleString("id-ID")}/gr{priceMeta.source === "online" ? " · online" : priceMeta.source === "manual" ? " · manual" : ""} · {priceMeta.date}
                     </p>
                   </div>
 
@@ -505,7 +505,14 @@ const Index = () => {
                     onRoundUpChange={(v) => { setRoundUp(v); saveRoundUp(v); }}
                     mazhab={mazhab}
                     onMazhabChange={handleMazhabChange}
+                    autoUpdate={autoUpdate}
+                    onAutoUpdateChange={(v) => {
+                      setAutoUpdate(v);
+                      saveAutoUpdate(v);
+                      if (v) refreshGoldPrice();
+                    }}
                   />
+
 
                   {/* Haul reminder (moved here to keep the home clean) */}
                   <div className="border-t pt-4">
