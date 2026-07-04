@@ -352,6 +352,18 @@ const Index = () => {
     migrateStorage();
   }, []);
 
+  // Auto-fetch latest gold price on mount when auto-update is enabled and the
+  // stored price wasn't already refreshed today.
+  const autoFetchedRef = useRef(false);
+  useEffect(() => {
+    if (autoFetchedRef.current) return;
+    if (!autoUpdate) return;
+    autoFetchedRef.current = true;
+    refreshGoldPrice();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoUpdate]);
+
+
   // Parse ?share=... deep-link and greet the visitor with the shared result.
   const sharedGreeted = useRef(false);
   useEffect(() => {
