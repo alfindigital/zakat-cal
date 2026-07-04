@@ -8,7 +8,7 @@ import { calcZakatPenghasilan, formatRupiah, addHistory, type NisabType } from "
 import { generateZakatPdf } from "@/lib/pdf-generator";
 import { track } from "@/lib/analytics";
 import { formatNumberInput, parseFormattedNumber, formattedChange } from "@/lib/format";
-import { ResultCard, MobileCta, MobilePdfFab } from "./MobileCalcChrome";
+import { ResultCard, MobilePdfFab } from "./MobileCalcChrome";
 import { toast } from "sonner";
 
 interface Props {
@@ -128,7 +128,7 @@ export default function ZakatPenghasilan({ metalPrice, nisabType, isActive, onCa
         </div>
       )}
 
-      <Button onClick={handleSave} disabled={!result || result.zakatAmount <= 0} className="w-full h-11 hidden md:inline-flex">
+      <Button onClick={handleSave} disabled={!result || result.zakatAmount <= 0} className="w-full h-11">
         Simpan ke Riwayat
       </Button>
 
@@ -147,7 +147,6 @@ export default function ZakatPenghasilan({ metalPrice, nisabType, isActive, onCa
         )}
       </AnimatePresence>
 
-      <MobileCta isActive={isActive} label="Simpan ke Riwayat" disabled={!result || result.zakatAmount <= 0} onClick={handleSave} />
       <MobilePdfFab isActive={isActive} visible={!!result} onClick={handleDownload} />
     </div>
   );

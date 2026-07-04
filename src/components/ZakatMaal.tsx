@@ -7,7 +7,7 @@ import { calcZakatMaal, formatRupiah, addHistory, type NisabType } from "@/lib/z
 import { generateZakatPdf } from "@/lib/pdf-generator";
 import { track } from "@/lib/analytics";
 import { formatNumberInput, parseFormattedNumber, formatQuantityInput, parseQuantity, formattedChange } from "@/lib/format";
-import { ResultCard, MobileCta, MobilePdfFab } from "./MobileCalcChrome";
+import { ResultCard, MobilePdfFab } from "./MobileCalcChrome";
 import { toast } from "sonner";
 
 interface Props {
@@ -117,7 +117,7 @@ export default function ZakatMaal({ goldPrice, silverPrice, nisabType, isActive,
         Catatan: menurut sebagian ulama, emas perhiasan yang wajar dipakai sehari-hari tidak dizakati — masukkan hanya emas simpanan/investasi.
       </p>
 
-      <Button onClick={handleSave} disabled={!result || result.zakatAmount <= 0} className="w-full h-11 hidden md:inline-flex">
+      <Button onClick={handleSave} disabled={!result || result.zakatAmount <= 0} className="w-full h-11">
         Simpan ke Riwayat
       </Button>
 
@@ -136,7 +136,6 @@ export default function ZakatMaal({ goldPrice, silverPrice, nisabType, isActive,
         )}
       </AnimatePresence>
 
-      <MobileCta isActive={isActive} label="Simpan ke Riwayat" disabled={!result || result.zakatAmount <= 0} onClick={handleSave} />
       <MobilePdfFab isActive={isActive} visible={!!result} onClick={handleDownload} />
     </div>
   );
