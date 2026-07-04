@@ -99,22 +99,56 @@ export function hasStoredPrices(): boolean {
 // explicitly asks (button / pull-to-refresh) — manual values are never
 // silently overwritten on load.
 export async function fetchGoldPrice(): Promise<GoldPrice> {
+  // Primary: goldprice.org public feed (no API key, returns price per troy oz in IDR).
+  try {
+    const res = await fetch("https://data-asg.goldprice.org/dbXRates/IDR", {
+      headers: { Accept: "application/json" },
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const item = Array.isArray(data?.items) ? data.items[0] : null;
+      const xauIdr = Number(item?.xauPrice);
+      if (xauIdr > 0) {
+        const perGram = Math.round(xauIdr / 31.1035);
+        return { price: perGram, date: todayId(), isDefault: false };
+      }
+    }
+  } catch {
+    /* fallback below */
+  }
+  // Fallback: metals.dev demo (may rate-limit).
   try {
     const res = await fetch("https://api.metals.dev/v1/latest?api_key=demo&currency=IDR&unit=gram");
     if (res.ok) {
       const data = await res.json();
       if (data?.metals?.gold) {
-        return {
-          price: Math.round(data.metals.gold),
-          date: todayId(),
-          isDefault: false,
-        };
+        return { price: Math.round(data.metals.gold), date: todayId(), isDefault: false };
       }
     }
   } catch {
-    // fallback
+    /* ignore */
   }
   return { price: loadStoredPrices().gold, date: todayId(), isDefault: true };
+}
+
+// ===== Auto-update preference =====
+const AUTO_UPDATE_KEY = "zakat-auto-update-gold";
+export function loadAutoUpdate(): boolean {
+  if (typeof localStorage === "undefined") return true;
+  try {
+    const v = localStorage.getItem(AUTO_UPDATE_KEY);
+    return v === null ? true : v === "1";
+  } catch {
+    return true;
+  }
+}
+export function saveAutoUpdate(on: boolean) {
+  if (typeof localStorage === "undefined") return;
+  try {
+    localStorage.setItem(AUTO_UPDATE_KEY, on ? "1" : "0");
+  } catch {
+    /* ignore */
+  }
 }
 
 export function getNisab(metalPrice: number, type: NisabType = "gold") {
