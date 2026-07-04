@@ -7,7 +7,7 @@ import { calcZakatMadin, formatRupiah, addHistory } from "@/lib/zakat";
 import { generateZakatPdf } from "@/lib/pdf-generator";
 import { track } from "@/lib/analytics";
 import { formatNumberInput, parseFormattedNumber, formattedChange } from "@/lib/format";
-import { ResultCard, MobileCta, MobilePdfFab } from "./MobileCalcChrome";
+import { ResultCard, MobilePdfFab } from "./MobileCalcChrome";
 import { toast } from "sonner";
 
 interface Props {
@@ -60,7 +60,7 @@ export default function ZakatMadin({ goldPrice, isActive, onCalculated }: Props)
         <Input id="madin-nilai" type="text" inputMode="decimal" pattern="[0-9]*" placeholder="0"
           value={nilai} onChange={(e) => formattedChange(e, setNilai, formatNumberInput)} className="h-12 sm:h-10 text-base" />
       </div>
-      <Button onClick={handleSave} disabled={!result || result.zakatAmount <= 0} className="w-full h-11 hidden md:inline-flex">
+      <Button onClick={handleSave} disabled={!result || result.zakatAmount <= 0} className="w-full h-11">
         Simpan ke Riwayat
       </Button>
       <AnimatePresence>
@@ -77,7 +77,6 @@ export default function ZakatMadin({ goldPrice, isActive, onCalculated }: Props)
           />
         )}
       </AnimatePresence>
-      <MobileCta isActive={isActive} label="Simpan ke Riwayat" disabled={!result || result.zakatAmount <= 0} onClick={handleSave} />
       <MobilePdfFab isActive={isActive} visible={!!result} onClick={handleDownload} />
     </div>
   );
