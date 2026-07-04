@@ -91,6 +91,8 @@ const NisabSettings = ({
   onRoundUpChange,
   mazhab,
   onMazhabChange,
+  autoUpdate,
+  onAutoUpdateChange,
 }: {
   nisabType: NisabType;
   setNisabType: (v: NisabType) => void;
@@ -105,6 +107,8 @@ const NisabSettings = ({
   onRoundUpChange: (v: boolean) => void;
   mazhab: Mazhab;
   onMazhabChange: (m: Mazhab) => void;
+  autoUpdate: boolean;
+  onAutoUpdateChange: (v: boolean) => void;
 }) => (
   <div className="space-y-4">
     <div className="space-y-2">
