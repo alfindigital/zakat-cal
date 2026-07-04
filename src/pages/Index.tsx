@@ -10,6 +10,8 @@ import {
   saveStoredPrices,
   loadRoundUp,
   saveRoundUp,
+  loadAutoUpdate,
+  saveAutoUpdate,
   getNisab,
   formatRupiah,
   migrateStorage,
