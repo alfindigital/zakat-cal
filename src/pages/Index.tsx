@@ -145,8 +145,23 @@ const NisabSettings = ({
         </ToggleGroupItem>
       </ToggleGroup>
     </div>
+    <div className="flex items-center justify-between gap-3 rounded-lg border border-border/60 p-3">
+      <div className="min-w-0">
+        <Label htmlFor="autoupdate-switch" className="text-sm font-medium">Auto-update harga emas</Label>
+        <p className="text-[11px] text-muted-foreground">Ambil harga terbaru dari internet. Matikan untuk isi manual.</p>
+      </div>
+      <Switch id="autoupdate-switch" checked={autoUpdate} onCheckedChange={onAutoUpdateChange} />
+    </div>
+
     <div className="space-y-2">
-      <Label htmlFor="gold-price-sheet" className="text-sm text-muted-foreground font-medium">Harga Emas per gram (Rp)</Label>
+      <div className="flex items-center justify-between gap-2">
+        <Label htmlFor="gold-price-sheet" className="text-sm text-muted-foreground font-medium">Harga Emas per gram (Rp)</Label>
+        {autoUpdate && (
+          <Button variant="outline" size="sm" onClick={onRefresh} disabled={refreshing} className="h-8 text-xs">
+            <RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${refreshing ? "animate-spin" : ""}`} /> Perbarui
+          </Button>
+        )}
+      </div>
       <Input
         id="gold-price-sheet"
         type="text"
@@ -154,9 +169,15 @@ const NisabSettings = ({
         pattern="[0-9]*"
         value={goldInput}
         onChange={(e) => onGoldChange(e.target.value.replace(/\D/g, ""))}
-        className="h-12 text-base font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        disabled={autoUpdate}
+        className="h-12 text-base font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed"
         placeholder="2000000"
       />
+      <p className="text-[11px] text-muted-foreground">
+        {autoUpdate
+          ? `Otomatis dari internet · ${priceMeta.source === "online" ? "online" : "belum berhasil, isi manual bila perlu"} · ${priceMeta.date}`
+          : `Manual · ${priceMeta.date}`}
+      </p>
     </div>
     <div className="space-y-2">
       <Label htmlFor="silver-price-sheet" className="text-sm text-muted-foreground font-medium">Harga Perak per gram (Rp)</Label>
@@ -170,14 +191,6 @@ const NisabSettings = ({
         className="h-12 text-base font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         placeholder="28000"
       />
-    </div>
-    <div className="flex items-center justify-between gap-2 pt-1">
-      <p className="text-xs text-muted-foreground">
-        {priceMeta.source === "online" ? "Harga online" : priceMeta.source === "manual" ? "Harga manual" : "Harga default"} • {priceMeta.date}
-      </p>
-      <Button variant="outline" size="sm" onClick={onRefresh} disabled={refreshing} className="h-9 text-xs">
-        <RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${refreshing ? "animate-spin" : ""}`} /> Perbarui online
-      </Button>
     </div>
     
 
