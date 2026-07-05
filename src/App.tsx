@@ -6,6 +6,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Index from "./pages/Index.tsx";
 import PanduanZakat from "./pages/PanduanZakat.tsx";
 import Tentang from "./pages/Tentang.tsx";
+import Pengaturan from "./pages/Pengaturan.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import { ALL_PAGES } from "@/lib/seo";
 
