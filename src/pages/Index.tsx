@@ -152,7 +152,6 @@ const Index = () => {
         toast.error("Gagal memuat harga online", { description: "Memakai harga tersimpan." });
       } else {
         setGoldPrice(g.price);
-        setGoldInput(String(g.price));
         persistPrices(g.price, silverPrice, "online");
         toast.success("Harga emas diperbarui", { description: `Rp ${g.price.toLocaleString("id-ID")} / gram` });
       }
@@ -164,23 +163,6 @@ const Index = () => {
     }
   }, [silverPrice, persistPrices]);
 
-  const handleGoldChange = (val: string) => {
-    setGoldInput(val);
-    const num = Number(val);
-    if (num > 0) {
-      setGoldPrice(num);
-      persistPrices(num, silverPrice, "manual");
-    }
-  };
-
-  const handleSilverChange = (val: string) => {
-    setSilverInput(val);
-    const num = Number(val);
-    if (num > 0) {
-      setSilverPrice(num);
-      persistPrices(goldPrice, num, "manual");
-    }
-  };
 
   const metalPrice = nisabType === "gold" ? goldPrice : silverPrice;
   const currentNisab = getNisab(metalPrice, nisabType);
