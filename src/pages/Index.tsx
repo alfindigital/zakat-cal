@@ -423,11 +423,8 @@ const Index = () => {
           </Card>
         </motion.div>
 
-        {/* Privacy reassurance */}
-        <p className="flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground">
-          <ShieldCheck aria-hidden="true" className="h-3.5 w-3.5 text-primary" />
-          Perhitungan 100% di perangkat Anda — tidak ada data yang dikirim.
-        </p>
+
+
 
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.15 }}>
           <ZakatRiwayat history={history} onChanged={refreshHistory} />
