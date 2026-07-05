@@ -73,7 +73,6 @@ export default function Tentang() {
               <Send className="mr-2 h-4 w-4" /> Hubungi via Telegram
             </a>
           </Button>
-          <p className="text-xs text-muted-foreground">t.me/{TELEGRAM_HANDLE}</p>
         </div>
 
       </div>
