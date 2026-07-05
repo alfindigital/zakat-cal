@@ -313,66 +313,11 @@ const Index = () => {
             </span>
           </Link>
           <div className="flex items-center gap-1">
-            {/* Settings: nisab, prices, rounding, haul reminder */}
-            <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
-              <DialogTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-11 w-11 sm:h-10 sm:w-10 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" aria-label="Pengaturan">
-                  <Settings2 className="h-5 w-5" />
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-md max-h-[85vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle>Pengaturan</DialogTitle>
-                  <DialogDescription className="sr-only">
-                    Atur nisab, harga emas/perak, pembulatan zakat, dan pengingat haul.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="mt-2 space-y-5">
-                  {/* Current nisab (moved here to keep the home clean) */}
-                  <div className="rounded-lg border border-border/60 bg-muted/40 p-3">
-                    <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Nisab saat ini</p>
-                    <p className="text-base font-bold tabular-nums">
-                      {formatRupiah(currentNisab)}
-                      <span className="text-muted-foreground font-normal"> · {nisabType === "gold" ? "85g emas" : "595g perak"}</span>
-                    </p>
-                    <p className="text-[11px] text-muted-foreground">
-                      {nisabType === "gold" ? "Emas" : "Perak"} Rp {metalPrice.toLocaleString("id-ID")}/gr{priceMeta.source === "online" ? " · online" : priceMeta.source === "manual" ? " · manual" : ""} · {priceMeta.date}
-                    </p>
-                  </div>
+            {/* Settings: dedicated page */}
+            <Button asChild variant="ghost" size="icon" className="h-11 w-11 sm:h-10 sm:w-10 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" aria-label="Pengaturan">
+              <Link to="/pengaturan"><Settings2 className="h-5 w-5" /></Link>
+            </Button>
 
-                  <NisabSettings
-                    nisabType={nisabType}
-                    setNisabType={setNisabType}
-                    goldInput={goldInput}
-                    silverInput={silverInput}
-                    onGoldChange={handleGoldChange}
-                    onSilverChange={handleSilverChange}
-                    onRefresh={refreshGoldPrice}
-                    refreshing={refreshing}
-                    priceMeta={priceMeta}
-                    roundUp={roundUp}
-                    onRoundUpChange={(v) => { setRoundUp(v); saveRoundUp(v); }}
-                    mazhab={mazhab}
-                    onMazhabChange={handleMazhabChange}
-                    autoUpdate={autoUpdate}
-                    onAutoUpdateChange={(v) => {
-                      setAutoUpdate(v);
-                      saveAutoUpdate(v);
-                      if (v) refreshGoldPrice();
-                    }}
-                  />
-
-
-                  {/* Haul reminder (moved here to keep the home clean) */}
-                  <div className="border-t pt-4">
-                    <h3 className="text-sm font-semibold flex items-center gap-2 mb-2">
-                      <CalendarClock className="h-4 w-4 text-primary" /> Pengingat Haul
-                    </h3>
-                    <HaulReminder embedded />
-                  </div>
-                </div>
-              </DialogContent>
-            </Dialog>
 
             {/* Info: go straight to the full guide page (no popup) */}
             <Button asChild variant="ghost" size="icon" className="h-11 w-11 sm:h-10 sm:w-10 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" aria-label="Panduan Zakat">
