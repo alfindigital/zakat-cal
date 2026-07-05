@@ -138,14 +138,7 @@ export default function HaulReminder({ embedded = false }: Props) {
   );
 
   if (embedded) {
-    return (
-      <div className="space-y-2">
-        <p className="text-xs text-muted-foreground">
-          Haul = 1 tahun Hijriah (±354 hari) sejak harta mencapai nisab. Catat tanggal mulainya — kami ingatkan saat jatuh tempo.
-        </p>
-        {body}
-      </div>
-    );
+    return <div className="space-y-2">{body}</div>;
   }
 
   return (

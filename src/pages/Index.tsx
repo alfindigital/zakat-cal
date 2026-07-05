@@ -1,7 +1,5 @@
 import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   fetchGoldPrice,
   getHistory,
@@ -9,9 +7,6 @@ import {
   loadStoredPrices,
   saveStoredPrices,
   loadRoundUp,
-  saveRoundUp,
-  loadAutoUpdate,
-  saveAutoUpdate,
   getNisab,
   formatRupiah,
   migrateStorage,
@@ -21,7 +16,6 @@ import {
 } from "@/lib/zakat";
 import { getHaulReminders, haulEndDate, daysUntil } from "@/lib/haul";
 import { RoundUpContext } from "@/lib/round-context";
-import { Switch } from "@/components/ui/switch";
 import ZakatPenghasilan from "@/components/ZakatPenghasilan";
 import ZakatMaal from "@/components/ZakatMaal";
 import ZakatFitrah from "@/components/ZakatFitrah";
@@ -33,11 +27,8 @@ import ZakatMadin from "@/components/ZakatMadin";
 import ZakatFidyah from "@/components/ZakatFidyah";
 import { DarkModeToggle } from "@/components/DarkModeToggle";
 import ZakatRiwayat from "@/components/ZakatRiwayat";
-import HaulReminder from "@/components/HaulReminder";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calculator, Briefcase, Wallet, Wheat, Settings2, Loader2, Store, Sprout, Beef, Gem, Mountain, Info, Moon, LayoutGrid, ShieldCheck, RefreshCw, CalendarClock } from "lucide-react";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Calculator, Briefcase, Wallet, Wheat, Settings2, Loader2, Store, Sprout, Beef, Gem, Mountain, Info, Moon, LayoutGrid } from "lucide-react";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -45,7 +36,7 @@ import { toast } from "sonner";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ALL_PAGES, HOME_SEO, getPageBySlug, useSeo, type ZakatPage } from "@/lib/seo";
 import { track } from "@/lib/analytics";
-import { loadMazhab, saveMazhab, MAZHAB_NOTES, type Mazhab } from "@/lib/mazhab";
+
 
 type IconType = typeof Briefcase;
 const TAB_ICONS: Record<string, IconType> = {
@@ -77,157 +68,22 @@ const tabForPath = (pathname: string) => {
   return getPageBySlug(slug)?.tab ?? "penghasilan";
 };
 
-const NisabSettings = ({
-  nisabType,
-  setNisabType,
-  goldInput,
-  silverInput,
-  onGoldChange,
-  onSilverChange,
-  onRefresh,
-  refreshing,
-  priceMeta,
-  roundUp,
-  onRoundUpChange,
-  mazhab,
-  onMazhabChange,
-  autoUpdate,
-  onAutoUpdateChange,
-}: {
-  nisabType: NisabType;
-  setNisabType: (v: NisabType) => void;
-  goldInput: string;
-  silverInput: string;
-  onGoldChange: (v: string) => void;
-  onSilverChange: (v: string) => void;
-  onRefresh: () => void;
-  refreshing: boolean;
-  priceMeta: { date: string; source: PriceSource };
-  roundUp: boolean;
-  onRoundUpChange: (v: boolean) => void;
-  mazhab: Mazhab;
-  onMazhabChange: (m: Mazhab) => void;
-  autoUpdate: boolean;
-  onAutoUpdateChange: (v: boolean) => void;
-}) => (
-  <div className="space-y-4">
-    <div className="space-y-2">
-      <Label className="text-sm text-muted-foreground font-medium">Mazhab / Preferensi Fiqh</Label>
-      <ToggleGroup
-        type="single"
-        value={mazhab}
-        onValueChange={(v) => v && onMazhabChange(v as Mazhab)}
-        className="w-full gap-0 rounded-lg border border-border/60 p-0.5"
-      >
-        <ToggleGroupItem value="jumhur" className="flex-1 text-sm h-10 rounded-md data-[state=on]:bg-primary data-[state=on]:text-primary-foreground font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none">
-          Jumhur
-        </ToggleGroupItem>
-        <ToggleGroupItem value="hanafi" className="flex-1 text-sm h-10 rounded-md data-[state=on]:bg-primary data-[state=on]:text-primary-foreground font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none">
-          Hanafi
-        </ToggleGroupItem>
-      </ToggleGroup>
-      <p className="text-[11px] text-muted-foreground leading-snug">{MAZHAB_NOTES[mazhab].maal}</p>
-    </div>
-
-    <div className="space-y-2">
-      <Label className="text-sm text-muted-foreground font-medium">Standar Nisab</Label>
-      <ToggleGroup
-        type="single"
-        value={nisabType}
-        onValueChange={(v) => v && setNisabType(v as NisabType)}
-        className="w-full gap-0 rounded-lg border border-border/60 p-0.5"
-      >
-        <ToggleGroupItem value="gold" className="flex-1 text-sm h-10 rounded-md data-[state=on]:bg-primary data-[state=on]:text-primary-foreground font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none">
-          🥇 Emas (85g)
-        </ToggleGroupItem>
-        <ToggleGroupItem value="silver" className="flex-1 text-sm h-10 rounded-md data-[state=on]:bg-primary data-[state=on]:text-primary-foreground font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none">
-          🥈 Perak (595g)
-        </ToggleGroupItem>
-      </ToggleGroup>
-    </div>
-    <div className="flex items-center justify-between gap-3 rounded-lg border border-border/60 p-3">
-      <div className="min-w-0">
-        <Label htmlFor="autoupdate-switch" className="text-sm font-medium">Auto-update harga emas</Label>
-        <p className="text-[11px] text-muted-foreground">Ambil harga terbaru dari internet. Matikan untuk isi manual.</p>
-      </div>
-      <Switch id="autoupdate-switch" checked={autoUpdate} onCheckedChange={onAutoUpdateChange} />
-    </div>
-
-    <div className="space-y-2">
-      <div className="flex items-center justify-between gap-2">
-        <Label htmlFor="gold-price-sheet" className="text-sm text-muted-foreground font-medium">Harga Emas per gram (Rp)</Label>
-        {autoUpdate && (
-          <Button variant="outline" size="sm" onClick={onRefresh} disabled={refreshing} className="h-8 text-xs">
-            <RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${refreshing ? "animate-spin" : ""}`} /> Perbarui
-          </Button>
-        )}
-      </div>
-      <Input
-        id="gold-price-sheet"
-        type="text"
-        inputMode="decimal"
-        pattern="[0-9]*"
-        value={goldInput}
-        onChange={(e) => onGoldChange(e.target.value.replace(/\D/g, ""))}
-        disabled={autoUpdate}
-        className="h-12 text-base font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed"
-        placeholder="2000000"
-      />
-      <p className="text-[11px] text-muted-foreground">
-        {autoUpdate
-          ? `Otomatis dari internet · ${priceMeta.source === "online" ? "online" : "belum berhasil, isi manual bila perlu"} · ${priceMeta.date}`
-          : `Manual · ${priceMeta.date}`}
-      </p>
-    </div>
-    <div className="space-y-2">
-      <Label htmlFor="silver-price-sheet" className="text-sm text-muted-foreground font-medium">Harga Perak per gram (Rp)</Label>
-      <Input
-        id="silver-price-sheet"
-        type="text"
-        inputMode="decimal"
-        pattern="[0-9]*"
-        value={silverInput}
-        onChange={(e) => onSilverChange(e.target.value.replace(/\D/g, ""))}
-        className="h-12 text-base font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-        placeholder="28000"
-      />
-    </div>
-    
-
-    <div className="flex items-center justify-between gap-3 rounded-lg border border-border/60 p-3">
-      <div className="min-w-0">
-        <Label htmlFor="roundup-switch" className="text-sm font-medium">Bulatkan zakat ke atas</Label>
-        <p className="text-[11px] text-muted-foreground">Pembulatan ihtiyat ke Rp 1.000 terdekat.</p>
-      </div>
-      <Switch id="roundup-switch" checked={roundUp} onCheckedChange={onRoundUpChange} />
-    </div>
-  </div>
-);
-
 const Index = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
   const stored = useMemo(() => loadStoredPrices(), []);
   const [goldPrice, setGoldPrice] = useState(stored.gold);
-  const [goldInput, setGoldInput] = useState(String(stored.gold));
-  const [silverPrice, setSilverPrice] = useState(stored.silver);
-  const [silverInput, setSilverInput] = useState(String(stored.silver));
+  const [silverPrice] = useState(stored.silver);
   const [priceMeta, setPriceMeta] = useState<{ date: string; source: PriceSource }>({ date: stored.date, source: stored.source });
-  const [nisabType, setNisabType] = useState<NisabType>("gold");
-  const [roundUp, setRoundUp] = useState(() => loadRoundUp());
-  const [autoUpdate, setAutoUpdate] = useState(() => loadAutoUpdate());
-  const [mazhab, setMazhab] = useState<Mazhab>(() => loadMazhab());
-  const handleMazhabChange = useCallback((m: Mazhab) => {
-    setMazhab(m);
-    saveMazhab(m);
-  }, []);
+  const [nisabType] = useState<NisabType>("gold");
+  const [roundUp] = useState(() => loadRoundUp());
   const [history, setHistory] = useState(getHistory());
-  const [settingsOpen, setSettingsOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false); // mobile drawer
   const [moreExpanded, setMoreExpanded] = useState(false); // desktop inline expansion
 
   const [refreshing, setRefreshing] = useState(false);
+
 
   const isMobile = useIsMobile();
   const activeTab = tabForPath(location.pathname);
@@ -296,7 +152,6 @@ const Index = () => {
         toast.error("Gagal memuat harga online", { description: "Memakai harga tersimpan." });
       } else {
         setGoldPrice(g.price);
-        setGoldInput(String(g.price));
         persistPrices(g.price, silverPrice, "online");
         toast.success("Harga emas diperbarui", { description: `Rp ${g.price.toLocaleString("id-ID")} / gram` });
       }
@@ -308,23 +163,6 @@ const Index = () => {
     }
   }, [silverPrice, persistPrices]);
 
-  const handleGoldChange = (val: string) => {
-    setGoldInput(val);
-    const num = Number(val);
-    if (num > 0) {
-      setGoldPrice(num);
-      persistPrices(num, silverPrice, "manual");
-    }
-  };
-
-  const handleSilverChange = (val: string) => {
-    setSilverInput(val);
-    const num = Number(val);
-    if (num > 0) {
-      setSilverPrice(num);
-      persistPrices(goldPrice, num, "manual");
-    }
-  };
 
   const metalPrice = nisabType === "gold" ? goldPrice : silverPrice;
   const currentNisab = getNisab(metalPrice, nisabType);
@@ -352,16 +190,15 @@ const Index = () => {
     migrateStorage();
   }, []);
 
-  // Auto-fetch latest gold price on mount when auto-update is enabled and the
-  // stored price wasn't already refreshed today.
+  // Always auto-fetch latest gold price on mount.
   const autoFetchedRef = useRef(false);
   useEffect(() => {
     if (autoFetchedRef.current) return;
-    if (!autoUpdate) return;
     autoFetchedRef.current = true;
     refreshGoldPrice();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoUpdate]);
+  }, []);
+
 
 
   // Parse ?share=... deep-link and greet the visitor with the shared result.
@@ -476,66 +313,11 @@ const Index = () => {
             </span>
           </Link>
           <div className="flex items-center gap-1">
-            {/* Settings: nisab, prices, rounding, haul reminder */}
-            <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
-              <DialogTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-11 w-11 sm:h-10 sm:w-10 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" aria-label="Pengaturan">
-                  <Settings2 className="h-5 w-5" />
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-md max-h-[85vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle>Pengaturan</DialogTitle>
-                  <DialogDescription className="sr-only">
-                    Atur nisab, harga emas/perak, pembulatan zakat, dan pengingat haul.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="mt-2 space-y-5">
-                  {/* Current nisab (moved here to keep the home clean) */}
-                  <div className="rounded-lg border border-border/60 bg-muted/40 p-3">
-                    <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Nisab saat ini</p>
-                    <p className="text-base font-bold tabular-nums">
-                      {formatRupiah(currentNisab)}
-                      <span className="text-muted-foreground font-normal"> · {nisabType === "gold" ? "85g emas" : "595g perak"}</span>
-                    </p>
-                    <p className="text-[11px] text-muted-foreground">
-                      {nisabType === "gold" ? "Emas" : "Perak"} Rp {metalPrice.toLocaleString("id-ID")}/gr{priceMeta.source === "online" ? " · online" : priceMeta.source === "manual" ? " · manual" : ""} · {priceMeta.date}
-                    </p>
-                  </div>
+            {/* Settings: dedicated page */}
+            <Button asChild variant="ghost" size="icon" className="h-11 w-11 sm:h-10 sm:w-10 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" aria-label="Pengaturan">
+              <Link to="/pengaturan"><Settings2 className="h-5 w-5" /></Link>
+            </Button>
 
-                  <NisabSettings
-                    nisabType={nisabType}
-                    setNisabType={setNisabType}
-                    goldInput={goldInput}
-                    silverInput={silverInput}
-                    onGoldChange={handleGoldChange}
-                    onSilverChange={handleSilverChange}
-                    onRefresh={refreshGoldPrice}
-                    refreshing={refreshing}
-                    priceMeta={priceMeta}
-                    roundUp={roundUp}
-                    onRoundUpChange={(v) => { setRoundUp(v); saveRoundUp(v); }}
-                    mazhab={mazhab}
-                    onMazhabChange={handleMazhabChange}
-                    autoUpdate={autoUpdate}
-                    onAutoUpdateChange={(v) => {
-                      setAutoUpdate(v);
-                      saveAutoUpdate(v);
-                      if (v) refreshGoldPrice();
-                    }}
-                  />
-
-
-                  {/* Haul reminder (moved here to keep the home clean) */}
-                  <div className="border-t pt-4">
-                    <h3 className="text-sm font-semibold flex items-center gap-2 mb-2">
-                      <CalendarClock className="h-4 w-4 text-primary" /> Pengingat Haul
-                    </h3>
-                    <HaulReminder embedded />
-                  </div>
-                </div>
-              </DialogContent>
-            </Dialog>
 
             {/* Info: go straight to the full guide page (no popup) */}
             <Button asChild variant="ghost" size="icon" className="h-11 w-11 sm:h-10 sm:w-10 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" aria-label="Panduan Zakat">
@@ -641,11 +423,8 @@ const Index = () => {
           </Card>
         </motion.div>
 
-        {/* Privacy reassurance */}
-        <p className="flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground">
-          <ShieldCheck aria-hidden="true" className="h-3.5 w-3.5 text-primary" />
-          Perhitungan 100% di perangkat Anda — tidak ada data yang dikirim.
-        </p>
+
+
 
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.15 }}>
           <ZakatRiwayat history={history} onChanged={refreshHistory} />
@@ -668,10 +447,8 @@ const Index = () => {
           </section>
         )}
 
-        {/* Privacy footer note */}
-        <p className="pt-6 pb-2 text-center text-xs text-muted-foreground">
-          Perhitungan 100% di perangkat Anda — tidak ada data yang dikirim.
-        </p>
+
+
       </main>
 
 

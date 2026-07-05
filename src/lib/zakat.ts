@@ -99,37 +99,29 @@ export function hasStoredPrices(): boolean {
 // explicitly asks (button / pull-to-refresh) — manual values are never
 // silently overwritten on load.
 export async function fetchGoldPrice(): Promise<GoldPrice> {
-  // Primary: goldprice.org public feed (no API key, returns price per troy oz in IDR).
+  // Combine XAU spot (USD/troy oz) with a live USD→IDR rate, then convert to
+  // per-gram. Both endpoints are free, CORS-open, and require no API key.
   try {
-    const res = await fetch("https://data-asg.goldprice.org/dbXRates/IDR", {
-      headers: { Accept: "application/json" },
-    });
-    if (res.ok) {
-      const data = await res.json();
-      const item = Array.isArray(data?.items) ? data.items[0] : null;
-      const xauIdr = Number(item?.xauPrice);
-      if (xauIdr > 0) {
-        const perGram = Math.round(xauIdr / 31.1035);
+    const [xauRes, fxRes] = await Promise.all([
+      fetch("https://api.gold-api.com/price/XAU", { headers: { Accept: "application/json" } }),
+      fetch("https://api.exchangerate-api.com/v4/latest/USD", { headers: { Accept: "application/json" } }),
+    ]);
+    if (xauRes.ok && fxRes.ok) {
+      const xau = await xauRes.json();
+      const fx = await fxRes.json();
+      const usdPerOz = Number(xau?.price);
+      const idrPerUsd = Number(fx?.rates?.IDR);
+      if (usdPerOz > 0 && idrPerUsd > 0) {
+        const perGram = Math.round((usdPerOz * idrPerUsd) / 31.1035);
         return { price: perGram, date: todayId(), isDefault: false };
       }
     }
   } catch {
-    /* fallback below */
-  }
-  // Fallback: metals.dev demo (may rate-limit).
-  try {
-    const res = await fetch("https://api.metals.dev/v1/latest?api_key=demo&currency=IDR&unit=gram");
-    if (res.ok) {
-      const data = await res.json();
-      if (data?.metals?.gold) {
-        return { price: Math.round(data.metals.gold), date: todayId(), isDefault: false };
-      }
-    }
-  } catch {
-    /* ignore */
+    /* fall through to fallback */
   }
   return { price: loadStoredPrices().gold, date: todayId(), isDefault: true };
 }
+
 
 // ===== Auto-update preference =====
 const AUTO_UPDATE_KEY = "zakat-auto-update-gold";

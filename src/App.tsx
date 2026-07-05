@@ -6,6 +6,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Index from "./pages/Index.tsx";
 import PanduanZakat from "./pages/PanduanZakat.tsx";
 import Tentang from "./pages/Tentang.tsx";
+import Pengaturan from "./pages/Pengaturan.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import { ALL_PAGES } from "@/lib/seo";
 
@@ -24,6 +25,7 @@ const App = () => (
           ))}
           <Route path="/panduan-zakat" element={<PanduanZakat />} />
           <Route path="/tentang" element={<Tentang />} />
+          <Route path="/pengaturan" element={<Pengaturan />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
