@@ -1,7 +1,5 @@
 import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   fetchGoldPrice,
   getHistory,
@@ -9,9 +7,6 @@ import {
   loadStoredPrices,
   saveStoredPrices,
   loadRoundUp,
-  saveRoundUp,
-  loadAutoUpdate,
-  saveAutoUpdate,
   getNisab,
   formatRupiah,
   migrateStorage,
@@ -21,7 +16,6 @@ import {
 } from "@/lib/zakat";
 import { getHaulReminders, haulEndDate, daysUntil } from "@/lib/haul";
 import { RoundUpContext } from "@/lib/round-context";
-import { Switch } from "@/components/ui/switch";
 import ZakatPenghasilan from "@/components/ZakatPenghasilan";
 import ZakatMaal from "@/components/ZakatMaal";
 import ZakatFitrah from "@/components/ZakatFitrah";
@@ -33,11 +27,8 @@ import ZakatMadin from "@/components/ZakatMadin";
 import ZakatFidyah from "@/components/ZakatFidyah";
 import { DarkModeToggle } from "@/components/DarkModeToggle";
 import ZakatRiwayat from "@/components/ZakatRiwayat";
-import HaulReminder from "@/components/HaulReminder";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calculator, Briefcase, Wallet, Wheat, Settings2, Loader2, Store, Sprout, Beef, Gem, Mountain, Info, Moon, LayoutGrid, ShieldCheck, RefreshCw, CalendarClock } from "lucide-react";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Calculator, Briefcase, Wallet, Wheat, Settings2, Loader2, Store, Sprout, Beef, Gem, Mountain, Info, Moon, LayoutGrid } from "lucide-react";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -45,7 +36,7 @@ import { toast } from "sonner";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ALL_PAGES, HOME_SEO, getPageBySlug, useSeo, type ZakatPage } from "@/lib/seo";
 import { track } from "@/lib/analytics";
-import { loadMazhab, saveMazhab, MAZHAB_NOTES, type Mazhab } from "@/lib/mazhab";
+
 
 type IconType = typeof Briefcase;
 const TAB_ICONS: Record<string, IconType> = {
