@@ -447,10 +447,8 @@ const Index = () => {
           </section>
         )}
 
-        {/* Privacy footer note */}
-        <p className="pt-6 pb-2 text-center text-xs text-muted-foreground">
-          Perhitungan 100% di perangkat Anda — tidak ada data yang dikirim.
-        </p>
+
+
       </main>
 
 
