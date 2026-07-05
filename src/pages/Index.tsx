@@ -68,157 +68,22 @@ const tabForPath = (pathname: string) => {
   return getPageBySlug(slug)?.tab ?? "penghasilan";
 };
 
-const NisabSettings = ({
-  nisabType,
-  setNisabType,
-  goldInput,
-  silverInput,
-  onGoldChange,
-  onSilverChange,
-  onRefresh,
-  refreshing,
-  priceMeta,
-  roundUp,
-  onRoundUpChange,
-  mazhab,
-  onMazhabChange,
-  autoUpdate,
-  onAutoUpdateChange,
-}: {
-  nisabType: NisabType;
-  setNisabType: (v: NisabType) => void;
-  goldInput: string;
-  silverInput: string;
-  onGoldChange: (v: string) => void;
-  onSilverChange: (v: string) => void;
-  onRefresh: () => void;
-  refreshing: boolean;
-  priceMeta: { date: string; source: PriceSource };
-  roundUp: boolean;
-  onRoundUpChange: (v: boolean) => void;
-  mazhab: Mazhab;
-  onMazhabChange: (m: Mazhab) => void;
-  autoUpdate: boolean;
-  onAutoUpdateChange: (v: boolean) => void;
-}) => (
-  <div className="space-y-4">
-    <div className="space-y-2">
-      <Label className="text-sm text-muted-foreground font-medium">Mazhab / Preferensi Fiqh</Label>
-      <ToggleGroup
-        type="single"
-        value={mazhab}
-        onValueChange={(v) => v && onMazhabChange(v as Mazhab)}
-        className="w-full gap-0 rounded-lg border border-border/60 p-0.5"
-      >
-        <ToggleGroupItem value="jumhur" className="flex-1 text-sm h-10 rounded-md data-[state=on]:bg-primary data-[state=on]:text-primary-foreground font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none">
-          Jumhur
-        </ToggleGroupItem>
-        <ToggleGroupItem value="hanafi" className="flex-1 text-sm h-10 rounded-md data-[state=on]:bg-primary data-[state=on]:text-primary-foreground font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none">
-          Hanafi
-        </ToggleGroupItem>
-      </ToggleGroup>
-      <p className="text-[11px] text-muted-foreground leading-snug">{MAZHAB_NOTES[mazhab].maal}</p>
-    </div>
-
-    <div className="space-y-2">
-      <Label className="text-sm text-muted-foreground font-medium">Standar Nisab</Label>
-      <ToggleGroup
-        type="single"
-        value={nisabType}
-        onValueChange={(v) => v && setNisabType(v as NisabType)}
-        className="w-full gap-0 rounded-lg border border-border/60 p-0.5"
-      >
-        <ToggleGroupItem value="gold" className="flex-1 text-sm h-10 rounded-md data-[state=on]:bg-primary data-[state=on]:text-primary-foreground font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none">
-          🥇 Emas (85g)
-        </ToggleGroupItem>
-        <ToggleGroupItem value="silver" className="flex-1 text-sm h-10 rounded-md data-[state=on]:bg-primary data-[state=on]:text-primary-foreground font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none">
-          🥈 Perak (595g)
-        </ToggleGroupItem>
-      </ToggleGroup>
-    </div>
-    <div className="flex items-center justify-between gap-3 rounded-lg border border-border/60 p-3">
-      <div className="min-w-0">
-        <Label htmlFor="autoupdate-switch" className="text-sm font-medium">Auto-update harga emas</Label>
-        <p className="text-[11px] text-muted-foreground">Ambil harga terbaru dari internet. Matikan untuk isi manual.</p>
-      </div>
-      <Switch id="autoupdate-switch" checked={autoUpdate} onCheckedChange={onAutoUpdateChange} />
-    </div>
-
-    <div className="space-y-2">
-      <div className="flex items-center justify-between gap-2">
-        <Label htmlFor="gold-price-sheet" className="text-sm text-muted-foreground font-medium">Harga Emas per gram (Rp)</Label>
-        {autoUpdate && (
-          <Button variant="outline" size="sm" onClick={onRefresh} disabled={refreshing} className="h-8 text-xs">
-            <RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${refreshing ? "animate-spin" : ""}`} /> Perbarui
-          </Button>
-        )}
-      </div>
-      <Input
-        id="gold-price-sheet"
-        type="text"
-        inputMode="decimal"
-        pattern="[0-9]*"
-        value={goldInput}
-        onChange={(e) => onGoldChange(e.target.value.replace(/\D/g, ""))}
-        disabled={autoUpdate}
-        className="h-12 text-base font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed"
-        placeholder="2000000"
-      />
-      <p className="text-[11px] text-muted-foreground">
-        {autoUpdate
-          ? `Otomatis dari internet · ${priceMeta.source === "online" ? "online" : "belum berhasil, isi manual bila perlu"} · ${priceMeta.date}`
-          : `Manual · ${priceMeta.date}`}
-      </p>
-    </div>
-    <div className="space-y-2">
-      <Label htmlFor="silver-price-sheet" className="text-sm text-muted-foreground font-medium">Harga Perak per gram (Rp)</Label>
-      <Input
-        id="silver-price-sheet"
-        type="text"
-        inputMode="decimal"
-        pattern="[0-9]*"
-        value={silverInput}
-        onChange={(e) => onSilverChange(e.target.value.replace(/\D/g, ""))}
-        className="h-12 text-base font-semibold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-        placeholder="28000"
-      />
-    </div>
-    
-
-    <div className="flex items-center justify-between gap-3 rounded-lg border border-border/60 p-3">
-      <div className="min-w-0">
-        <Label htmlFor="roundup-switch" className="text-sm font-medium">Bulatkan zakat ke atas</Label>
-        <p className="text-[11px] text-muted-foreground">Pembulatan ihtiyat ke Rp 1.000 terdekat.</p>
-      </div>
-      <Switch id="roundup-switch" checked={roundUp} onCheckedChange={onRoundUpChange} />
-    </div>
-  </div>
-);
-
 const Index = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
   const stored = useMemo(() => loadStoredPrices(), []);
   const [goldPrice, setGoldPrice] = useState(stored.gold);
-  const [goldInput, setGoldInput] = useState(String(stored.gold));
-  const [silverPrice, setSilverPrice] = useState(stored.silver);
-  const [silverInput, setSilverInput] = useState(String(stored.silver));
+  const [silverPrice] = useState(stored.silver);
   const [priceMeta, setPriceMeta] = useState<{ date: string; source: PriceSource }>({ date: stored.date, source: stored.source });
-  const [nisabType, setNisabType] = useState<NisabType>("gold");
-  const [roundUp, setRoundUp] = useState(() => loadRoundUp());
-  const [autoUpdate, setAutoUpdate] = useState(() => loadAutoUpdate());
-  const [mazhab, setMazhab] = useState<Mazhab>(() => loadMazhab());
-  const handleMazhabChange = useCallback((m: Mazhab) => {
-    setMazhab(m);
-    saveMazhab(m);
-  }, []);
+  const [nisabType] = useState<NisabType>("gold");
+  const [roundUp] = useState(() => loadRoundUp());
   const [history, setHistory] = useState(getHistory());
-  const [settingsOpen, setSettingsOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false); // mobile drawer
   const [moreExpanded, setMoreExpanded] = useState(false); // desktop inline expansion
 
   const [refreshing, setRefreshing] = useState(false);
+
 
   const isMobile = useIsMobile();
   const activeTab = tabForPath(location.pathname);
