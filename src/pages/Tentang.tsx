@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Send } from "lucide-react";
-import { TELEGRAM_BASE, TELEGRAM_HANDLE } from "@/lib/contact";
+import { TELEGRAM_BASE } from "@/lib/contact";
 import { useSeo, SITE_URL } from "@/lib/seo";
 
 export default function Tentang() {
