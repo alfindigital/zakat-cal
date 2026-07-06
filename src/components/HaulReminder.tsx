@@ -108,7 +108,7 @@ export default function HaulReminder({ embedded = false }: Props) {
       <div className="space-y-2">
         <div className="grid gap-2 sm:grid-cols-2">
           <div className="space-y-1.5 min-w-0">
-            <Label htmlFor="haul-label" className="text-xs">Nama harta (opsional)</Label>
+            <Label htmlFor="haul-label" className="text-xs">Nama</Label>
             <Input
               id="haul-label"
               value={label}
