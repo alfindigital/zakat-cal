@@ -133,7 +133,7 @@ export default function Pengaturan() {
               </span>
             </p>
             <p className="text-xs text-muted-foreground">
-              {nisabType === "gold" ? "Emas" : "Perak"} Rp {metalPrice.toLocaleString("id-ID")}/gr
+              {nisabType === "gold" ? "Emas" : "Perak"} Rp {metalPrice.toLocaleString("id-ID", { maximumFractionDigits: 2 })}/gr
             </p>
           </CardContent>
         </Card>
