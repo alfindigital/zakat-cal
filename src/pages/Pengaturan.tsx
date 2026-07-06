@@ -86,19 +86,19 @@ export default function Pengaturan() {
   }, []);
 
   const handleGoldChange = (val: string) => {
-    const clean = val.replace(/\D/g, "");
+    const clean = val.replace(/[^0-9.,]/g, "").replace(",", ".");
     setGoldInput(clean);
-    const num = Number(clean);
-    if (num > 0) {
+    const num = parseFloat(clean);
+    if (!isNaN(num) && num > 0) {
       setGoldPrice(num);
       persistPrices(num, silverPrice, "manual");
     }
   };
   const handleSilverChange = (val: string) => {
-    const clean = val.replace(/\D/g, "");
+    const clean = val.replace(/[^0-9.,]/g, "").replace(",", ".");
     setSilverInput(clean);
-    const num = Number(clean);
-    if (num > 0) {
+    const num = parseFloat(clean);
+    if (!isNaN(num) && num > 0) {
       setSilverPrice(num);
       persistPrices(goldPrice, num, "manual");
     }
