@@ -25,7 +25,7 @@ import ZakatPeternakan from "@/components/ZakatPeternakan";
 import ZakatRikaz from "@/components/ZakatRikaz";
 import ZakatMadin from "@/components/ZakatMadin";
 import ZakatFidyah from "@/components/ZakatFidyah";
-import { DarkModeToggle } from "@/components/DarkModeToggle";
+
 import ZakatRiwayat from "@/components/ZakatRiwayat";
 import { motion, AnimatePresence } from "framer-motion";
 import { Calculator, Briefcase, Wallet, Wheat, Settings2, Loader2, Store, Sprout, Beef, Gem, Mountain, Info, Moon, LayoutGrid } from "lucide-react";
@@ -324,7 +324,7 @@ const Index = () => {
               <Link to="/panduan-zakat"><Info className="h-5 w-5" /></Link>
             </Button>
 
-            <DarkModeToggle />
+            
           </div>
         </div>
       </header>

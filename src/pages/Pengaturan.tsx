@@ -66,7 +66,7 @@ export default function Pengaturan() {
         setGoldInput(String(g.price));
         persistPrices(g.price, silverPrice, "online");
         toast.success("Harga emas diperbarui", {
-          description: `Rp ${g.price.toLocaleString("id-ID")} / gram`,
+          description: `Rp ${g.price.toLocaleString("id-ID", { maximumFractionDigits: 2 })} / gram`,
         });
       }
     } catch {
@@ -86,19 +86,19 @@ export default function Pengaturan() {
   }, []);
 
   const handleGoldChange = (val: string) => {
-    const clean = val.replace(/\D/g, "");
+    const clean = val.replace(/[^0-9.,]/g, "").replace(",", ".");
     setGoldInput(clean);
-    const num = Number(clean);
-    if (num > 0) {
+    const num = parseFloat(clean);
+    if (!isNaN(num) && num > 0) {
       setGoldPrice(num);
       persistPrices(num, silverPrice, "manual");
     }
   };
   const handleSilverChange = (val: string) => {
-    const clean = val.replace(/\D/g, "");
+    const clean = val.replace(/[^0-9.,]/g, "").replace(",", ".");
     setSilverInput(clean);
-    const num = Number(clean);
-    if (num > 0) {
+    const num = parseFloat(clean);
+    if (!isNaN(num) && num > 0) {
       setSilverPrice(num);
       persistPrices(goldPrice, num, "manual");
     }
@@ -133,7 +133,7 @@ export default function Pengaturan() {
               </span>
             </p>
             <p className="text-xs text-muted-foreground">
-              {nisabType === "gold" ? "Emas" : "Perak"} Rp {metalPrice.toLocaleString("id-ID")}/gr
+              {nisabType === "gold" ? "Emas" : "Perak"} Rp {metalPrice.toLocaleString("id-ID", { maximumFractionDigits: 2 })}/gr
             </p>
           </CardContent>
         </Card>
