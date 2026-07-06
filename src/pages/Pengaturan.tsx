@@ -66,7 +66,7 @@ export default function Pengaturan() {
         setGoldInput(String(g.price));
         persistPrices(g.price, silverPrice, "online");
         toast.success("Harga emas diperbarui", {
-          description: `Rp ${g.price.toLocaleString("id-ID")} / gram`,
+          description: `Rp ${g.price.toLocaleString("id-ID", { maximumFractionDigits: 2 })} / gram`,
         });
       }
     } catch {
