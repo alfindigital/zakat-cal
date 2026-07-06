@@ -148,10 +148,10 @@ export default function Pengaturan() {
               className="w-full gap-0 rounded-lg border border-border/60 p-0.5"
             >
               <ToggleGroupItem value="gold" className="flex-1 text-sm h-10 rounded-md data-[state=on]:bg-primary data-[state=on]:text-primary-foreground font-semibold">
-                🥇 Emas (85g)
+                Emas (85g)
               </ToggleGroupItem>
               <ToggleGroupItem value="silver" className="flex-1 text-sm h-10 rounded-md data-[state=on]:bg-primary data-[state=on]:text-primary-foreground font-semibold">
-                🥈 Perak (595g)
+                Perak (595g)
               </ToggleGroupItem>
             </ToggleGroup>
           </CardContent>

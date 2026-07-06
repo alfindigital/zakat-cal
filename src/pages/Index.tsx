@@ -432,7 +432,7 @@ const Index = () => {
 
         {/* Per-route SEO content — visually distinct (tinted bg + serif type) */}
         {activePage && activePage.sections.length > 0 && (
-          <section className="rounded-2xl border border-border/60 bg-secondary p-5 sm:p-6 font-serif space-y-4">
+          <section className="rounded-2xl border border-border/60 bg-secondary p-5 sm:p-6 space-y-4">
             <h2 className="text-xl font-bold text-foreground tracking-tight">
               Tentang {activePage.h1.replace("Kalkulator ", "")}
             </h2>
