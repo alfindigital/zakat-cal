@@ -147,7 +147,7 @@ export default function HaulReminder({ embedded = false }: Props) {
         <CardTitle className="text-sm sm:text-base font-semibold flex items-center gap-2">
           <CalendarClock className="h-4 w-4 text-primary" /> Pengingat Haul
         </CardTitle>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-[11px] text-muted-foreground sm:text-xs">
           Haul = 1 tahun Hijriah (±354 hari) sejak harta mencapai nisab. Catat tanggal mulainya, kami ingatkan saat jatuh tempo.
         </p>
       </CardHeader>
