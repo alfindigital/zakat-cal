@@ -108,29 +108,29 @@ export default function HaulReminder({ embedded = false }: Props) {
       <div className="space-y-2">
         <div className="grid gap-2 sm:grid-cols-2">
           <div className="space-y-1.5 min-w-0">
-            <Label htmlFor="haul-label" className="text-xs">Nama</Label>
+            <Label htmlFor="haul-label" className="text-[11px] sm:text-xs">Nama</Label>
             <Input
               id="haul-label"
               value={label}
               onChange={(e) => setLabel(e.target.value)}
               placeholder="mis. Hartaku"
-              className="h-10 text-sm w-full"
+              className="h-9 text-xs w-full sm:h-10 sm:text-sm"
               maxLength={40}
             />
           </div>
           <div className="space-y-1.5 min-w-0">
-            <Label htmlFor="haul-date" className="text-xs">Tanggal mulai (capai nisab)</Label>
+            <Label htmlFor="haul-date" className="text-[11px] sm:text-xs">Tanggal mulai (capai nisab)</Label>
             <Input
               id="haul-date"
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="h-10 text-sm w-full"
+              className="h-9 text-xs w-full sm:h-10 sm:text-sm"
             />
           </div>
         </div>
-        <Button onClick={handleAdd} disabled={!date} className="h-10 w-full sm:w-auto">
-          <Plus className="h-4 w-4 mr-1" /> Tambah pengingat
+        <Button onClick={handleAdd} disabled={!date} className="h-9 w-full text-xs sm:h-10 sm:w-auto sm:text-sm">
+          <Plus className="h-3.5 w-3.5 mr-1 sm:h-4 sm:w-4" /> Tambah pengingat
         </Button>
       </div>
 
