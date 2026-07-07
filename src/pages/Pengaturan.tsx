@@ -87,7 +87,7 @@ export default function Pengaturan() {
   }, []);
 
   const handleGoldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    formattedChange(e, setGoldInput, formatQuantityInput);
+    formattedChange(e, setGoldInput, (v) => formatQuantityInput(v, 2));
     const num = parseQuantity(e.target.value);
     if (num > 0) {
       setGoldPrice(num);
@@ -95,7 +95,7 @@ export default function Pengaturan() {
     }
   };
   const handleSilverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    formattedChange(e, setSilverInput, formatQuantityInput);
+    formattedChange(e, setSilverInput, (v) => formatQuantityInput(v, 2));
     const num = parseQuantity(e.target.value);
     if (num > 0) {
       setSilverPrice(num);
