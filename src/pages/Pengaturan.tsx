@@ -116,8 +116,8 @@ export default function Pengaturan() {
         </div>
 
         <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Pengaturan</h1>
-          <p className="text-muted-foreground">Atur nisab, harga logam, dan pengingat haul.</p>
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl">Pengaturan</h1>
+          <p className="text-sm text-muted-foreground sm:text-base">Atur nisab, harga logam, dan pengingat haul.</p>
         </div>
 
         <Card>
