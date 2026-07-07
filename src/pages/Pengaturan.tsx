@@ -86,20 +86,18 @@ export default function Pengaturan() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleGoldChange = (val: string) => {
-    const clean = val.replace(/[^0-9.,]/g, "").replace(",", ".");
-    setGoldInput(clean);
-    const num = parseFloat(clean);
-    if (!isNaN(num) && num > 0) {
+  const handleGoldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    formattedChange(e, setGoldInput, formatQuantityInput);
+    const num = parseQuantity(e.target.value);
+    if (num > 0) {
       setGoldPrice(num);
       persistPrices(num, silverPrice, "manual");
     }
   };
-  const handleSilverChange = (val: string) => {
-    const clean = val.replace(/[^0-9.,]/g, "").replace(",", ".");
-    setSilverInput(clean);
-    const num = parseFloat(clean);
-    if (!isNaN(num) && num > 0) {
+  const handleSilverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    formattedChange(e, setSilverInput, formatQuantityInput);
+    const num = parseQuantity(e.target.value);
+    if (num > 0) {
       setSilverPrice(num);
       persistPrices(goldPrice, num, "manual");
     }
