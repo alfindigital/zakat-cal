@@ -138,18 +138,18 @@ export default function Pengaturan() {
         </Card>
 
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-lg">Standar Nisab</CardTitle></CardHeader>
-          <CardContent>
+          <CardHeader className="pb-2 px-4 pt-4 sm:px-6 sm:pt-5"><CardTitle className="text-base sm:text-lg">Standar Nisab</CardTitle></CardHeader>
+          <CardContent className="px-4 pb-4 sm:px-6 sm:pb-5">
             <ToggleGroup
               type="single"
               value={nisabType}
               onValueChange={(v) => v && setNisabType(v as NisabType)}
               className="w-full gap-0 rounded-lg border border-border/60 p-0.5"
             >
-              <ToggleGroupItem value="gold" className="flex-1 text-sm h-10 rounded-md data-[state=on]:bg-primary data-[state=on]:text-primary-foreground font-semibold">
+              <ToggleGroupItem value="gold" className="flex-1 text-xs h-9 rounded-md data-[state=on]:bg-primary data-[state=on]:text-primary-foreground font-semibold sm:text-sm sm:h-10">
                 Emas (85g)
               </ToggleGroupItem>
-              <ToggleGroupItem value="silver" className="flex-1 text-sm h-10 rounded-md data-[state=on]:bg-primary data-[state=on]:text-primary-foreground font-semibold">
+              <ToggleGroupItem value="silver" className="flex-1 text-xs h-9 rounded-md data-[state=on]:bg-primary data-[state=on]:text-primary-foreground font-semibold sm:text-sm sm:h-10">
                 Perak (595g)
               </ToggleGroupItem>
             </ToggleGroup>
