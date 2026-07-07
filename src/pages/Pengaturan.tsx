@@ -171,25 +171,25 @@ export default function Pengaturan() {
               <Input
                 id="gold-price"
                 type="text"
-                inputMode="numeric"
+                inputMode="decimal"
                 value={goldInput}
-                onChange={(e) => handleGoldChange(e.target.value)}
-                className="h-12 text-base font-semibold"
-                placeholder="2000000"
+                onChange={handleGoldChange}
+                className="h-10 text-sm font-semibold sm:h-12 sm:text-base"
+                placeholder="2.000.000"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="silver-price" className="text-sm text-muted-foreground font-medium">
+              <Label htmlFor="silver-price" className="text-xs text-muted-foreground font-medium sm:text-sm">
                 Harga Perak per gram (Rp)
               </Label>
               <Input
                 id="silver-price"
                 type="text"
-                inputMode="numeric"
+                inputMode="decimal"
                 value={silverInput}
-                onChange={(e) => handleSilverChange(e.target.value)}
-                className="h-12 text-base font-semibold"
-                placeholder="28000"
+                onChange={handleSilverChange}
+                className="h-10 text-sm font-semibold sm:h-12 sm:text-base"
+                placeholder="28.000"
               />
             </div>
           </CardContent>
