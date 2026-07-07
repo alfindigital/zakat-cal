@@ -196,12 +196,12 @@ export default function Pengaturan() {
         </Card>
 
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-lg">Pembulatan Zakat</CardTitle></CardHeader>
-          <CardContent>
+          <CardHeader className="pb-2 px-4 pt-4 sm:px-6 sm:pt-5"><CardTitle className="text-base sm:text-lg">Pembulatan Zakat</CardTitle></CardHeader>
+          <CardContent className="px-4 pb-4 sm:px-6 sm:pb-5">
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">
-                <Label htmlFor="roundup-switch" className="text-sm font-medium">Bulatkan zakat ke atas</Label>
-                <p className="text-[11px] text-muted-foreground">Pembulatan ihtiyat ke Rp 1.000 terdekat.</p>
+                <Label htmlFor="roundup-switch" className="text-xs font-medium sm:text-sm">Bulatkan zakat ke atas</Label>
+                <p className="text-[10px] text-muted-foreground sm:text-[11px]">Pembulatan ihtiyat ke Rp 1.000 terdekat.</p>
               </div>
               <Switch
                 id="roundup-switch"
