@@ -121,17 +121,17 @@ export default function Pengaturan() {
         </div>
 
         <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Nisab saat ini</CardTitle>
+          <CardHeader className="pb-2 px-4 pt-4 sm:px-6 sm:pt-5">
+            <CardTitle className="text-base sm:text-lg">Nisab saat ini</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-1">
-            <p className="text-2xl font-bold tabular-nums">
+          <CardContent className="px-4 pb-4 sm:px-6 sm:pb-5 space-y-1">
+            <p className="text-xl font-bold tabular-nums sm:text-2xl">
               {formatRupiah(currentNisab)}
-              <span className="text-muted-foreground text-base font-normal">
+              <span className="text-muted-foreground text-xs font-normal sm:text-sm">
                 {" "}· {nisabType === "gold" ? "85g emas" : "595g perak"}
               </span>
             </p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-[11px] text-muted-foreground sm:text-xs">
               {nisabType === "gold" ? "Emas" : "Perak"} Rp {metalPrice.toLocaleString("id-ID", { maximumFractionDigits: 2 })}/gr
             </p>
           </CardContent>
