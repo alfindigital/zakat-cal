@@ -213,12 +213,12 @@ export default function Pengaturan() {
         </Card>
 
         <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <CalendarClock className="h-5 w-5 text-primary" /> Pengingat Haul
+          <CardHeader className="pb-2 px-4 pt-4 sm:px-6 sm:pt-5">
+            <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+              <CalendarClock className="h-4 w-4 sm:h-5 sm:w-5 text-primary" /> Pengingat Haul
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-4 pb-4 sm:px-6 sm:pb-5">
             <HaulReminder embedded />
           </CardContent>
         </Card>
