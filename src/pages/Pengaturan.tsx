@@ -20,6 +20,7 @@ import {
   type NisabType,
   type PriceSource,
 } from "@/lib/zakat";
+import { formattedChange, formatQuantityInput, parseQuantity } from "@/lib/format";
 import { useSeo, SITE_URL } from "@/lib/seo";
 
 export default function Pengaturan() {
@@ -38,9 +39,9 @@ export default function Pengaturan() {
 
   const stored = loadStoredPrices();
   const [goldPrice, setGoldPrice] = useState(stored.gold);
-  const [goldInput, setGoldInput] = useState(String(stored.gold));
+  const [goldInput, setGoldInput] = useState(formatQuantityInput(String(stored.gold), 2));
   const [silverPrice, setSilverPrice] = useState(stored.silver);
-  const [silverInput, setSilverInput] = useState(String(stored.silver));
+  const [silverInput, setSilverInput] = useState(formatQuantityInput(String(stored.silver), 2));
   const [priceMeta, setPriceMeta] = useState<{ date: string; source: PriceSource }>({
     date: stored.date,
     source: stored.source,
@@ -63,7 +64,7 @@ export default function Pengaturan() {
         toast.error("Gagal memuat harga online", { description: "Isi manual bila perlu." });
       } else {
         setGoldPrice(g.price);
-        setGoldInput(String(g.price));
+        setGoldInput(formatQuantityInput(String(g.price), 2));
         persistPrices(g.price, silverPrice, "online");
         toast.success("Harga emas diperbarui", {
           description: `Rp ${g.price.toLocaleString("id-ID", { maximumFractionDigits: 2 })} / gram`,
@@ -85,20 +86,18 @@ export default function Pengaturan() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleGoldChange = (val: string) => {
-    const clean = val.replace(/[^0-9.,]/g, "").replace(",", ".");
-    setGoldInput(clean);
-    const num = parseFloat(clean);
-    if (!isNaN(num) && num > 0) {
+  const handleGoldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    formattedChange(e, setGoldInput, (v) => formatQuantityInput(v, 2));
+    const num = parseQuantity(e.target.value);
+    if (num > 0) {
       setGoldPrice(num);
       persistPrices(num, silverPrice, "manual");
     }
   };
-  const handleSilverChange = (val: string) => {
-    const clean = val.replace(/[^0-9.,]/g, "").replace(",", ".");
-    setSilverInput(clean);
-    const num = parseFloat(clean);
-    if (!isNaN(num) && num > 0) {
+  const handleSilverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    formattedChange(e, setSilverInput, (v) => formatQuantityInput(v, 2));
+    const num = parseQuantity(e.target.value);
+    if (num > 0) {
       setSilverPrice(num);
       persistPrices(goldPrice, num, "manual");
     }
@@ -117,40 +116,40 @@ export default function Pengaturan() {
         </div>
 
         <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Pengaturan</h1>
-          <p className="text-muted-foreground">Atur nisab, harga logam, dan pengingat haul.</p>
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl">Pengaturan</h1>
+          <p className="text-sm text-muted-foreground sm:text-base">Atur nisab, harga logam, dan pengingat haul.</p>
         </div>
 
         <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Nisab saat ini</CardTitle>
+          <CardHeader className="pb-2 px-4 pt-4 sm:px-6 sm:pt-5">
+            <CardTitle className="text-base sm:text-lg">Nisab saat ini</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-1">
-            <p className="text-2xl font-bold tabular-nums">
+          <CardContent className="px-4 pb-4 sm:px-6 sm:pb-5 space-y-1">
+            <p className="text-xl font-bold tabular-nums sm:text-2xl">
               {formatRupiah(currentNisab)}
-              <span className="text-muted-foreground text-base font-normal">
+              <span className="text-muted-foreground text-xs font-normal sm:text-sm">
                 {" "}· {nisabType === "gold" ? "85g emas" : "595g perak"}
               </span>
             </p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-[11px] text-muted-foreground sm:text-xs">
               {nisabType === "gold" ? "Emas" : "Perak"} Rp {metalPrice.toLocaleString("id-ID", { maximumFractionDigits: 2 })}/gr
             </p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-lg">Standar Nisab</CardTitle></CardHeader>
-          <CardContent>
+          <CardHeader className="pb-2 px-4 pt-4 sm:px-6 sm:pt-5"><CardTitle className="text-base sm:text-lg">Standar Nisab</CardTitle></CardHeader>
+          <CardContent className="px-4 pb-4 sm:px-6 sm:pb-5">
             <ToggleGroup
               type="single"
               value={nisabType}
               onValueChange={(v) => v && setNisabType(v as NisabType)}
               className="w-full gap-0 rounded-lg border border-border/60 p-0.5"
             >
-              <ToggleGroupItem value="gold" className="flex-1 text-sm h-10 rounded-md data-[state=on]:bg-primary data-[state=on]:text-primary-foreground font-semibold">
+              <ToggleGroupItem value="gold" className="flex-1 text-xs h-9 rounded-md data-[state=on]:bg-primary data-[state=on]:text-primary-foreground font-semibold sm:text-sm sm:h-10">
                 Emas (85g)
               </ToggleGroupItem>
-              <ToggleGroupItem value="silver" className="flex-1 text-sm h-10 rounded-md data-[state=on]:bg-primary data-[state=on]:text-primary-foreground font-semibold">
+              <ToggleGroupItem value="silver" className="flex-1 text-xs h-9 rounded-md data-[state=on]:bg-primary data-[state=on]:text-primary-foreground font-semibold sm:text-sm sm:h-10">
                 Perak (595g)
               </ToggleGroupItem>
             </ToggleGroup>
@@ -158,51 +157,51 @@ export default function Pengaturan() {
         </Card>
 
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-lg">Harga Logam per Gram</CardTitle></CardHeader>
-          <CardContent className="space-y-4">
+          <CardHeader className="pb-2 px-4 pt-4 sm:px-6 sm:pt-5"><CardTitle className="text-base sm:text-lg">Harga Logam per Gram</CardTitle></CardHeader>
+          <CardContent className="px-4 pb-4 sm:px-6 sm:pb-5 space-y-4">
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-2">
-                <Label htmlFor="gold-price" className="text-sm text-muted-foreground font-medium">
+                <Label htmlFor="gold-price" className="text-xs text-muted-foreground font-medium sm:text-sm">
                   Harga Emas per gram (Rp)
                 </Label>
-                <Button variant="outline" size="sm" onClick={refreshGoldPrice} disabled={refreshing} className="h-8 text-xs">
+                <Button variant="outline" size="sm" onClick={refreshGoldPrice} disabled={refreshing} className="h-7 text-[11px] sm:h-8 sm:text-xs">
                   <RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${refreshing ? "animate-spin" : ""}`} /> Perbarui
                 </Button>
               </div>
               <Input
                 id="gold-price"
                 type="text"
-                inputMode="numeric"
+                inputMode="decimal"
                 value={goldInput}
-                onChange={(e) => handleGoldChange(e.target.value)}
-                className="h-12 text-base font-semibold"
-                placeholder="2000000"
+                onChange={handleGoldChange}
+                className="h-10 text-sm font-semibold sm:h-12 sm:text-base"
+                placeholder="2.000.000"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="silver-price" className="text-sm text-muted-foreground font-medium">
+              <Label htmlFor="silver-price" className="text-xs text-muted-foreground font-medium sm:text-sm">
                 Harga Perak per gram (Rp)
               </Label>
               <Input
                 id="silver-price"
                 type="text"
-                inputMode="numeric"
+                inputMode="decimal"
                 value={silverInput}
-                onChange={(e) => handleSilverChange(e.target.value)}
-                className="h-12 text-base font-semibold"
-                placeholder="28000"
+                onChange={handleSilverChange}
+                className="h-10 text-sm font-semibold sm:h-12 sm:text-base"
+                placeholder="28.000"
               />
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-lg">Pembulatan Zakat</CardTitle></CardHeader>
-          <CardContent>
+          <CardHeader className="pb-2 px-4 pt-4 sm:px-6 sm:pt-5"><CardTitle className="text-base sm:text-lg">Pembulatan Zakat</CardTitle></CardHeader>
+          <CardContent className="px-4 pb-4 sm:px-6 sm:pb-5">
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">
-                <Label htmlFor="roundup-switch" className="text-sm font-medium">Bulatkan zakat ke atas</Label>
-                <p className="text-[11px] text-muted-foreground">Pembulatan ihtiyat ke Rp 1.000 terdekat.</p>
+                <Label htmlFor="roundup-switch" className="text-xs font-medium sm:text-sm">Bulatkan zakat ke atas</Label>
+                <p className="text-[10px] text-muted-foreground sm:text-[11px]">Pembulatan ihtiyat ke Rp 1.000 terdekat.</p>
               </div>
               <Switch
                 id="roundup-switch"
@@ -214,12 +213,12 @@ export default function Pengaturan() {
         </Card>
 
         <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <CalendarClock className="h-5 w-5 text-primary" /> Pengingat Haul
+          <CardHeader className="pb-2 px-4 pt-4 sm:px-6 sm:pt-5">
+            <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+              <CalendarClock className="h-4 w-4 sm:h-5 sm:w-5 text-primary" /> Pengingat Haul
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-4 pb-4 sm:px-6 sm:pb-5">
             <HaulReminder embedded />
           </CardContent>
         </Card>
