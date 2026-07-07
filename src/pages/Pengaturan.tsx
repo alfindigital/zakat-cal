@@ -157,14 +157,14 @@ export default function Pengaturan() {
         </Card>
 
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-lg">Harga Logam per Gram</CardTitle></CardHeader>
-          <CardContent className="space-y-4">
+          <CardHeader className="pb-2 px-4 pt-4 sm:px-6 sm:pt-5"><CardTitle className="text-base sm:text-lg">Harga Logam per Gram</CardTitle></CardHeader>
+          <CardContent className="px-4 pb-4 sm:px-6 sm:pb-5 space-y-4">
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-2">
-                <Label htmlFor="gold-price" className="text-sm text-muted-foreground font-medium">
+                <Label htmlFor="gold-price" className="text-xs text-muted-foreground font-medium sm:text-sm">
                   Harga Emas per gram (Rp)
                 </Label>
-                <Button variant="outline" size="sm" onClick={refreshGoldPrice} disabled={refreshing} className="h-8 text-xs">
+                <Button variant="outline" size="sm" onClick={refreshGoldPrice} disabled={refreshing} className="h-7 text-[11px] sm:h-8 sm:text-xs">
                   <RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${refreshing ? "animate-spin" : ""}`} /> Perbarui
                 </Button>
               </div>
