@@ -64,7 +64,7 @@ export default function Pengaturan() {
         toast.error("Gagal memuat harga online", { description: "Isi manual bila perlu." });
       } else {
         setGoldPrice(g.price);
-        setGoldInput(formatQuantityInput(String(g.price)));
+        setGoldInput(formatQuantityInput(String(g.price), 2));
         persistPrices(g.price, silverPrice, "online");
         toast.success("Harga emas diperbarui", {
           description: `Rp ${g.price.toLocaleString("id-ID", { maximumFractionDigits: 2 })} / gram`,
