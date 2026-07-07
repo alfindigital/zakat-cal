@@ -18,7 +18,8 @@ export function parseFormattedNumber(val: string): number {
 // keep a single decimal separator (Indonesian comma) plus thousand grouping.
 
 // Normalise a raw quantity string: keep digits and at most one decimal comma.
-export function formatQuantityInput(val: string): string {
+// Optional maxDecimals caps the fractional part (e.g. 2 for metal prices).
+export function formatQuantityInput(val: string, maxDecimals?: number): string {
   // Accept both "." and "," as the user's decimal mark while typing.
   const cleaned = val.replace(/[^\d.,]/g, "").replace(/\./g, ",");
   const firstComma = cleaned.indexOf(",");
@@ -27,6 +28,10 @@ export function formatQuantityInput(val: string): string {
 
   intPart = intPart.replace(/\D/g, "");
   decPart = decPart.replace(/\D/g, "");
+
+  if (maxDecimals !== undefined && decPart.length > maxDecimals) {
+    decPart = decPart.slice(0, maxDecimals);
+  }
 
   const grouped = intPart ? new Intl.NumberFormat("id-ID").format(Number(intPart)) : "";
 
