@@ -36,6 +36,7 @@ import { toast } from "sonner";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ALL_PAGES, HOME_SEO, getPageBySlug, useSeo, type ZakatPage } from "@/lib/seo";
 import { track } from "@/lib/analytics";
+import { formatMetalPrice } from "@/lib/format";
 
 
 type IconType = typeof Briefcase;
