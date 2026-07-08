@@ -36,6 +36,7 @@ import { toast } from "sonner";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ALL_PAGES, HOME_SEO, getPageBySlug, useSeo, type ZakatPage } from "@/lib/seo";
 import { track } from "@/lib/analytics";
+import { formatMetalPrice } from "@/lib/format";
 
 
 type IconType = typeof Briefcase;
@@ -153,7 +154,7 @@ const Index = () => {
       } else {
         setGoldPrice(g.price);
         persistPrices(g.price, silverPrice, "online");
-        toast.success("Harga emas diperbarui", { description: `Rp ${g.price.toLocaleString("id-ID", { maximumFractionDigits: 2 })} / gram` });
+        toast.success("Harga emas diperbarui", { description: `Rp ${formatMetalPrice(g.price)} / gram` });
       }
     } catch {
       toast.error("Gagal memuat harga emas");

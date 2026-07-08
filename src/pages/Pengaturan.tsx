@@ -20,7 +20,7 @@ import {
   type NisabType,
   type PriceSource,
 } from "@/lib/zakat";
-import { formattedChange, formatQuantityInput, parseQuantity } from "@/lib/format";
+import { formattedChange, formatQuantityInput, parseQuantity, formatMetalPrice } from "@/lib/format";
 import { useSeo, SITE_URL } from "@/lib/seo";
 
 export default function Pengaturan() {
@@ -39,9 +39,9 @@ export default function Pengaturan() {
 
   const stored = loadStoredPrices();
   const [goldPrice, setGoldPrice] = useState(stored.gold);
-  const [goldInput, setGoldInput] = useState(formatQuantityInput(String(stored.gold), 2));
+  const [goldInput, setGoldInput] = useState(formatMetalPrice(stored.gold));
   const [silverPrice, setSilverPrice] = useState(stored.silver);
-  const [silverInput, setSilverInput] = useState(formatQuantityInput(String(stored.silver), 2));
+  const [silverInput, setSilverInput] = useState(formatMetalPrice(stored.silver));
   const [priceMeta, setPriceMeta] = useState<{ date: string; source: PriceSource }>({
     date: stored.date,
     source: stored.source,
@@ -64,10 +64,10 @@ export default function Pengaturan() {
         toast.error("Gagal memuat harga online", { description: "Isi manual bila perlu." });
       } else {
         setGoldPrice(g.price);
-        setGoldInput(formatQuantityInput(String(g.price), 2));
+        setGoldInput(formatMetalPrice(g.price));
         persistPrices(g.price, silverPrice, "online");
         toast.success("Harga emas diperbarui", {
-          description: `Rp ${g.price.toLocaleString("id-ID", { maximumFractionDigits: 2 })} / gram`,
+          description: `Rp ${formatMetalPrice(g.price)} / gram`,
         });
       }
     } catch {
@@ -107,17 +107,17 @@ export default function Pengaturan() {
   const currentNisab = getNisab(metalPrice, nisabType);
 
   return (
-    <div className="min-h-dvh bg-background px-4 py-8 sm:py-12">
-      <div className="mx-auto max-w-2xl space-y-6">
+    <div className="min-h-dvh bg-background px-4 py-6 sm:py-12">
+      <div className="mx-auto max-w-2xl space-y-4 sm:space-y-6">
         <div className="flex items-center justify-between">
           <Button variant="ghost" size="sm" asChild>
             <Link to="/"><ArrowLeft className="mr-2 h-4 w-4" />Kembali</Link>
           </Button>
         </div>
 
-        <div className="text-center space-y-2">
-          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl">Pengaturan</h1>
-          <p className="text-sm text-muted-foreground sm:text-base">Atur nisab, harga logam, dan pengingat haul.</p>
+        <div className="text-center space-y-1 sm:space-y-2">
+          <h1 className="text-xl font-bold tracking-tight sm:text-3xl lg:text-4xl">Pengaturan</h1>
+          <p className="text-xs text-muted-foreground sm:text-base">Atur nisab, harga logam, dan pengingat haul.</p>
         </div>
 
         <Card>
@@ -132,7 +132,7 @@ export default function Pengaturan() {
               </span>
             </p>
             <p className="text-[11px] text-muted-foreground sm:text-xs">
-              {nisabType === "gold" ? "Emas" : "Perak"} Rp {metalPrice.toLocaleString("id-ID", { maximumFractionDigits: 2 })}/gr
+              {nisabType === "gold" ? "Emas" : "Perak"} Rp {formatMetalPrice(metalPrice)}/gr
             </p>
           </CardContent>
         </Card>

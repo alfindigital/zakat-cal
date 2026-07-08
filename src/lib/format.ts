@@ -12,6 +12,16 @@ export function parseFormattedNumber(val: string): number {
   return Number(val.replace(/\D/g, "")) || 0;
 }
 
+// Format a metal price (gold / silver) per gram with Indonesian locale — always
+// shows exactly 2 decimals and thousand separators, e.g. 1234567.5 -> "1.234.567,50".
+export function formatMetalPrice(n: number): string {
+  if (!Number.isFinite(n)) return "0,00";
+  return new Intl.NumberFormat("id-ID", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(n);
+}
+
 // ===== Quantity inputs (gram / kg / liter) — allow ONE decimal fraction =====
 // Currency uses formatNumberInput above (integer only). Quantities like gold
 // grams (2,5 gr) or harvest weight (1.234,5 kg) need a fractional part, so we
