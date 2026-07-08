@@ -14,12 +14,26 @@ export function parseFormattedNumber(val: string): number {
 
 // Format a metal price (gold / silver) per gram with Indonesian locale — always
 // shows exactly 2 decimals and thousand separators, e.g. 1234567.5 -> "1.234.567,50".
-export function formatMetalPrice(n: number): string {
-  if (!Number.isFinite(n)) return "0,00";
+export function formatMetalPrice(n: number | string | null | undefined): string {
+  let num: number;
+  if (typeof n === "string") {
+    // Accept id-ID ("1.234,50") or plain ("1234.5") forms defensively.
+    const cleaned = n.trim().replace(/\s/g, "");
+    const hasComma = cleaned.includes(",");
+    const normalized = hasComma
+      ? cleaned.replace(/\./g, "").replace(",", ".")
+      : cleaned;
+    num = Number(normalized);
+  } else {
+    num = Number(n);
+  }
+  if (!Number.isFinite(num)) return "0,00";
+  // Guard against negatives (metal prices are always positive).
+  if (num < 0) num = 0;
   return new Intl.NumberFormat("id-ID", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(n);
+  }).format(num);
 }
 
 // ===== Quantity inputs (gram / kg / liter) — allow ONE decimal fraction =====
