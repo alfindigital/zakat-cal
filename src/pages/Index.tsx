@@ -153,7 +153,7 @@ const Index = () => {
       } else {
         setGoldPrice(g.price);
         persistPrices(g.price, silverPrice, "online");
-        toast.success("Harga emas diperbarui", { description: `Rp ${g.price.toLocaleString("id-ID", { maximumFractionDigits: 2 })} / gram` });
+        toast.success("Harga emas diperbarui", { description: `Rp ${formatMetalPrice(g.price)} / gram` });
       }
     } catch {
       toast.error("Gagal memuat harga emas");
