@@ -56,7 +56,7 @@ export default function Pengaturan() {
     setPriceMeta({ date: m.date, source: m.source });
   }, []);
 
-  const refreshGoldPrice = useCallback(async () => {
+  const refreshGoldPrice = useCallback(async (silent = false) => {
     setRefreshing(true);
     try {
       const g = await fetchGoldPrice();
@@ -66,9 +66,11 @@ export default function Pengaturan() {
         setGoldPrice(g.price);
         setGoldInput(formatMetalPrice(g.price));
         persistPrices(g.price, silverPrice, "online");
-        toast.success("Harga emas diperbarui", {
-          description: `Rp ${formatMetalPrice(g.price)} / gram`,
-        });
+        if (!silent) {
+          toast.success("Harga emas diperbarui", {
+            description: `Rp ${formatMetalPrice(g.price)} / gram`,
+          });
+        }
       }
     } catch {
       toast.error("Gagal memuat harga emas");

@@ -145,7 +145,7 @@ const Index = () => {
     setPriceMeta({ date: m.date, source: m.source });
   }, []);
 
-  const refreshGoldPrice = useCallback(async () => {
+  const refreshGoldPrice = useCallback(async (silent = false) => {
     setRefreshing(true);
     try {
       const g = await fetchGoldPrice();
@@ -154,7 +154,9 @@ const Index = () => {
       } else {
         setGoldPrice(g.price);
         persistPrices(g.price, silverPrice, "online");
-        toast.success("Harga emas diperbarui", { description: `Rp ${formatMetalPrice(g.price)} / gram` });
+        if (!silent) {
+          toast.success("Harga emas diperbarui", { description: `Rp ${formatMetalPrice(g.price)} / gram` });
+        }
       }
     } catch {
       toast.error("Gagal memuat harga emas");
