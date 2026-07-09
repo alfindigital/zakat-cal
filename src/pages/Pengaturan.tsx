@@ -56,7 +56,7 @@ export default function Pengaturan() {
     setPriceMeta({ date: m.date, source: m.source });
   }, []);
 
-  const refreshGoldPrice = useCallback(async () => {
+  const refreshGoldPrice = useCallback(async (silent = false) => {
     setRefreshing(true);
     try {
       const g = await fetchGoldPrice();
@@ -66,9 +66,11 @@ export default function Pengaturan() {
         setGoldPrice(g.price);
         setGoldInput(formatMetalPrice(g.price));
         persistPrices(g.price, silverPrice, "online");
-        toast.success("Harga emas diperbarui", {
-          description: `Rp ${formatMetalPrice(g.price)} / gram`,
-        });
+        if (!silent) {
+          toast.success("Harga emas diperbarui", {
+            description: `Rp ${formatMetalPrice(g.price)} / gram`,
+          });
+        }
       }
     } catch {
       toast.error("Gagal memuat harga emas");
@@ -77,12 +79,12 @@ export default function Pengaturan() {
     }
   }, [silverPrice, persistPrices]);
 
-  // Auto-fetch once on mount (auto-update is always on).
+  // Auto-fetch once on mount (silent: no repeated toast).
   const autoFetchedRef = useRef(false);
   useEffect(() => {
     if (autoFetchedRef.current) return;
     autoFetchedRef.current = true;
-    refreshGoldPrice();
+    refreshGoldPrice(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -164,7 +166,7 @@ export default function Pengaturan() {
                 <Label htmlFor="gold-price" className="text-xs text-muted-foreground font-medium sm:text-sm">
                   Harga Emas per gram (Rp)
                 </Label>
-                <Button variant="outline" size="sm" onClick={refreshGoldPrice} disabled={refreshing} className="h-7 text-[11px] sm:h-8 sm:text-xs">
+                <Button variant="outline" size="sm" onClick={() => refreshGoldPrice()} disabled={refreshing} className="h-7 text-[11px] sm:h-8 sm:text-xs">
                   <RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${refreshing ? "animate-spin" : ""}`} /> Perbarui
                 </Button>
               </div>
