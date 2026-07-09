@@ -193,12 +193,12 @@ const Index = () => {
     migrateStorage();
   }, []);
 
-  // Always auto-fetch latest gold price on mount.
+  // Always auto-fetch latest gold price on mount (silent: no repeated toast).
   const autoFetchedRef = useRef(false);
   useEffect(() => {
     if (autoFetchedRef.current) return;
     autoFetchedRef.current = true;
-    refreshGoldPrice();
+    refreshGoldPrice(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
