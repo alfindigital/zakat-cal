@@ -77,7 +77,7 @@ export default function PanduanZakat() {
 
         <div className="text-center space-y-2">
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Panduan Zakat</h1>
-          <p className="text-muted-foreground">Syarat, ketentuan, dan jenis-jenis zakat dalam Islam</p>
+          <p className="text-muted-foreground">Syarat, jenis, dan ketentuan zakat</p>
         </div>
 
         <div className="space-y-4">
