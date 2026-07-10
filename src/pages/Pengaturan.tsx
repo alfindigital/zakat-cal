@@ -187,13 +187,13 @@ export default function Pengaturan() {
               </Label>
               <Button
                 variant="outline"
-                size="sm"
+                size="icon"
                 onClick={() => refreshGoldPrice()}
                 disabled={refreshing}
-                className="h-7 gap-1 rounded-full border-primary/10 bg-primary/10 px-3 text-xs font-semibold text-primary hover:bg-primary/15 hover:text-primary"
+                aria-label="Perbarui harga emas"
+                className="h-8 w-8 rounded-full border-primary/10 bg-primary/10 text-primary hover:bg-primary/15 hover:text-primary"
               >
-                <RefreshCw className={`h-3 w-3 ${refreshing ? "animate-spin" : ""}`} />
-                Perbarui
+                <RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
               </Button>
             </div>
             <div className="space-y-4">
