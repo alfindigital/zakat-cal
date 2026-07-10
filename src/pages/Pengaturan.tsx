@@ -190,7 +190,7 @@ export default function Pengaturan() {
                 size="sm"
                 onClick={() => refreshGoldPrice()}
                 disabled={refreshing}
-                className="h-7 gap-1 rounded-full border-emerald-100 bg-emerald-50 px-3 text-xs font-semibold text-primary hover:bg-emerald-100 hover:text-primary"
+                className="h-7 gap-1 rounded-full border-primary/10 bg-primary/10 px-3 text-xs font-semibold text-primary hover:bg-primary/15 hover:text-primary"
               >
                 <RefreshCw className={`h-3 w-3 ${refreshing ? "animate-spin" : ""}`} />
                 Perbarui
