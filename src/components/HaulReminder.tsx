@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { CalendarClock, CalendarPlus, Download, Trash2, Plus } from "lucide-react";
+import { CalendarClock, CalendarPlus, Download, Trash2, Plus, Calendar } from "lucide-react";
 import {
   type HaulReminder as HaulReminderT,
   getHaulReminders,
