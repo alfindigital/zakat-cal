@@ -129,7 +129,7 @@ export default function HaulReminder({ embedded = false }: Props) {
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="h-11 w-full border-border bg-muted pr-10 text-sm text-card-foreground focus-visible:border-primary focus-visible:ring-primary/20 sm:h-12"
+                className="no-calendar-picker h-11 w-full border-border bg-muted pr-10 text-sm text-card-foreground focus-visible:border-primary focus-visible:ring-primary/20 sm:h-12"
               />
               <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
                 <Calendar className="h-4 w-4 sm:h-5 sm:w-5" />
