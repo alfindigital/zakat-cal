@@ -100,4 +100,6 @@
 @layer utilities {
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  .no-calendar-picker::-webkit-calendar-picker-indicator { display: none; }
+  .no-calendar-picker { -webkit-appearance: none; }
 }

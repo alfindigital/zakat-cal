@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { CalendarClock, CalendarPlus, Download, Trash2, Plus } from "lucide-react";
+import { CalendarClock, CalendarPlus, Download, Trash2, Plus, Calendar } from "lucide-react";
 import {
   type HaulReminder as HaulReminderT,
   getHaulReminders,
@@ -123,13 +123,18 @@ export default function HaulReminder({ embedded = false }: Props) {
             <Label htmlFor="haul-date" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground sm:text-[11px]">
               Tanggal mulai (capai nisab)
             </Label>
-            <Input
-              id="haul-date"
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="h-11 w-full border-border bg-muted text-sm text-card-foreground focus-visible:border-primary focus-visible:ring-primary/20 sm:h-12"
-            />
+            <div className="relative">
+              <Input
+                id="haul-date"
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className="no-calendar-picker h-11 w-full border-border bg-muted pr-10 text-sm text-card-foreground focus-visible:border-primary focus-visible:ring-primary/20 sm:h-12"
+              />
+              <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                <Calendar className="h-4 w-4 sm:h-5 sm:w-5" />
+              </div>
+            </div>
           </div>
         </div>
         <Button onClick={handleAdd} disabled={!date} className="h-11 w-full gap-1 text-sm font-semibold shadow-sm transition-transform active:scale-[0.98] sm:h-12 sm:w-auto">
