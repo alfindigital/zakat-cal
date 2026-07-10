@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, RefreshCw, CalendarClock } from "lucide-react";
+import { ArrowLeft, RefreshCw, Coins } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -109,101 +108,148 @@ export default function Pengaturan() {
   const currentNisab = getNisab(metalPrice, nisabType);
 
   return (
-    <div className="min-h-dvh bg-background px-4 py-6 sm:py-12">
-      <div className="mx-auto max-w-2xl space-y-4 sm:space-y-6">
-        <div className="flex items-center justify-between">
-          <Button variant="ghost" size="sm" asChild>
-            <Link to="/"><ArrowLeft className="mr-2 h-4 w-4" />Kembali</Link>
+    <div className="min-h-dvh bg-background px-4 py-6 sm:px-8 sm:py-12">
+      <div className="mx-auto max-w-lg space-y-6">
+        {/* Header */}
+        <div className="mb-6 sm:mb-8">
+          <Button variant="ghost" size="sm" asChild className="group -ml-2 mb-3 h-auto px-2 py-1 text-muted-foreground hover:text-primary">
+            <Link to="/" className="flex items-center gap-1">
+              <ArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1" />
+              <span className="font-medium">Kembali</span>
+            </Link>
           </Button>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+            Pengaturan
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Atur nisab, harga logam, dan pengingat haul.
+          </p>
         </div>
 
-        <div className="text-center space-y-1 sm:space-y-2">
-          <h1 className="text-xl font-bold tracking-tight sm:text-3xl lg:text-4xl">Pengaturan</h1>
-          <p className="text-xs text-muted-foreground sm:text-base">Atur nisab, harga logam, dan pengingat haul.</p>
-        </div>
-
-        <Card>
-          <CardHeader className="pb-2 px-4 pt-4 sm:px-6 sm:pt-5">
-            <CardTitle className="text-base sm:text-lg">Nisab saat ini</CardTitle>
-          </CardHeader>
-          <CardContent className="px-4 pb-4 sm:px-6 sm:pb-5 space-y-1">
-            <p className="text-xl font-bold tabular-nums sm:text-2xl">
-              {formatRupiah(currentNisab)}
-              <span className="text-muted-foreground text-xs font-normal sm:text-sm">
-                {" "}· {nisabType === "gold" ? "85g emas" : "595g perak"}
+        {/* Hero Nisab Card */}
+        <div className="relative overflow-hidden rounded-3xl bg-primary p-6 text-primary-foreground shadow-xl shadow-primary/25">
+          <div className="relative z-10">
+            <div className="flex items-start justify-between">
+              <p className="text-xs font-medium uppercase tracking-wider text-primary-foreground/80">
+                Nisab saat ini
+              </p>
+              <Coins className="h-6 w-6 text-primary-foreground/40" />
+            </div>
+            <div className="mt-4 flex items-baseline gap-2">
+              <h2 className="text-2xl font-bold tabular-nums sm:text-3xl">
+                {formatRupiah(currentNisab)}
+              </h2>
+              <span className="text-sm font-light text-primary-foreground/80">
+                / {nisabType === "gold" ? "85g emas" : "595g perak"}
               </span>
-            </p>
-            <p className="text-[11px] text-muted-foreground sm:text-xs">
+            </div>
+            <p className="mt-2 text-xs font-medium uppercase tracking-tight text-primary-foreground/70">
               {nisabType === "gold" ? "Emas" : "Perak"} Rp {formatMetalPrice(metalPrice)}/gr
             </p>
-          </CardContent>
-        </Card>
+          </div>
+          <div className="absolute -right-8 -bottom-8 h-32 w-32 rounded-full bg-primary-foreground/10 blur-2xl" />
+          <div className="absolute -left-8 -top-8 h-32 w-32 rounded-full bg-primary/30 blur-3xl" />
+        </div>
 
-        <Card>
-          <CardHeader className="pb-2 px-4 pt-4 sm:px-6 sm:pt-5"><CardTitle className="text-base sm:text-lg">Standar Nisab</CardTitle></CardHeader>
-          <CardContent className="px-4 pb-4 sm:px-6 sm:pb-5">
+        {/* Main Settings Container */}
+        <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-sm">
+          {/* Standar Nisab */}
+          <div className="p-5 sm:p-6">
+            <Label className="mb-4 block text-sm font-semibold text-card-foreground">
+              Standar Nisab
+            </Label>
             <ToggleGroup
               type="single"
               value={nisabType}
               onValueChange={(v) => v && setNisabType(v as NisabType)}
-              className="w-full gap-0 rounded-lg border border-border/60 p-0.5"
+              className="flex w-full gap-1 rounded-xl bg-muted p-1"
             >
-              <ToggleGroupItem value="gold" className="flex-1 text-xs h-9 rounded-md data-[state=on]:bg-primary data-[state=on]:text-primary-foreground font-semibold sm:text-sm sm:h-10">
+              <ToggleGroupItem
+                value="gold"
+                className="flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all data-[state=on]:bg-card data-[state=on]:text-primary data-[state=on]:shadow-sm"
+              >
                 Emas (85g)
               </ToggleGroupItem>
-              <ToggleGroupItem value="silver" className="flex-1 text-xs h-9 rounded-md data-[state=on]:bg-primary data-[state=on]:text-primary-foreground font-semibold sm:text-sm sm:h-10">
+              <ToggleGroupItem
+                value="silver"
+                className="flex-1 rounded-lg py-2.5 text-sm font-medium text-muted-foreground transition-all hover:text-card-foreground data-[state=on]:bg-card data-[state=on]:text-primary data-[state=on]:shadow-sm"
+              >
                 Perak (595g)
               </ToggleGroupItem>
             </ToggleGroup>
-          </CardContent>
-        </Card>
+          </div>
 
-        <Card>
-          <CardHeader className="pb-2 px-4 pt-4 sm:px-6 sm:pt-5"><CardTitle className="text-base sm:text-lg">Harga Logam per Gram</CardTitle></CardHeader>
-          <CardContent className="px-4 pb-4 sm:px-6 sm:pb-5 space-y-4">
-            <div className="space-y-2">
-              <div className="flex items-center justify-between gap-2">
-                <Label htmlFor="gold-price" className="text-xs text-muted-foreground font-medium sm:text-sm">
-                  Harga Emas per gram (Rp)
-                </Label>
-                <Button variant="outline" size="sm" onClick={() => refreshGoldPrice()} disabled={refreshing} className="h-7 text-[11px] sm:h-8 sm:text-xs">
-                  <RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${refreshing ? "animate-spin" : ""}`} /> Perbarui
-                </Button>
-              </div>
-              <Input
-                id="gold-price"
-                type="text"
-                inputMode="decimal"
-                value={goldInput}
-                onChange={handleGoldChange}
-                className="h-10 text-sm font-semibold sm:h-12 sm:text-base"
-                placeholder="2.000.000"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="silver-price" className="text-xs text-muted-foreground font-medium sm:text-sm">
-                Harga Perak per gram (Rp)
+          {/* Harga Logam */}
+          <div className="border-t border-border p-5 sm:p-6">
+            <div className="mb-4 flex items-center justify-between">
+              <Label className="text-sm font-semibold text-card-foreground">
+                Harga Logam per Gram
               </Label>
-              <Input
-                id="silver-price"
-                type="text"
-                inputMode="decimal"
-                value={silverInput}
-                onChange={handleSilverChange}
-                className="h-10 text-sm font-semibold sm:h-12 sm:text-base"
-                placeholder="28.000"
-              />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => refreshGoldPrice()}
+                disabled={refreshing}
+                className="h-7 gap-1 rounded-full border-primary/10 bg-primary/10 px-3 text-xs font-semibold text-primary hover:bg-primary/15 hover:text-primary"
+              >
+                <RefreshCw className={`h-3 w-3 ${refreshing ? "animate-spin" : ""}`} />
+                Perbarui
+              </Button>
             </div>
-          </CardContent>
-        </Card>
+            <div className="space-y-4">
+              <div className="relative">
+                <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 font-medium text-muted-foreground">
+                  Rp
+                </span>
+                <Input
+                  id="gold-price"
+                  type="text"
+                  inputMode="decimal"
+                  value={goldInput}
+                  onChange={handleGoldChange}
+                  className="h-12 border-border bg-muted pl-12 pr-4 text-base font-medium text-card-foreground placeholder:text-muted-foreground/60 focus-visible:border-primary focus-visible:ring-primary/20"
+                  placeholder="2.000.000"
+                />
+                <Label
+                  htmlFor="gold-price"
+                  className="absolute -top-2 left-3 bg-card px-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground"
+                >
+                  Harga Emas
+                </Label>
+              </div>
+              <div className="relative">
+                <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 font-medium text-muted-foreground">
+                  Rp
+                </span>
+                <Input
+                  id="silver-price"
+                  type="text"
+                  inputMode="decimal"
+                  value={silverInput}
+                  onChange={handleSilverChange}
+                  className="h-12 border-border bg-muted pl-12 pr-4 text-base font-medium text-card-foreground placeholder:text-muted-foreground/60 focus-visible:border-primary focus-visible:ring-primary/20"
+                  placeholder="28.000"
+                />
+                <Label
+                  htmlFor="silver-price"
+                  className="absolute -top-2 left-3 bg-card px-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground"
+                >
+                  Harga Perak
+                </Label>
+              </div>
+            </div>
+          </div>
 
-        <Card>
-          <CardHeader className="pb-2 px-4 pt-4 sm:px-6 sm:pt-5"><CardTitle className="text-base sm:text-lg">Pembulatan Zakat</CardTitle></CardHeader>
-          <CardContent className="px-4 pb-4 sm:px-6 sm:pb-5">
-            <div className="flex items-center justify-between gap-3">
-              <div className="min-w-0">
-                <Label htmlFor="roundup-switch" className="text-xs font-medium sm:text-sm">Bulatkan zakat ke atas</Label>
-                <p className="text-[10px] text-muted-foreground sm:text-[11px]">Pembulatan ihtiyat ke Rp 1.000 terdekat.</p>
+          {/* Pembulatan Zakat */}
+          <div className="border-t border-border p-5 sm:p-6">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <Label htmlFor="roundup-switch" className="text-sm font-semibold text-card-foreground">
+                  Pembulatan Zakat
+                </Label>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  Bulatkan zakat ke Rp 1.000 terdekat
+                </p>
               </div>
               <Switch
                 id="roundup-switch"
@@ -211,19 +257,13 @@ export default function Pengaturan() {
                 onCheckedChange={(v) => { setRoundUp(v); saveRoundUp(v); }}
               />
             </div>
-          </CardContent>
-        </Card>
+          </div>
 
-        <Card>
-          <CardHeader className="pb-2 px-4 pt-4 sm:px-6 sm:pt-5">
-            <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-              <CalendarClock className="h-4 w-4 sm:h-5 sm:w-5 text-primary" /> Pengingat Haul
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="px-4 pb-4 sm:px-6 sm:pb-5">
+          {/* Pengingat Haul */}
+          <div className="border-t border-border p-5 sm:p-6">
             <HaulReminder embedded />
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </div>
   );
