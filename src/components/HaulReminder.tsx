@@ -41,11 +41,29 @@ export default function HaulReminder({ embedded = false }: Props) {
   const [list, setList] = useState<HaulReminderT[]>(getHaulReminders());
   const [label, setLabel] = useState("");
   const [date, setDate] = useState(todayISO());
+  const [dateError, setDateError] = useState<string | null>(null);
 
   useEffect(() => subscribeHaul(() => setList(getHaulReminders())), []);
 
+  const validateDate = (value: string): string | null => {
+    if (!value) return "Tanggal mulai wajib diisi.";
+    const picked = new Date(value);
+    if (Number.isNaN(picked.getTime())) return "Tanggal tidak valid.";
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    picked.setHours(0, 0, 0, 0);
+    if (picked.getTime() > today.getTime()) return "Tanggal mulai tidak boleh di masa depan.";
+    return null;
+  };
+
   const handleAdd = () => {
-    if (!date) return;
+    const err = validateDate(date);
+    if (err) {
+      setDateError(err);
+      toast.error(err);
+      return;
+    }
+    setDateError(null);
     addHaulReminder(label, date);
     setLabel("");
     setDate(todayISO());
@@ -128,16 +146,29 @@ export default function HaulReminder({ embedded = false }: Props) {
                 id="haul-date"
                 type="date"
                 value={date}
-                onChange={(e) => setDate(e.target.value)}
-                className="no-calendar-picker h-11 w-full border-border bg-muted pr-10 text-sm text-card-foreground focus-visible:border-primary focus-visible:ring-primary/20 sm:h-12"
+                max={todayISO()}
+                aria-label="Tanggal mulai haul (saat harta mencapai nisab)"
+                aria-invalid={dateError ? true : undefined}
+                aria-describedby={dateError ? "haul-date-error" : undefined}
+                onChange={(e) => {
+                  setDate(e.target.value);
+                  setDateError(validateDate(e.target.value));
+                }}
+                className="no-calendar-picker h-11 w-full border-border bg-muted pr-11 text-sm text-card-foreground focus-visible:border-primary focus-visible:ring-primary/20 sm:h-12 sm:pr-12"
               />
-              <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                <Calendar className="h-4 w-4 sm:h-5 sm:w-5" />
-              </div>
+              <Calendar
+                aria-hidden="true"
+                className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground sm:right-4 sm:h-[18px] sm:w-[18px]"
+              />
             </div>
+            {dateError && (
+              <p id="haul-date-error" role="alert" className="text-[11px] text-destructive sm:text-xs">
+                {dateError}
+              </p>
+            )}
           </div>
         </div>
-        <Button onClick={handleAdd} disabled={!date} className="h-11 w-full gap-1 text-sm font-semibold shadow-sm transition-transform active:scale-[0.98] sm:h-12 sm:w-auto">
+        <Button onClick={handleAdd} disabled={!date || !!dateError} className="h-11 w-full gap-1 text-sm font-semibold shadow-sm transition-transform active:scale-[0.98] sm:h-12 sm:w-auto">
           <Plus className="h-4 w-4" /> Tambah pengingat
         </Button>
       </div>
