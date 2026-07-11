@@ -41,11 +41,29 @@ export default function HaulReminder({ embedded = false }: Props) {
   const [list, setList] = useState<HaulReminderT[]>(getHaulReminders());
   const [label, setLabel] = useState("");
   const [date, setDate] = useState(todayISO());
+  const [dateError, setDateError] = useState<string | null>(null);
 
   useEffect(() => subscribeHaul(() => setList(getHaulReminders())), []);
 
+  const validateDate = (value: string): string | null => {
+    if (!value) return "Tanggal mulai wajib diisi.";
+    const picked = new Date(value);
+    if (Number.isNaN(picked.getTime())) return "Tanggal tidak valid.";
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    picked.setHours(0, 0, 0, 0);
+    if (picked.getTime() > today.getTime()) return "Tanggal mulai tidak boleh di masa depan.";
+    return null;
+  };
+
   const handleAdd = () => {
-    if (!date) return;
+    const err = validateDate(date);
+    if (err) {
+      setDateError(err);
+      toast.error(err);
+      return;
+    }
+    setDateError(null);
     addHaulReminder(label, date);
     setLabel("");
     setDate(todayISO());
