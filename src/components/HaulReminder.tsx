@@ -123,8 +123,8 @@ export default function HaulReminder({ embedded = false }: Props) {
       )}
 
       <div className="space-y-3">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div className="space-y-1.5 min-w-0">
+        <div className="grid gap-3 sm:gap-4 sm:grid-cols-2">
+          <div className="space-y-1 min-w-0 sm:space-y-1.5">
             <Label htmlFor="haul-label" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground sm:text-[11px]">
               Nama
             </Label>
@@ -133,7 +133,7 @@ export default function HaulReminder({ embedded = false }: Props) {
               value={label}
               onChange={(e) => setLabel(e.target.value)}
               placeholder="mis. Hartaku"
-              className="h-11 w-full border-border bg-muted text-sm text-card-foreground placeholder:text-muted-foreground/60 focus-visible:border-primary focus-visible:ring-primary/20 sm:h-12"
+              className="h-10 w-full border-border bg-muted text-sm text-card-foreground placeholder:text-muted-foreground/60 transition-shadow focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/25 sm:h-11 md:h-12"
               maxLength={40}
             />
           </div>
