@@ -213,45 +213,63 @@ export default function Pengaturan() {
               </Button>
             </div>
             <div className="space-y-4">
-              <div className="relative">
-                <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 font-medium text-muted-foreground">
-                  Rp
-                </span>
-                <Input
-                  id="gold-price"
-                  type="text"
-                  inputMode="decimal"
-                  value={goldInput}
-                  onChange={handleGoldChange}
-                  className="h-12 border-border bg-muted pl-12 pr-4 text-base font-medium text-card-foreground placeholder:text-muted-foreground/60 focus-visible:border-primary focus-visible:ring-primary/20"
-                  placeholder="2.000.000"
-                />
-                <Label
-                  htmlFor="gold-price"
-                  className="absolute -top-2 left-3 bg-card px-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground"
-                >
-                  Harga Emas
-                </Label>
+              <div className="space-y-1">
+                <div className="relative">
+                  <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 font-medium text-muted-foreground">
+                    Rp
+                  </span>
+                  <Input
+                    id="gold-price"
+                    type="text"
+                    inputMode="decimal"
+                    value={goldInput}
+                    onChange={handleGoldChange}
+                    aria-invalid={goldError ? true : undefined}
+                    aria-describedby={goldError ? "gold-price-error" : undefined}
+                    className="h-12 border-border bg-muted pl-12 pr-4 text-base font-medium text-card-foreground placeholder:text-muted-foreground/60 transition-shadow focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/25"
+                    placeholder="2.000.000"
+                  />
+                  <Label
+                    htmlFor="gold-price"
+                    className="absolute -top-2 left-3 bg-card px-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground"
+                  >
+                    Harga Emas
+                  </Label>
+                </div>
+                {goldError && (
+                  <p id="gold-price-error" role="alert" className="text-xs text-destructive">
+                    {goldError}
+                  </p>
+                )}
               </div>
-              <div className="relative">
-                <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 font-medium text-muted-foreground">
-                  Rp
-                </span>
-                <Input
-                  id="silver-price"
-                  type="text"
-                  inputMode="decimal"
-                  value={silverInput}
-                  onChange={handleSilverChange}
-                  className="h-12 border-border bg-muted pl-12 pr-4 text-base font-medium text-card-foreground placeholder:text-muted-foreground/60 focus-visible:border-primary focus-visible:ring-primary/20"
-                  placeholder="28.000"
-                />
-                <Label
-                  htmlFor="silver-price"
-                  className="absolute -top-2 left-3 bg-card px-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground"
-                >
-                  Harga Perak
-                </Label>
+              <div className="space-y-1">
+                <div className="relative">
+                  <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 font-medium text-muted-foreground">
+                    Rp
+                  </span>
+                  <Input
+                    id="silver-price"
+                    type="text"
+                    inputMode="decimal"
+                    value={silverInput}
+                    onChange={handleSilverChange}
+                    aria-invalid={silverError ? true : undefined}
+                    aria-describedby={silverError ? "silver-price-error" : undefined}
+                    className="h-12 border-border bg-muted pl-12 pr-4 text-base font-medium text-card-foreground placeholder:text-muted-foreground/60 transition-shadow focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/25"
+                    placeholder="28.000"
+                  />
+                  <Label
+                    htmlFor="silver-price"
+                    className="absolute -top-2 left-3 bg-card px-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground"
+                  >
+                    Harga Perak
+                  </Label>
+                </div>
+                {silverError && (
+                  <p id="silver-price-error" role="alert" className="text-xs text-destructive">
+                    {silverError}
+                  </p>
+                )}
               </div>
             </div>
           </div>
