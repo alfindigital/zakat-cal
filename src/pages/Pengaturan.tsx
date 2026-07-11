@@ -66,6 +66,7 @@ export default function Pengaturan() {
       } else {
         setGoldPrice(g.price);
         setGoldInput(formatMetalPrice(g.price));
+        setGoldError(null);
         persistPrices(g.price, silverPrice, "online");
         if (!silent) {
           toast.success("Harga emas diperbarui", {
