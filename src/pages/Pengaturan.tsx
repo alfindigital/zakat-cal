@@ -39,8 +39,10 @@ export default function Pengaturan() {
   const stored = loadStoredPrices();
   const [goldPrice, setGoldPrice] = useState(stored.gold);
   const [goldInput, setGoldInput] = useState(formatMetalPrice(stored.gold));
+  const [goldError, setGoldError] = useState<string | null>(null);
   const [silverPrice, setSilverPrice] = useState(stored.silver);
   const [silverInput, setSilverInput] = useState(formatMetalPrice(stored.silver));
+  const [silverError, setSilverError] = useState<string | null>(null);
   const [priceMeta, setPriceMeta] = useState<{ date: string; source: PriceSource }>({
     date: stored.date,
     source: stored.source,
