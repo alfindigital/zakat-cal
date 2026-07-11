@@ -89,18 +89,31 @@ export default function Pengaturan() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const validateMetalPrice = (value: string, label: string): string | null => {
+    const trimmed = value.trim();
+    if (!trimmed) return `${label} wajib diisi.`;
+    const num = parseQuantity(trimmed);
+    if (Number.isNaN(num)) return `${label} harus berupa angka.`;
+    if (num <= 0) return `${label} harus lebih dari 0.`;
+    return null;
+  };
+
   const handleGoldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     formattedChange(e, setGoldInput, (v) => formatQuantityInput(v, 2));
-    const num = parseQuantity(e.target.value);
-    if (num > 0) {
+    const err = validateMetalPrice(e.target.value, "Harga emas");
+    setGoldError(err);
+    if (!err) {
+      const num = parseQuantity(e.target.value);
       setGoldPrice(num);
       persistPrices(num, silverPrice, "manual");
     }
   };
   const handleSilverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     formattedChange(e, setSilverInput, (v) => formatQuantityInput(v, 2));
-    const num = parseQuantity(e.target.value);
-    if (num > 0) {
+    const err = validateMetalPrice(e.target.value, "Harga perak");
+    setSilverError(err);
+    if (!err) {
+      const num = parseQuantity(e.target.value);
       setSilverPrice(num);
       persistPrices(goldPrice, num, "manual");
     }
