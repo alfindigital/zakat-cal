@@ -137,7 +137,7 @@ export default function HaulReminder({ embedded = false }: Props) {
               maxLength={40}
             />
           </div>
-          <div className="space-y-1.5 min-w-0">
+          <div className="space-y-1 min-w-0 sm:space-y-1.5">
             <Label htmlFor="haul-date" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground sm:text-[11px]">
               Tanggal mulai (capai nisab)
             </Label>
@@ -154,11 +154,11 @@ export default function HaulReminder({ embedded = false }: Props) {
                   setDate(e.target.value);
                   setDateError(validateDate(e.target.value));
                 }}
-                className="no-calendar-picker h-11 w-full border-border bg-muted pr-11 text-sm text-card-foreground focus-visible:border-primary focus-visible:ring-primary/20 sm:h-12 sm:pr-12"
+                className="no-calendar-picker h-10 w-full border-border bg-muted pr-10 text-sm text-card-foreground transition-shadow focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/25 sm:h-11 sm:pr-11 md:h-12 md:pr-12"
               />
               <Calendar
                 aria-hidden="true"
-                className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground sm:right-4 sm:h-[18px] sm:w-[18px]"
+                className="pointer-events-none absolute right-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground sm:right-3.5 sm:h-4 sm:w-4 md:right-4 md:h-[18px] md:w-[18px]"
               />
             </div>
             {dateError && (
