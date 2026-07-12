@@ -57,6 +57,10 @@ export default function ZakatFitrah({ isActive, onCalculated }: Props) {
     : [];
 
   const handleSave = () => {
+    if (focusFirstInvalid([
+      { id: "fitrah-jiwa", label: "Jumlah Jiwa", invalid: jiwaNum <= 0 },
+      { id: "fitrah-uang", label: "Tarif per Jiwa", invalid: mode === "uang" && perJiwaUangNum <= 0 },
+    ])) return;
     if (!result) return;
     addHistory({ type: "Fitrah", amount: result.total, detail: detailRows });
     onCalculated();
