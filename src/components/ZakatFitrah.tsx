@@ -11,6 +11,7 @@ import { track } from "@/lib/analytics";
 import { formatNumberInput, parseFormattedNumber, formattedChange } from "@/lib/format";
 import { ResultCard, MobilePdfFab } from "./MobileCalcChrome";
 import { toast } from "sonner";
+import { focusFirstInvalid } from "@/lib/focus-invalid";
 import { getIdulFitriInfo } from "@/lib/ramadhan";
 import { loadMazhab, MAZHAB_NOTES } from "@/lib/mazhab";
 import { CalendarClock } from "lucide-react";
