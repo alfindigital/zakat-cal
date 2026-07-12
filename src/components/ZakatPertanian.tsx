@@ -41,6 +41,10 @@ export default function ZakatPertanian({ isActive, onCalculated }: Props) {
     : [];
 
   const handleSave = () => {
+    if (focusFirstInvalid([
+      { id: "tani-hasil", label: "Hasil Panen (kg)", invalid: hasilN <= 0 },
+      { id: "tani-harga", label: "Harga per kg", invalid: hargaN <= 0 },
+    ])) return;
     if (!result || result.zakatAmount <= 0) return;
     addHistory({ type: "Pertanian", amount: result.zakatAmount, detail: detailRows });
     onCalculated();
