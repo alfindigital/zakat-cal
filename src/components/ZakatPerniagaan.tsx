@@ -88,9 +88,14 @@ export default function ZakatPerniagaan({ goldPrice, isActive, onCalculated }: P
       <p className="text-xs text-muted-foreground">
         <strong>Modal kerja</strong> = kas/uang usaha. <strong>Piutang lancar</strong> = tagihan yang akan tertagih. <strong>Stok dagang</strong> = nilai barang dagangan. <strong>Hutang dagang</strong> = kewajiban jangka pendek usaha.
       </p>
-      <Button onClick={handleSave} disabled={!result || result.zakatAmount <= 0} className="w-full h-11">
-        Simpan ke Riwayat
-      </Button>
+      <div className="space-y-1.5">
+        <Button onClick={handleSave} aria-disabled={!canCalc} className="w-full h-11">
+          Simpan ke Riwayat
+        </Button>
+        <p aria-live="polite" className="text-xs text-muted-foreground text-center">
+          {canCalc ? "Perhitungan diperbarui otomatis di bawah." : "Isi modal/piutang/stok untuk melihat perhitungan otomatis."}
+        </p>
+      </div>
       <AnimatePresence>
         {result && (
           <ResultCard
