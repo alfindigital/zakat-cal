@@ -35,6 +35,10 @@ export default function ZakatFidyah({ isActive, onCalculated }: Props) {
     : [];
 
   const handleSave = () => {
+    if (focusFirstInvalid([
+      { id: "fidyah-hari", label: "Jumlah Hari Ditinggalkan", invalid: hariN <= 0 },
+      { id: "fidyah-harga", label: "Nilai per Hari", invalid: hargaN <= 0 },
+    ])) return;
     if (!result || result.total <= 0) return;
     addHistory({ type: "Fidyah", amount: result.total, detail: detailRows });
     onCalculated();
