@@ -32,6 +32,9 @@ export default function ZakatRikaz({ isActive, onCalculated }: Props) {
     : [];
 
   const handleSave = () => {
+    if (focusFirstInvalid([
+      { id: "rikaz-nilai", label: "Nilai Harta yang Ditemukan", invalid: nilaiN <= 0 },
+    ])) return;
     if (!result || result.zakatAmount <= 0) return;
     addHistory({ type: "Rikaz", amount: result.zakatAmount, detail: detailRows });
     onCalculated();
