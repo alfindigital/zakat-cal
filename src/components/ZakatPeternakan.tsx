@@ -47,6 +47,10 @@ export default function ZakatPeternakan({ isActive, onCalculated }: Props) {
     : [];
 
   const handleSave = () => {
+    if (focusFirstInvalid([
+      { id: "ternak-jumlah", label: "Jumlah ekor", invalid: jumlahN <= 0 },
+      { id: "ternak-harga", label: "Harga per Ekor", invalid: hargaN <= 0 },
+    ])) return;
     if (!result || result.zakatAmount <= 0) return;
     addHistory({ type: "Peternakan", amount: result.zakatAmount, detail: detailRows });
     onCalculated();
