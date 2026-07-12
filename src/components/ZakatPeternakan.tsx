@@ -10,6 +10,7 @@ import { track } from "@/lib/analytics";
 import { formatNumberInput, parseFormattedNumber, formattedChange } from "@/lib/format";
 import { ResultCard, MobilePdfFab } from "./MobileCalcChrome";
 import { toast } from "sonner";
+import { focusFirstInvalid } from "@/lib/focus-invalid";
 
 interface Props {
   isActive: boolean;
@@ -46,6 +47,10 @@ export default function ZakatPeternakan({ isActive, onCalculated }: Props) {
     : [];
 
   const handleSave = () => {
+    if (focusFirstInvalid([
+      { id: "ternak-jumlah", label: "Jumlah ekor", invalid: jumlahN <= 0 },
+      { id: "ternak-harga", label: "Harga per Ekor", invalid: hargaN <= 0 },
+    ])) return;
     if (!result || result.zakatAmount <= 0) return;
     addHistory({ type: "Peternakan", amount: result.zakatAmount, detail: detailRows });
     onCalculated();
@@ -90,9 +95,14 @@ export default function ZakatPeternakan({ isActive, onCalculated }: Props) {
             value={harga} onChange={(e) => formattedChange(e, setHarga, formatNumberInput)} className="h-12 sm:h-10 text-base" />
         </div>
       </div>
-      <Button onClick={handleSave} disabled={!result || result.zakatAmount <= 0} className="w-full h-11">
-        Simpan ke Riwayat
-      </Button>
+      <div className="space-y-1.5">
+        <Button onClick={handleSave} aria-disabled={!canCalc} className="w-full h-11">
+          Simpan ke Riwayat
+        </Button>
+        <p aria-live="polite" className="text-xs text-muted-foreground text-center">
+          {canCalc ? "Perhitungan diperbarui otomatis di bawah." : "Isi jumlah & harga per ekor untuk melihat perhitungan otomatis."}
+        </p>
+      </div>
       <AnimatePresence>
         {result && (
           <ResultCard

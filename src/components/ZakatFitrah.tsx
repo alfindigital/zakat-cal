@@ -11,6 +11,7 @@ import { track } from "@/lib/analytics";
 import { formatNumberInput, parseFormattedNumber, formattedChange } from "@/lib/format";
 import { ResultCard, MobilePdfFab } from "./MobileCalcChrome";
 import { toast } from "sonner";
+import { focusFirstInvalid } from "@/lib/focus-invalid";
 import { getIdulFitriInfo } from "@/lib/ramadhan";
 import { loadMazhab, MAZHAB_NOTES } from "@/lib/mazhab";
 import { CalendarClock } from "lucide-react";
@@ -56,6 +57,10 @@ export default function ZakatFitrah({ isActive, onCalculated }: Props) {
     : [];
 
   const handleSave = () => {
+    if (focusFirstInvalid([
+      { id: "fitrah-jiwa", label: "Jumlah Jiwa", invalid: jiwaNum <= 0 },
+      { id: "fitrah-uang", label: "Tarif per Jiwa", invalid: mode === "uang" && perJiwaUangNum <= 0 },
+    ])) return;
     if (!result) return;
     addHistory({ type: "Fitrah", amount: result.total, detail: detailRows });
     onCalculated();
@@ -175,9 +180,14 @@ export default function ZakatFitrah({ isActive, onCalculated }: Props) {
         </div>
       )}
 
-      <Button onClick={handleSave} disabled={!canCalc} className="w-full h-11">
-        Simpan ke Riwayat
-      </Button>
+      <div className="space-y-1.5">
+        <Button onClick={handleSave} aria-disabled={!canCalc} className="w-full h-11">
+          Simpan ke Riwayat
+        </Button>
+        <p aria-live="polite" className="text-xs text-muted-foreground text-center">
+          {canCalc ? "Perhitungan diperbarui otomatis di bawah." : "Isi jumlah jiwa untuk melihat perhitungan otomatis."}
+        </p>
+      </div>
 
       <AnimatePresence>
         {result && (

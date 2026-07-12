@@ -9,6 +9,7 @@ import { track } from "@/lib/analytics";
 import { formatNumberInput, parseFormattedNumber, formatQuantityInput, parseQuantity, formattedChange } from "@/lib/format";
 import { ResultCard, MobilePdfFab } from "./MobileCalcChrome";
 import { toast } from "sonner";
+import { focusFirstInvalid } from "@/lib/focus-invalid";
 
 interface Props {
   goldPrice: number;
@@ -53,6 +54,9 @@ export default function ZakatMaal({ goldPrice, silverPrice, nisabType, isActive,
     : [];
 
   const handleSave = () => {
+    if (focusFirstInvalid([
+      { id: "maal-tabungan", label: "salah satu harta (tabungan, emas, perak, investasi, atau properti)", invalid: !canCalc },
+    ])) return;
     if (!result || result.zakatAmount <= 0) return;
     addHistory({ type: "Maal", amount: result.zakatAmount, detail: detailRows });
     onCalculated();
@@ -117,9 +121,14 @@ export default function ZakatMaal({ goldPrice, silverPrice, nisabType, isActive,
         Catatan: menurut sebagian ulama, emas perhiasan yang wajar dipakai sehari-hari tidak dizakati — masukkan hanya emas simpanan/investasi.
       </p>
 
-      <Button onClick={handleSave} disabled={!result || result.zakatAmount <= 0} className="w-full h-11">
-        Simpan ke Riwayat
-      </Button>
+      <div className="space-y-1.5">
+        <Button onClick={handleSave} aria-disabled={!canCalc} className="w-full h-11">
+          Simpan ke Riwayat
+        </Button>
+        <p aria-live="polite" className="text-xs text-muted-foreground text-center">
+          {canCalc ? "Perhitungan diperbarui otomatis di bawah." : "Isi salah satu harta untuk melihat perhitungan otomatis."}
+        </p>
+      </div>
 
       <AnimatePresence>
         {result && (

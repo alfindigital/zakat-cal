@@ -9,6 +9,7 @@ import { track } from "@/lib/analytics";
 import { formatNumberInput, parseFormattedNumber, formattedChange } from "@/lib/format";
 import { ResultCard, MobilePdfFab } from "./MobileCalcChrome";
 import { toast } from "sonner";
+import { focusFirstInvalid } from "@/lib/focus-invalid";
 
 interface Props {
   goldPrice: number;
@@ -33,6 +34,9 @@ export default function ZakatMadin({ goldPrice, isActive, onCalculated }: Props)
     : [];
 
   const handleSave = () => {
+    if (focusFirstInvalid([
+      { id: "madin-nilai", label: "Nilai Hasil Tambang", invalid: nilaiN <= 0 },
+    ])) return;
     if (!result || result.zakatAmount <= 0) return;
     addHistory({ type: "Madin", amount: result.zakatAmount, detail: detailRows });
     onCalculated();
@@ -60,9 +64,14 @@ export default function ZakatMadin({ goldPrice, isActive, onCalculated }: Props)
         <Input id="madin-nilai" type="text" inputMode="decimal" pattern="[0-9]*" placeholder="0"
           value={nilai} onChange={(e) => formattedChange(e, setNilai, formatNumberInput)} className="h-12 sm:h-10 text-base" />
       </div>
-      <Button onClick={handleSave} disabled={!result || result.zakatAmount <= 0} className="w-full h-11">
-        Simpan ke Riwayat
-      </Button>
+      <div className="space-y-1.5">
+        <Button onClick={handleSave} aria-disabled={!canCalc} className="w-full h-11">
+          Simpan ke Riwayat
+        </Button>
+        <p aria-live="polite" className="text-xs text-muted-foreground text-center">
+          {canCalc ? "Perhitungan diperbarui otomatis di bawah." : "Isi nilai hasil tambang untuk melihat perhitungan otomatis."}
+        </p>
+      </div>
       <AnimatePresence>
         {result && (
           <ResultCard

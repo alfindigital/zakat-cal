@@ -9,6 +9,7 @@ import { track } from "@/lib/analytics";
 import { formatNumberInput, parseFormattedNumber, formattedChange } from "@/lib/format";
 import { ResultCard, MobilePdfFab } from "./MobileCalcChrome";
 import { toast } from "sonner";
+import { focusFirstInvalid } from "@/lib/focus-invalid";
 
 interface Props {
   isActive: boolean;
@@ -34,6 +35,10 @@ export default function ZakatFidyah({ isActive, onCalculated }: Props) {
     : [];
 
   const handleSave = () => {
+    if (focusFirstInvalid([
+      { id: "fidyah-hari", label: "Jumlah Hari Ditinggalkan", invalid: hariN <= 0 },
+      { id: "fidyah-harga", label: "Nilai per Hari", invalid: hargaN <= 0 },
+    ])) return;
     if (!result || result.total <= 0) return;
     addHistory({ type: "Fidyah", amount: result.total, detail: detailRows });
     onCalculated();
@@ -65,9 +70,14 @@ export default function ZakatFidyah({ isActive, onCalculated }: Props) {
             value={harga} onChange={(e) => formattedChange(e, setHarga, formatNumberInput)} className="h-12 sm:h-10 text-base" />
         </div>
       </div>
-      <Button onClick={handleSave} disabled={!canCalc} className="w-full h-11">
-        Simpan ke Riwayat
-      </Button>
+      <div className="space-y-1.5">
+        <Button onClick={handleSave} aria-disabled={!canCalc} className="w-full h-11">
+          Simpan ke Riwayat
+        </Button>
+        <p aria-live="polite" className="text-xs text-muted-foreground text-center">
+          {canCalc ? "Perhitungan diperbarui otomatis di bawah." : "Isi jumlah hari & nilai per hari untuk melihat perhitungan otomatis."}
+        </p>
+      </div>
       <AnimatePresence>
         {result && (
           <ResultCard

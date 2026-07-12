@@ -10,6 +10,7 @@ import { track } from "@/lib/analytics";
 import { formatNumberInput, parseFormattedNumber, formattedChange } from "@/lib/format";
 import { ResultCard, MobilePdfFab } from "./MobileCalcChrome";
 import { toast } from "sonner";
+import { focusFirstInvalid } from "@/lib/focus-invalid";
 
 interface Props {
   metalPrice: number;
@@ -48,6 +49,9 @@ export default function ZakatPenghasilan({ metalPrice, nisabType, isActive, onCa
     : [];
 
   const handleSave = () => {
+    if (focusFirstInvalid([
+      { id: "penghasilan-bulanan", label: "Penghasilan Bulanan", invalid: monthlyNum <= 0 },
+    ])) return;
     if (!result || result.zakatAmount <= 0) return;
     addHistory({ type: "Penghasilan", amount: result.zakatAmount, detail: detailRows });
     onCalculated();
@@ -128,9 +132,14 @@ export default function ZakatPenghasilan({ metalPrice, nisabType, isActive, onCa
         </div>
       )}
 
-      <Button onClick={handleSave} disabled={!result || result.zakatAmount <= 0} className="w-full h-11">
-        Simpan ke Riwayat
-      </Button>
+      <div className="space-y-1.5">
+        <Button onClick={handleSave} aria-disabled={!canCalc} className="w-full h-11">
+          Simpan ke Riwayat
+        </Button>
+        <p aria-live="polite" className="text-xs text-muted-foreground text-center">
+          {canCalc ? "Perhitungan diperbarui otomatis di bawah." : "Isi field wajib untuk melihat perhitungan otomatis."}
+        </p>
+      </div>
 
       <AnimatePresence>
         {result && (
