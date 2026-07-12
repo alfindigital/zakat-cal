@@ -44,6 +44,9 @@ export default function ZakatPerniagaan({ goldPrice, isActive, onCalculated }: P
     : [];
 
   const handleSave = () => {
+    if (focusFirstInvalid([
+      { id: "perniagaan-modal", label: "Modal Kerja / Piutang / Stok Dagang", invalid: !canCalc },
+    ])) return;
     if (!result || result.zakatAmount <= 0) return;
     addHistory({ type: "Perniagaan", amount: result.zakatAmount, detail: detailRows });
     onCalculated();
