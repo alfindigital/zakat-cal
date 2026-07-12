@@ -91,9 +91,14 @@ export default function ZakatPertanian({ isActive, onCalculated }: Props) {
             value={hargaKg} onChange={(e) => formattedChange(e, setHargaKg, formatNumberInput)} className="h-12 sm:h-10 text-base" />
         </div>
       </div>
-      <Button onClick={handleSave} disabled={!result || result.zakatAmount <= 0} className="w-full h-11">
-        Simpan ke Riwayat
-      </Button>
+      <div className="space-y-1.5">
+        <Button onClick={handleSave} aria-disabled={!canCalc} className="w-full h-11">
+          Simpan ke Riwayat
+        </Button>
+        <p aria-live="polite" className="text-xs text-muted-foreground text-center">
+          {canCalc ? "Perhitungan diperbarui otomatis di bawah." : "Isi hasil panen & harga per kg untuk melihat perhitungan otomatis."}
+        </p>
+      </div>
       <AnimatePresence>
         {result && (
           <ResultCard
