@@ -49,6 +49,9 @@ export default function ZakatPenghasilan({ metalPrice, nisabType, isActive, onCa
     : [];
 
   const handleSave = () => {
+    if (focusFirstInvalid([
+      { id: "penghasilan-bulanan", label: "Penghasilan Bulanan", invalid: monthlyNum <= 0 },
+    ])) return;
     if (!result || result.zakatAmount <= 0) return;
     addHistory({ type: "Penghasilan", amount: result.zakatAmount, detail: detailRows });
     onCalculated();
