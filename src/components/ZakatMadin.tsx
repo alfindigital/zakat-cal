@@ -34,6 +34,9 @@ export default function ZakatMadin({ goldPrice, isActive, onCalculated }: Props)
     : [];
 
   const handleSave = () => {
+    if (focusFirstInvalid([
+      { id: "madin-nilai", label: "Nilai Hasil Tambang", invalid: nilaiN <= 0 },
+    ])) return;
     if (!result || result.zakatAmount <= 0) return;
     addHistory({ type: "Madin", amount: result.zakatAmount, detail: detailRows });
     onCalculated();
