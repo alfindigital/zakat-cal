@@ -180,9 +180,14 @@ export default function ZakatFitrah({ isActive, onCalculated }: Props) {
         </div>
       )}
 
-      <Button onClick={handleSave} disabled={!canCalc} className="w-full h-11">
-        Simpan ke Riwayat
-      </Button>
+      <div className="space-y-1.5">
+        <Button onClick={handleSave} aria-disabled={!canCalc} className="w-full h-11">
+          Simpan ke Riwayat
+        </Button>
+        <p aria-live="polite" className="text-xs text-muted-foreground text-center">
+          {canCalc ? "Perhitungan diperbarui otomatis di bawah." : "Isi jumlah jiwa untuk melihat perhitungan otomatis."}
+        </p>
+      </div>
 
       <AnimatePresence>
         {result && (
