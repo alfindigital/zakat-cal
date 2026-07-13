@@ -92,14 +92,23 @@ export default function ZakatPeternakan({ isActive, onCalculated }: Props) {
         <div className="space-y-2">
           <Label htmlFor="ternak-jumlah" className="text-sm">Jumlah (ekor)</Label>
           <Input id="ternak-jumlah" type="text" inputMode="numeric" pattern="[0-9]*" placeholder="0"
-            value={jumlah} onChange={(e) => formattedChange(e, setJumlah, formatNumberInput)} className="h-12 sm:h-10 text-base" />
+            value={jumlah} onChange={(e) => formattedChange(e, setJumlah, formatNumberInput)}
+            aria-invalid={attempted && fields[0].invalid}
+            aria-describedby={attempted && fields[0].invalid ? "ternak-jumlah-error" : undefined}
+            className="h-12 sm:h-10 text-base" />
+          {attempted && <FieldError id="ternak-jumlah" message={fields[0].invalid ? fields[0].message : undefined} />}
         </div>
         <div className="space-y-2">
           <Label htmlFor="ternak-harga" className="text-sm">Harga per Ekor (Rp)</Label>
           <Input id="ternak-harga" type="text" inputMode="decimal" pattern="[0-9]*" placeholder="0"
-            value={harga} onChange={(e) => formattedChange(e, setHarga, formatNumberInput)} className="h-12 sm:h-10 text-base" />
+            value={harga} onChange={(e) => formattedChange(e, setHarga, formatNumberInput)}
+            aria-invalid={attempted && fields[1].invalid}
+            aria-describedby={attempted && fields[1].invalid ? "ternak-harga-error" : undefined}
+            className="h-12 sm:h-10 text-base" />
+          {attempted && <FieldError id="ternak-harga" message={fields[1].invalid ? fields[1].message : undefined} />}
         </div>
       </div>
+      <ValidationSummary fields={fields} visible={attempted} />
       <div className="space-y-1.5">
         <Button onClick={handleSave} aria-disabled={!canCalc} className="w-full h-11">
           Simpan ke Riwayat
