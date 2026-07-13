@@ -10,6 +10,7 @@ import { formatNumberInput, parseFormattedNumber, formattedChange } from "@/lib/
 import { ResultCard, MobilePdfFab } from "./MobileCalcChrome";
 import { toast } from "sonner";
 import { focusFirstInvalid } from "@/lib/focus-invalid";
+import { ValidationSummary } from "@/components/ValidationHints";
 
 interface Props {
   goldPrice: number;
@@ -22,6 +23,7 @@ export default function ZakatPerniagaan({ goldPrice, isActive, onCalculated }: P
   const [piutang, setPiutang] = useState("");
   const [stok, setStok] = useState("");
   const [hutang, setHutang] = useState("");
+  const [attempted, setAttempted] = useState(false);
 
   const modalN = parseFormattedNumber(modal);
   const piutangN = parseFormattedNumber(piutang);
@@ -43,10 +45,18 @@ export default function ZakatPerniagaan({ goldPrice, isActive, onCalculated }: P
       ]
     : [];
 
+  const fields = [
+    {
+      id: "perniagaan-modal",
+      label: "Modal Kerja / Piutang / Stok Dagang",
+      invalid: !canCalc,
+      message: "Isi minimal salah satu: modal kerja, piutang, atau stok dagang.",
+    },
+  ];
+
   const handleSave = () => {
-    if (focusFirstInvalid([
-      { id: "perniagaan-modal", label: "Modal Kerja / Piutang / Stok Dagang", invalid: !canCalc },
-    ])) return;
+    setAttempted(true);
+    if (focusFirstInvalid(fields)) return;
     if (!result || result.zakatAmount <= 0) return;
     addHistory({ type: "Perniagaan", amount: result.zakatAmount, detail: detailRows });
     onCalculated();
