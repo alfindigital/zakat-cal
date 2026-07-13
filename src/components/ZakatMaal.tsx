@@ -10,6 +10,7 @@ import { formatNumberInput, parseFormattedNumber, formatQuantityInput, parseQuan
 import { ResultCard, MobilePdfFab } from "./MobileCalcChrome";
 import { toast } from "sonner";
 import { focusFirstInvalid } from "@/lib/focus-invalid";
+import { ValidationSummary } from "@/components/ValidationHints";
 
 interface Props {
   goldPrice: number;
@@ -26,6 +27,7 @@ export default function ZakatMaal({ goldPrice, silverPrice, nisabType, isActive,
   const [investasi, setInvestasi] = useState("");
   const [properti, setProperti] = useState("");
   const [hutang, setHutang] = useState("");
+  const [attempted, setAttempted] = useState(false);
 
   const tabunganNum = parseFormattedNumber(tabungan);
   const emasNum = parseQuantity(emas);
@@ -53,10 +55,18 @@ export default function ZakatMaal({ goldPrice, silverPrice, nisabType, isActive,
       ]
     : [];
 
+  const fields = [
+    {
+      id: "maal-tabungan",
+      label: "Salah satu harta (tabungan / emas / perak / investasi / properti)",
+      invalid: !canCalc,
+      message: "Isi minimal salah satu jenis harta.",
+    },
+  ];
+
   const handleSave = () => {
-    if (focusFirstInvalid([
-      { id: "maal-tabungan", label: "salah satu harta (tabungan, emas, perak, investasi, atau properti)", invalid: !canCalc },
-    ])) return;
+    setAttempted(true);
+    if (focusFirstInvalid(fields)) return;
     if (!result || result.zakatAmount <= 0) return;
     addHistory({ type: "Maal", amount: result.zakatAmount, detail: detailRows });
     onCalculated();
@@ -120,6 +130,8 @@ export default function ZakatMaal({ goldPrice, silverPrice, nisabType, isActive,
       <p className="text-xs text-muted-foreground">
         Catatan: menurut sebagian ulama, emas perhiasan yang wajar dipakai sehari-hari tidak dizakati — masukkan hanya emas simpanan/investasi.
       </p>
+
+      <ValidationSummary fields={fields} visible={attempted} />
 
       <div className="space-y-1.5">
         <Button onClick={handleSave} aria-disabled={!canCalc} className="w-full h-11">

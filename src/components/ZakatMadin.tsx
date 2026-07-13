@@ -10,6 +10,7 @@ import { formatNumberInput, parseFormattedNumber, formattedChange } from "@/lib/
 import { ResultCard, MobilePdfFab } from "./MobileCalcChrome";
 import { toast } from "sonner";
 import { focusFirstInvalid } from "@/lib/focus-invalid";
+import { FieldError, ValidationSummary } from "@/components/ValidationHints";
 
 interface Props {
   goldPrice: number;
@@ -19,6 +20,7 @@ interface Props {
 
 export default function ZakatMadin({ goldPrice, isActive, onCalculated }: Props) {
   const [nilai, setNilai] = useState("");
+  const [attempted, setAttempted] = useState(false);
 
   const nilaiN = parseFormattedNumber(nilai);
   const canCalc = nilaiN > 0;
@@ -33,10 +35,13 @@ export default function ZakatMadin({ goldPrice, isActive, onCalculated }: Props)
       ]
     : [];
 
+  const fields = [
+    { id: "madin-nilai", label: "Nilai Hasil Tambang", invalid: nilaiN <= 0, message: "Isi nilai hasil tambang lebih dari 0." },
+  ];
+
   const handleSave = () => {
-    if (focusFirstInvalid([
-      { id: "madin-nilai", label: "Nilai Hasil Tambang", invalid: nilaiN <= 0 },
-    ])) return;
+    setAttempted(true);
+    if (focusFirstInvalid(fields)) return;
     if (!result || result.zakatAmount <= 0) return;
     addHistory({ type: "Madin", amount: result.zakatAmount, detail: detailRows });
     onCalculated();
@@ -62,8 +67,13 @@ export default function ZakatMadin({ goldPrice, isActive, onCalculated }: Props)
       <div className="space-y-2">
         <Label htmlFor="madin-nilai" className="text-sm">Nilai Hasil Tambang (Rp)</Label>
         <Input id="madin-nilai" type="text" inputMode="decimal" pattern="[0-9]*" placeholder="0"
-          value={nilai} onChange={(e) => formattedChange(e, setNilai, formatNumberInput)} className="h-12 sm:h-10 text-base" />
+          value={nilai} onChange={(e) => formattedChange(e, setNilai, formatNumberInput)}
+          aria-invalid={attempted && fields[0].invalid}
+          aria-describedby={attempted && fields[0].invalid ? "madin-nilai-error" : undefined}
+          className="h-12 sm:h-10 text-base" />
+        {attempted && <FieldError id="madin-nilai" message={fields[0].invalid ? fields[0].message : undefined} />}
       </div>
+      <ValidationSummary fields={fields} visible={attempted} />
       <div className="space-y-1.5">
         <Button onClick={handleSave} aria-disabled={!canCalc} className="w-full h-11">
           Simpan ke Riwayat

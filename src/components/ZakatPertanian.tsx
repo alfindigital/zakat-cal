@@ -11,6 +11,7 @@ import { formatNumberInput, parseFormattedNumber, formatQuantityInput, parseQuan
 import { ResultCard, MobilePdfFab } from "./MobileCalcChrome";
 import { toast } from "sonner";
 import { focusFirstInvalid } from "@/lib/focus-invalid";
+import { FieldError, ValidationSummary } from "@/components/ValidationHints";
 
 interface Props {
   isActive: boolean;
@@ -21,6 +22,7 @@ export default function ZakatPertanian({ isActive, onCalculated }: Props) {
   const [hasilKg, setHasilKg] = useState("");
   const [hargaKg, setHargaKg] = useState("");
   const [irr, setIrr] = useState<IrrigationType>("tadah_hujan");
+  const [attempted, setAttempted] = useState(false);
 
   const hasilN = parseQuantity(hasilKg);
   const hargaN = parseFormattedNumber(hargaKg);
@@ -40,11 +42,14 @@ export default function ZakatPertanian({ isActive, onCalculated }: Props) {
       ]
     : [];
 
+  const fields = [
+    { id: "tani-hasil", label: "Hasil Panen (kg)", invalid: hasilN <= 0, message: "Isi jumlah hasil panen dalam kg." },
+    { id: "tani-harga", label: "Harga per kg", invalid: hargaN <= 0, message: "Isi harga jual per kg." },
+  ];
+
   const handleSave = () => {
-    if (focusFirstInvalid([
-      { id: "tani-hasil", label: "Hasil Panen (kg)", invalid: hasilN <= 0 },
-      { id: "tani-harga", label: "Harga per kg", invalid: hargaN <= 0 },
-    ])) return;
+    setAttempted(true);
+    if (focusFirstInvalid(fields)) return;
     if (!result || result.zakatAmount <= 0) return;
     addHistory({ type: "Pertanian", amount: result.zakatAmount, detail: detailRows });
     onCalculated();
@@ -83,14 +88,23 @@ export default function ZakatPertanian({ isActive, onCalculated }: Props) {
         <div className="space-y-2">
           <Label htmlFor="tani-hasil" className="text-sm">Hasil Panen (kg)</Label>
           <Input id="tani-hasil" type="text" inputMode="decimal" placeholder="0"
-            value={hasilKg} onChange={(e) => formattedChange(e, setHasilKg, formatQuantityInput)} className="h-12 sm:h-10 text-base" />
+            value={hasilKg} onChange={(e) => formattedChange(e, setHasilKg, formatQuantityInput)}
+            aria-invalid={attempted && fields[0].invalid}
+            aria-describedby={attempted && fields[0].invalid ? "tani-hasil-error" : undefined}
+            className="h-12 sm:h-10 text-base" />
+          {attempted && <FieldError id="tani-hasil" message={fields[0].invalid ? fields[0].message : undefined} />}
         </div>
         <div className="space-y-2">
           <Label htmlFor="tani-harga" className="text-sm">Harga per kg (Rp)</Label>
           <Input id="tani-harga" type="text" inputMode="decimal" pattern="[0-9]*" placeholder="0"
-            value={hargaKg} onChange={(e) => formattedChange(e, setHargaKg, formatNumberInput)} className="h-12 sm:h-10 text-base" />
+            value={hargaKg} onChange={(e) => formattedChange(e, setHargaKg, formatNumberInput)}
+            aria-invalid={attempted && fields[1].invalid}
+            aria-describedby={attempted && fields[1].invalid ? "tani-harga-error" : undefined}
+            className="h-12 sm:h-10 text-base" />
+          {attempted && <FieldError id="tani-harga" message={fields[1].invalid ? fields[1].message : undefined} />}
         </div>
       </div>
+      <ValidationSummary fields={fields} visible={attempted} />
       <div className="space-y-1.5">
         <Button onClick={handleSave} aria-disabled={!canCalc} className="w-full h-11">
           Simpan ke Riwayat

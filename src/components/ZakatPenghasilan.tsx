@@ -11,6 +11,7 @@ import { formatNumberInput, parseFormattedNumber, formattedChange } from "@/lib/
 import { ResultCard, MobilePdfFab } from "./MobileCalcChrome";
 import { toast } from "sonner";
 import { focusFirstInvalid } from "@/lib/focus-invalid";
+import { FieldError, ValidationSummary } from "@/components/ValidationHints";
 
 interface Props {
   metalPrice: number;
@@ -24,10 +25,20 @@ export default function ZakatPenghasilan({ metalPrice, nisabType, isActive, onCa
   const [bonus, setBonus] = useState("");
   const [method, setMethod] = useState<"bruto" | "netto">("bruto");
   const [deduction, setDeduction] = useState("");
+  const [attempted, setAttempted] = useState(false);
 
   const monthlyNum = parseFormattedNumber(monthly);
   const deductionNum = method === "netto" ? parseFormattedNumber(deduction) : 0;
   const canCalc = monthlyNum > 0;
+
+  const fields = [
+    {
+      id: "penghasilan-bulanan",
+      label: "Penghasilan Bulanan",
+      invalid: monthlyNum <= 0,
+      message: "Isi penghasilan bulanan lebih dari 0.",
+    },
+  ];
 
   const result = useMemo(
     () =>
@@ -49,9 +60,8 @@ export default function ZakatPenghasilan({ metalPrice, nisabType, isActive, onCa
     : [];
 
   const handleSave = () => {
-    if (focusFirstInvalid([
-      { id: "penghasilan-bulanan", label: "Penghasilan Bulanan", invalid: monthlyNum <= 0 },
-    ])) return;
+    setAttempted(true);
+    if (focusFirstInvalid(fields)) return;
     if (!result || result.zakatAmount <= 0) return;
     addHistory({ type: "Penghasilan", amount: result.zakatAmount, detail: detailRows });
     onCalculated();
@@ -80,8 +90,11 @@ export default function ZakatPenghasilan({ metalPrice, nisabType, isActive, onCa
             placeholder="0"
             value={monthly}
             onChange={(e) => formattedChange(e, setMonthly, formatNumberInput)}
+            aria-invalid={attempted && fields[0].invalid}
+            aria-describedby={attempted && fields[0].invalid ? "penghasilan-bulanan-error" : undefined}
             className="h-12 sm:h-10 text-base"
           />
+          {attempted && <FieldError id="penghasilan-bulanan" message={fields[0].invalid ? fields[0].message : undefined} />}
         </div>
         <div className="space-y-2">
           <Label htmlFor="penghasilan-bonus" className="text-sm">Bonus / THR Tahunan (Rp)</Label>
@@ -131,6 +144,8 @@ export default function ZakatPenghasilan({ metalPrice, nisabType, isActive, onCa
           <p className="text-xs text-muted-foreground">Pendapat sebagian ulama: nafkah pokok boleh dipotong sebelum zakat.</p>
         </div>
       )}
+
+      <ValidationSummary fields={fields} visible={attempted} />
 
       <div className="space-y-1.5">
         <Button onClick={handleSave} aria-disabled={!canCalc} className="w-full h-11">

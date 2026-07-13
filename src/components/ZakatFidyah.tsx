@@ -10,6 +10,7 @@ import { formatNumberInput, parseFormattedNumber, formattedChange } from "@/lib/
 import { ResultCard, MobilePdfFab } from "./MobileCalcChrome";
 import { toast } from "sonner";
 import { focusFirstInvalid } from "@/lib/focus-invalid";
+import { FieldError, ValidationSummary } from "@/components/ValidationHints";
 
 interface Props {
   isActive: boolean;
@@ -19,6 +20,7 @@ interface Props {
 export default function ZakatFidyah({ isActive, onCalculated }: Props) {
   const [hari, setHari] = useState("");
   const [harga, setHarga] = useState("");
+  const [attempted, setAttempted] = useState(false);
 
   const hariN = Number(hari) || 0;
   const hargaN = parseFormattedNumber(harga);
@@ -34,11 +36,14 @@ export default function ZakatFidyah({ isActive, onCalculated }: Props) {
       ]
     : [];
 
+  const fields = [
+    { id: "fidyah-hari", label: "Jumlah Hari Ditinggalkan", invalid: hariN <= 0, message: "Isi jumlah hari puasa yang ditinggalkan." },
+    { id: "fidyah-harga", label: "Nilai per Hari", invalid: hargaN <= 0, message: "Isi nominal fidyah per hari." },
+  ];
+
   const handleSave = () => {
-    if (focusFirstInvalid([
-      { id: "fidyah-hari", label: "Jumlah Hari Ditinggalkan", invalid: hariN <= 0 },
-      { id: "fidyah-harga", label: "Nilai per Hari", invalid: hargaN <= 0 },
-    ])) return;
+    setAttempted(true);
+    if (focusFirstInvalid(fields)) return;
     if (!result || result.total <= 0) return;
     addHistory({ type: "Fidyah", amount: result.total, detail: detailRows });
     onCalculated();
@@ -62,14 +67,23 @@ export default function ZakatFidyah({ isActive, onCalculated }: Props) {
         <div className="space-y-2">
           <Label htmlFor="fidyah-hari" className="text-sm">Jumlah Hari Ditinggalkan</Label>
           <Input id="fidyah-hari" type="text" inputMode="numeric" pattern="[0-9]*" placeholder="0"
-            value={hari} onChange={(e) => setHari(e.target.value.replace(/\D/g, ""))} className="h-12 sm:h-10 text-base" />
+            value={hari} onChange={(e) => setHari(e.target.value.replace(/\D/g, ""))}
+            aria-invalid={attempted && fields[0].invalid}
+            aria-describedby={attempted && fields[0].invalid ? "fidyah-hari-error" : undefined}
+            className="h-12 sm:h-10 text-base" />
+          {attempted && <FieldError id="fidyah-hari" message={fields[0].invalid ? fields[0].message : undefined} />}
         </div>
         <div className="space-y-2">
           <Label htmlFor="fidyah-harga" className="text-sm">Nilai per Hari (Rp)</Label>
           <Input id="fidyah-harga" type="text" inputMode="decimal" pattern="[0-9]*" placeholder="contoh 25.000"
-            value={harga} onChange={(e) => formattedChange(e, setHarga, formatNumberInput)} className="h-12 sm:h-10 text-base" />
+            value={harga} onChange={(e) => formattedChange(e, setHarga, formatNumberInput)}
+            aria-invalid={attempted && fields[1].invalid}
+            aria-describedby={attempted && fields[1].invalid ? "fidyah-harga-error" : undefined}
+            className="h-12 sm:h-10 text-base" />
+          {attempted && <FieldError id="fidyah-harga" message={fields[1].invalid ? fields[1].message : undefined} />}
         </div>
       </div>
+      <ValidationSummary fields={fields} visible={attempted} />
       <div className="space-y-1.5">
         <Button onClick={handleSave} aria-disabled={!canCalc} className="w-full h-11">
           Simpan ke Riwayat
