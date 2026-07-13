@@ -64,8 +64,13 @@ export default function ZakatRikaz({ isActive, onCalculated }: Props) {
       <div className="space-y-2">
         <Label htmlFor="rikaz-nilai" className="text-sm">Nilai Harta yang Ditemukan (Rp)</Label>
         <Input id="rikaz-nilai" type="text" inputMode="decimal" pattern="[0-9]*" placeholder="0"
-          value={nilai} onChange={(e) => formattedChange(e, setNilai, formatNumberInput)} className="h-12 sm:h-10 text-base" />
+          value={nilai} onChange={(e) => formattedChange(e, setNilai, formatNumberInput)}
+          aria-invalid={attempted && fields[0].invalid}
+          aria-describedby={attempted && fields[0].invalid ? "rikaz-nilai-error" : undefined}
+          className="h-12 sm:h-10 text-base" />
+        {attempted && <FieldError id="rikaz-nilai" message={fields[0].invalid ? fields[0].message : undefined} />}
       </div>
+      <ValidationSummary fields={fields} visible={attempted} />
       <div className="space-y-1.5">
         <Button onClick={handleSave} aria-disabled={!canCalc} className="w-full h-11">
           Simpan ke Riwayat
