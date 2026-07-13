@@ -10,6 +10,7 @@ import { formatNumberInput, parseFormattedNumber, formattedChange } from "@/lib/
 import { ResultCard, MobilePdfFab } from "./MobileCalcChrome";
 import { toast } from "sonner";
 import { focusFirstInvalid } from "@/lib/focus-invalid";
+import { FieldError, ValidationSummary } from "@/components/ValidationHints";
 
 interface Props {
   isActive: boolean;
@@ -19,6 +20,7 @@ interface Props {
 export default function ZakatFidyah({ isActive, onCalculated }: Props) {
   const [hari, setHari] = useState("");
   const [harga, setHarga] = useState("");
+  const [attempted, setAttempted] = useState(false);
 
   const hariN = Number(hari) || 0;
   const hargaN = parseFormattedNumber(harga);
@@ -34,11 +36,14 @@ export default function ZakatFidyah({ isActive, onCalculated }: Props) {
       ]
     : [];
 
+  const fields = [
+    { id: "fidyah-hari", label: "Jumlah Hari Ditinggalkan", invalid: hariN <= 0, message: "Isi jumlah hari puasa yang ditinggalkan." },
+    { id: "fidyah-harga", label: "Nilai per Hari", invalid: hargaN <= 0, message: "Isi nominal fidyah per hari." },
+  ];
+
   const handleSave = () => {
-    if (focusFirstInvalid([
-      { id: "fidyah-hari", label: "Jumlah Hari Ditinggalkan", invalid: hariN <= 0 },
-      { id: "fidyah-harga", label: "Nilai per Hari", invalid: hargaN <= 0 },
-    ])) return;
+    setAttempted(true);
+    if (focusFirstInvalid(fields)) return;
     if (!result || result.total <= 0) return;
     addHistory({ type: "Fidyah", amount: result.total, detail: detailRows });
     onCalculated();
