@@ -11,6 +11,7 @@ import { formatNumberInput, parseFormattedNumber, formatQuantityInput, parseQuan
 import { ResultCard, MobilePdfFab } from "./MobileCalcChrome";
 import { toast } from "sonner";
 import { focusFirstInvalid } from "@/lib/focus-invalid";
+import { FieldError, ValidationSummary } from "@/components/ValidationHints";
 
 interface Props {
   isActive: boolean;
@@ -21,6 +22,7 @@ export default function ZakatPertanian({ isActive, onCalculated }: Props) {
   const [hasilKg, setHasilKg] = useState("");
   const [hargaKg, setHargaKg] = useState("");
   const [irr, setIrr] = useState<IrrigationType>("tadah_hujan");
+  const [attempted, setAttempted] = useState(false);
 
   const hasilN = parseQuantity(hasilKg);
   const hargaN = parseFormattedNumber(hargaKg);
@@ -40,11 +42,14 @@ export default function ZakatPertanian({ isActive, onCalculated }: Props) {
       ]
     : [];
 
+  const fields = [
+    { id: "tani-hasil", label: "Hasil Panen (kg)", invalid: hasilN <= 0, message: "Isi jumlah hasil panen dalam kg." },
+    { id: "tani-harga", label: "Harga per kg", invalid: hargaN <= 0, message: "Isi harga jual per kg." },
+  ];
+
   const handleSave = () => {
-    if (focusFirstInvalid([
-      { id: "tani-hasil", label: "Hasil Panen (kg)", invalid: hasilN <= 0 },
-      { id: "tani-harga", label: "Harga per kg", invalid: hargaN <= 0 },
-    ])) return;
+    setAttempted(true);
+    if (focusFirstInvalid(fields)) return;
     if (!result || result.zakatAmount <= 0) return;
     addHistory({ type: "Pertanian", amount: result.zakatAmount, detail: detailRows });
     onCalculated();
