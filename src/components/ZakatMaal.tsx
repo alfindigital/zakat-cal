@@ -131,6 +131,8 @@ export default function ZakatMaal({ goldPrice, silverPrice, nisabType, isActive,
         Catatan: menurut sebagian ulama, emas perhiasan yang wajar dipakai sehari-hari tidak dizakati — masukkan hanya emas simpanan/investasi.
       </p>
 
+      <ValidationSummary fields={fields} visible={attempted} />
+
       <div className="space-y-1.5">
         <Button onClick={handleSave} aria-disabled={!canCalc} className="w-full h-11">
           Simpan ke Riwayat
