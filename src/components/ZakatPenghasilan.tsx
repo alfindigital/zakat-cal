@@ -11,6 +11,7 @@ import { formatNumberInput, parseFormattedNumber, formattedChange } from "@/lib/
 import { ResultCard, MobilePdfFab } from "./MobileCalcChrome";
 import { toast } from "sonner";
 import { focusFirstInvalid } from "@/lib/focus-invalid";
+import { FieldError, ValidationSummary } from "@/components/ValidationHints";
 
 interface Props {
   metalPrice: number;
@@ -24,10 +25,20 @@ export default function ZakatPenghasilan({ metalPrice, nisabType, isActive, onCa
   const [bonus, setBonus] = useState("");
   const [method, setMethod] = useState<"bruto" | "netto">("bruto");
   const [deduction, setDeduction] = useState("");
+  const [attempted, setAttempted] = useState(false);
 
   const monthlyNum = parseFormattedNumber(monthly);
   const deductionNum = method === "netto" ? parseFormattedNumber(deduction) : 0;
   const canCalc = monthlyNum > 0;
+
+  const fields = [
+    {
+      id: "penghasilan-bulanan",
+      label: "Penghasilan Bulanan",
+      invalid: monthlyNum <= 0,
+      message: "Isi penghasilan bulanan lebih dari 0.",
+    },
+  ];
 
   const result = useMemo(
     () =>
@@ -49,9 +60,8 @@ export default function ZakatPenghasilan({ metalPrice, nisabType, isActive, onCa
     : [];
 
   const handleSave = () => {
-    if (focusFirstInvalid([
-      { id: "penghasilan-bulanan", label: "Penghasilan Bulanan", invalid: monthlyNum <= 0 },
-    ])) return;
+    setAttempted(true);
+    if (focusFirstInvalid(fields)) return;
     if (!result || result.zakatAmount <= 0) return;
     addHistory({ type: "Penghasilan", amount: result.zakatAmount, detail: detailRows });
     onCalculated();
