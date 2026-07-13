@@ -90,8 +90,11 @@ export default function ZakatPenghasilan({ metalPrice, nisabType, isActive, onCa
             placeholder="0"
             value={monthly}
             onChange={(e) => formattedChange(e, setMonthly, formatNumberInput)}
+            aria-invalid={attempted && fields[0].invalid}
+            aria-describedby={attempted && fields[0].invalid ? "penghasilan-bulanan-error" : undefined}
             className="h-12 sm:h-10 text-base"
           />
+          {attempted && <FieldError id="penghasilan-bulanan" message={fields[0].invalid ? fields[0].message : undefined} />}
         </div>
         <div className="space-y-2">
           <Label htmlFor="penghasilan-bonus" className="text-sm">Bonus / THR Tahunan (Rp)</Label>
@@ -141,6 +144,8 @@ export default function ZakatPenghasilan({ metalPrice, nisabType, isActive, onCa
           <p className="text-xs text-muted-foreground">Pendapat sebagian ulama: nafkah pokok boleh dipotong sebelum zakat.</p>
         </div>
       )}
+
+      <ValidationSummary fields={fields} visible={attempted} />
 
       <div className="space-y-1.5">
         <Button onClick={handleSave} aria-disabled={!canCalc} className="w-full h-11">
