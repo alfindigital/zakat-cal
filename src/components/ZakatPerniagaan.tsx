@@ -98,6 +98,7 @@ export default function ZakatPerniagaan({ goldPrice, isActive, onCalculated }: P
       <p className="text-xs text-muted-foreground">
         <strong>Modal kerja</strong> = kas/uang usaha. <strong>Piutang lancar</strong> = tagihan yang akan tertagih. <strong>Stok dagang</strong> = nilai barang dagangan. <strong>Hutang dagang</strong> = kewajiban jangka pendek usaha.
       </p>
+      <ValidationSummary fields={fields} visible={attempted} />
       <div className="space-y-1.5">
         <Button onClick={handleSave} aria-disabled={!canCalc} className="w-full h-11">
           Simpan ke Riwayat
