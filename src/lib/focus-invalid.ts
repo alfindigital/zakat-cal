@@ -1,25 +1,43 @@
 import { toast } from "sonner";
 
+export interface ValidationField {
+  id: string;
+  label: string;
+  invalid: boolean;
+  /** Optional custom message. Falls back to a generic hint. */
+  message?: string;
+}
+
 /**
- * Focus the first field in `fields` whose value is empty/zero.
- * Returns true when a field was focused (i.e. validation failed).
- * Used so the primary action button stays keyboard-reachable even when
- * inputs are incomplete — instead of being `disabled`, the click routes
- * the user straight to the field that needs attention.
+ * Focus a field by id, select its content, and scroll it into view.
+ * Exported so inline error links can reuse the same behavior as the
+ * Save-button validation flow.
  */
-export function focusFirstInvalid(
-  fields: { id: string; label: string; invalid: boolean }[],
-): boolean {
+export function focusField(id: string): boolean {
+  const el = document.getElementById(id) as
+    | HTMLInputElement
+    | HTMLTextAreaElement
+    | HTMLButtonElement
+    | null;
+  if (!el) return false;
+  el.focus({ preventScroll: false });
+  if ("select" in el && typeof (el as HTMLInputElement).select === "function") {
+    try { (el as HTMLInputElement).select(); } catch { /* noop */ }
+  }
+  el.scrollIntoView({ behavior: "smooth", block: "center" });
+  return true;
+}
+
+/**
+ * Focus the first invalid field. Returns true when validation failed
+ * (i.e. the caller should abort the submit).
+ */
+export function focusFirstInvalid(fields: ValidationField[]): boolean {
   const first = fields.find((f) => f.invalid);
   if (!first) return false;
-  const el = document.getElementById(first.id) as HTMLInputElement | HTMLTextAreaElement | null;
-  if (el) {
-    el.focus({ preventScroll: false });
-    if ("select" in el && typeof el.select === "function") {
-      try { el.select(); } catch { /* noop */ }
-    }
-    el.scrollIntoView({ behavior: "smooth", block: "center" });
-  }
-  toast.error("Lengkapi field wajib", { description: `Isi "${first.label}" terlebih dahulu.` });
+  focusField(first.id);
+  toast.error("Lengkapi field wajib", {
+    description: `Isi "${first.label}" terlebih dahulu.`,
+  });
   return true;
 }
