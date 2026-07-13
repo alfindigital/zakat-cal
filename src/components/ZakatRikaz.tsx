@@ -10,6 +10,7 @@ import { formatNumberInput, parseFormattedNumber, formattedChange } from "@/lib/
 import { ResultCard, MobilePdfFab } from "./MobileCalcChrome";
 import { toast } from "sonner";
 import { focusFirstInvalid } from "@/lib/focus-invalid";
+import { FieldError, ValidationSummary } from "@/components/ValidationHints";
 
 interface Props {
   isActive: boolean;
@@ -18,6 +19,7 @@ interface Props {
 
 export default function ZakatRikaz({ isActive, onCalculated }: Props) {
   const [nilai, setNilai] = useState("");
+  const [attempted, setAttempted] = useState(false);
 
   const nilaiN = parseFormattedNumber(nilai);
   const canCalc = nilaiN > 0;
@@ -31,10 +33,13 @@ export default function ZakatRikaz({ isActive, onCalculated }: Props) {
       ]
     : [];
 
+  const fields = [
+    { id: "rikaz-nilai", label: "Nilai Harta yang Ditemukan", invalid: nilaiN <= 0, message: "Isi nilai harta lebih dari 0." },
+  ];
+
   const handleSave = () => {
-    if (focusFirstInvalid([
-      { id: "rikaz-nilai", label: "Nilai Harta yang Ditemukan", invalid: nilaiN <= 0 },
-    ])) return;
+    setAttempted(true);
+    if (focusFirstInvalid(fields)) return;
     if (!result || result.zakatAmount <= 0) return;
     addHistory({ type: "Rikaz", amount: result.zakatAmount, detail: detailRows });
     onCalculated();
