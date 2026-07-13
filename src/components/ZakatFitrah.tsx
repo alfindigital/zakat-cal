@@ -12,6 +12,7 @@ import { formatNumberInput, parseFormattedNumber, formattedChange } from "@/lib/
 import { ResultCard, MobilePdfFab } from "./MobileCalcChrome";
 import { toast } from "sonner";
 import { focusFirstInvalid } from "@/lib/focus-invalid";
+import { FieldError, ValidationSummary } from "@/components/ValidationHints";
 import { getIdulFitriInfo } from "@/lib/ramadhan";
 import { loadMazhab, MAZHAB_NOTES } from "@/lib/mazhab";
 import { CalendarClock } from "lucide-react";
@@ -27,6 +28,7 @@ export default function ZakatFitrah({ isActive, onCalculated }: Props) {
   const [riceIdx, setRiceIdx] = useState("0");
   const [customPrice, setCustomPrice] = useState("");
   const [perJiwaUang, setPerJiwaUang] = useState("");
+  const [attempted, setAttempted] = useState(false);
 
   const jiwaNum = Number(jiwa) || 0;
   const customPriceNum = parseFormattedNumber(customPrice);
@@ -56,11 +58,14 @@ export default function ZakatFitrah({ isActive, onCalculated }: Props) {
         ]
     : [];
 
+  const fields = [
+    { id: "fitrah-jiwa", label: "Jumlah Jiwa", invalid: jiwaNum <= 0, message: "Isi jumlah anggota keluarga (minimal 1)." },
+    { id: "fitrah-uang", label: "Tarif per Jiwa", invalid: mode === "uang" && perJiwaUangNum <= 0, message: "Isi tarif fitrah per jiwa sesuai daerah." },
+  ];
+
   const handleSave = () => {
-    if (focusFirstInvalid([
-      { id: "fitrah-jiwa", label: "Jumlah Jiwa", invalid: jiwaNum <= 0 },
-      { id: "fitrah-uang", label: "Tarif per Jiwa", invalid: mode === "uang" && perJiwaUangNum <= 0 },
-    ])) return;
+    setAttempted(true);
+    if (focusFirstInvalid(fields)) return;
     if (!result) return;
     addHistory({ type: "Fitrah", amount: result.total, detail: detailRows });
     onCalculated();
