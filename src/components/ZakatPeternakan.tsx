@@ -11,6 +11,7 @@ import { formatNumberInput, parseFormattedNumber, formattedChange } from "@/lib/
 import { ResultCard, MobilePdfFab } from "./MobileCalcChrome";
 import { toast } from "sonner";
 import { focusFirstInvalid } from "@/lib/focus-invalid";
+import { FieldError, ValidationSummary } from "@/components/ValidationHints";
 
 interface Props {
   isActive: boolean;
@@ -27,6 +28,7 @@ export default function ZakatPeternakan({ isActive, onCalculated }: Props) {
   const [type, setType] = useState<LivestockType>("kambing");
   const [jumlah, setJumlah] = useState("");
   const [harga, setHarga] = useState("");
+  const [attempted, setAttempted] = useState(false);
 
   const jumlahN = parseFormattedNumber(jumlah);
   const hargaN = parseFormattedNumber(harga);
@@ -46,11 +48,14 @@ export default function ZakatPeternakan({ isActive, onCalculated }: Props) {
       ]
     : [];
 
+  const fields = [
+    { id: "ternak-jumlah", label: "Jumlah ekor", invalid: jumlahN <= 0, message: "Isi jumlah ekor ternak." },
+    { id: "ternak-harga", label: "Harga per Ekor", invalid: hargaN <= 0, message: "Isi harga rata-rata per ekor." },
+  ];
+
   const handleSave = () => {
-    if (focusFirstInvalid([
-      { id: "ternak-jumlah", label: "Jumlah ekor", invalid: jumlahN <= 0 },
-      { id: "ternak-harga", label: "Harga per Ekor", invalid: hargaN <= 0 },
-    ])) return;
+    setAttempted(true);
+    if (focusFirstInvalid(fields)) return;
     if (!result || result.zakatAmount <= 0) return;
     addHistory({ type: "Peternakan", amount: result.zakatAmount, detail: detailRows });
     onCalculated();
