@@ -132,8 +132,11 @@ export default function ZakatFitrah({ isActive, onCalculated }: Props) {
             placeholder="1"
             value={jiwa}
             onChange={(e) => setJiwa(e.target.value.replace(/\D/g, ""))}
+            aria-invalid={attempted && fields[0].invalid}
+            aria-describedby={attempted && fields[0].invalid ? "fitrah-jiwa-error" : undefined}
             className="h-12 sm:h-10 text-base"
           />
+          {attempted && <FieldError id="fitrah-jiwa" message={fields[0].invalid ? fields[0].message : undefined} />}
         </div>
 
         {mode === "beras" ? (
@@ -163,8 +166,11 @@ export default function ZakatFitrah({ isActive, onCalculated }: Props) {
               placeholder="contoh 45.000"
               value={perJiwaUang}
               onChange={(e) => formattedChange(e, setPerJiwaUang, formatNumberInput)}
+              aria-invalid={attempted && fields[1].invalid}
+              aria-describedby={attempted && fields[1].invalid ? "fitrah-uang-error" : undefined}
               className="h-12 sm:h-10 text-base"
             />
+            {attempted && <FieldError id="fitrah-uang" message={fields[1].invalid ? fields[1].message : undefined} />}
           </div>
         )}
       </div>
@@ -184,6 +190,8 @@ export default function ZakatFitrah({ isActive, onCalculated }: Props) {
           />
         </div>
       )}
+
+      <ValidationSummary fields={fields} visible={attempted} />
 
       <div className="space-y-1.5">
         <Button onClick={handleSave} aria-disabled={!canCalc} className="w-full h-11">
