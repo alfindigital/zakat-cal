@@ -1,4 +1,5 @@
 import { lazy, Suspense, useMemo, useRef, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -12,7 +13,7 @@ import {
   AlertDialogAction,
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
-import { Trash2, Briefcase, Wallet, Wheat, Store, Sprout, Beef, Gem, Mountain, Moon, Download, Upload, FileDown } from "lucide-react";
+import { Trash2, Briefcase, Wallet, Wheat, Store, Sprout, Beef, Gem, Mountain, Moon, Download, Upload, FileDown, Eye, ChevronRight } from "lucide-react";
 import {
   type ZakatHistory,
   formatRupiah,
@@ -26,8 +27,10 @@ import {
 import { generateZakatPdf } from "@/lib/pdf-generator";
 // Recharts is heavy — load the chart lazily so it stays out of the initial bundle.
 const ZakatChart = lazy(() => import("./ZakatChart"));
+import HistoryDetailDialog from "./HistoryDetailDialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
+
 
 interface Props {
   history: ZakatHistory[];
