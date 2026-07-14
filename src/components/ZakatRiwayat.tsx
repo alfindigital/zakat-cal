@@ -298,16 +298,33 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
         </p>
       )}
       <div className="space-y-2">
-        {history.map((h) => (
+        {displayed.map((h) => (
           <HistoryItem
             key={h.id}
             h={h}
             isMobile={isMobile}
             onRemove={() => handleRemove(h)}
             onExportPdf={() => handleExportPdf(h)}
+            onOpenDetail={() => setDetailItem(h)}
           />
         ))}
       </div>
+
+      {hasMore && (
+        <div className="pt-1">
+          <Button asChild variant="outline" className="w-full">
+            <Link to="/riwayat" aria-label="Lihat semua riwayat perhitungan zakat">
+              Lihat semua riwayat ({history.length})
+            </Link>
+          </Button>
+        </div>
+      )}
+
+      <HistoryDetailDialog
+        item={detailItem}
+        open={!!detailItem}
+        onOpenChange={(v) => !v && setDetailItem(null)}
+      />
 
       <AlertDialog open={showClearDialog} onOpenChange={setShowClearDialog}>
         <AlertDialogContent>
@@ -327,4 +344,5 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
       </AlertDialog>
     </div>
   );
+
 }
