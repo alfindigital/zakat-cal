@@ -15,11 +15,13 @@ import { FieldError, ValidationSummary } from "@/components/ValidationHints";
 interface Props {
   isActive: boolean;
   onCalculated: () => void;
+  prefill?: Record<string, unknown>;
 }
 
-export default function ZakatRikaz({ isActive, onCalculated }: Props) {
-  const [nilai, setNilai] = useState("");
+export default function ZakatRikaz({ isActive, onCalculated, prefill }: Props) {
+  const [nilai, setNilai] = useState<string>(() => (prefill?.nilai as string) ?? "");
   const [attempted, setAttempted] = useState(false);
+
 
   const nilaiN = parseFormattedNumber(nilai);
   const canCalc = nilaiN > 0;
@@ -41,7 +43,7 @@ export default function ZakatRikaz({ isActive, onCalculated }: Props) {
     setAttempted(true);
     if (focusFirstInvalid(fields)) return;
     if (!result || result.zakatAmount <= 0) return;
-    addHistory({ type: "Rikaz", amount: result.zakatAmount, detail: detailRows });
+    addHistory({ type: "Rikaz", amount: result.zakatAmount, detail: detailRows, inputs: { nilai } });
     onCalculated();
     track("save", { type: "Rikaz" });
     toast.success("Tersimpan ke riwayat");

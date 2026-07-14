@@ -18,16 +18,18 @@ interface Props {
   nisabType: NisabType;
   isActive: boolean;
   onCalculated: () => void;
+  prefill?: Record<string, unknown>;
 }
 
-export default function ZakatMaal({ goldPrice, silverPrice, nisabType, isActive, onCalculated }: Props) {
-  const [tabungan, setTabungan] = useState("");
-  const [emas, setEmas] = useState("");
-  const [perak, setPerak] = useState("");
-  const [investasi, setInvestasi] = useState("");
-  const [properti, setProperti] = useState("");
-  const [hutang, setHutang] = useState("");
+export default function ZakatMaal({ goldPrice, silverPrice, nisabType, isActive, onCalculated, prefill }: Props) {
+  const [tabungan, setTabungan] = useState<string>(() => (prefill?.tabungan as string) ?? "");
+  const [emas, setEmas] = useState<string>(() => (prefill?.emas as string) ?? "");
+  const [perak, setPerak] = useState<string>(() => (prefill?.perak as string) ?? "");
+  const [investasi, setInvestasi] = useState<string>(() => (prefill?.investasi as string) ?? "");
+  const [properti, setProperti] = useState<string>(() => (prefill?.properti as string) ?? "");
+  const [hutang, setHutang] = useState<string>(() => (prefill?.hutang as string) ?? "");
   const [attempted, setAttempted] = useState(false);
+
 
   const tabunganNum = parseFormattedNumber(tabungan);
   const emasNum = parseQuantity(emas);
@@ -68,7 +70,7 @@ export default function ZakatMaal({ goldPrice, silverPrice, nisabType, isActive,
     setAttempted(true);
     if (focusFirstInvalid(fields)) return;
     if (!result || result.zakatAmount <= 0) return;
-    addHistory({ type: "Maal", amount: result.zakatAmount, detail: detailRows });
+    addHistory({ type: "Maal", amount: result.zakatAmount, detail: detailRows, inputs: { tabungan, emas, perak, investasi, properti, hutang } });
     onCalculated();
     track("save", { type: "Maal" });
     toast.success("Tersimpan ke riwayat");

@@ -20,15 +20,17 @@ import { CalendarClock } from "lucide-react";
 interface Props {
   isActive: boolean;
   onCalculated: () => void;
+  prefill?: Record<string, unknown>;
 }
 
-export default function ZakatFitrah({ isActive, onCalculated }: Props) {
-  const [mode, setMode] = useState<"beras" | "uang">("beras");
-  const [jiwa, setJiwa] = useState("");
-  const [riceIdx, setRiceIdx] = useState("0");
-  const [customPrice, setCustomPrice] = useState("");
-  const [perJiwaUang, setPerJiwaUang] = useState("");
+export default function ZakatFitrah({ isActive, onCalculated, prefill }: Props) {
+  const [mode, setMode] = useState<"beras" | "uang">(() => (prefill?.mode as "beras" | "uang") ?? "beras");
+  const [jiwa, setJiwa] = useState<string>(() => (prefill?.jiwa as string) ?? "");
+  const [riceIdx, setRiceIdx] = useState<string>(() => (prefill?.riceIdx as string) ?? "0");
+  const [customPrice, setCustomPrice] = useState<string>(() => (prefill?.customPrice as string) ?? "");
+  const [perJiwaUang, setPerJiwaUang] = useState<string>(() => (prefill?.perJiwaUang as string) ?? "");
   const [attempted, setAttempted] = useState(false);
+
 
   const jiwaNum = Number(jiwa) || 0;
   const customPriceNum = parseFormattedNumber(customPrice);
@@ -67,7 +69,7 @@ export default function ZakatFitrah({ isActive, onCalculated }: Props) {
     setAttempted(true);
     if (focusFirstInvalid(fields)) return;
     if (!result) return;
-    addHistory({ type: "Fitrah", amount: result.total, detail: detailRows });
+    addHistory({ type: "Fitrah", amount: result.total, detail: detailRows, inputs: { mode, jiwa, riceIdx, customPrice, perJiwaUang } });
     onCalculated();
     track("save", { type: "Fitrah" });
     toast.success("Tersimpan ke riwayat");

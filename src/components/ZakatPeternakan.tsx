@@ -16,6 +16,7 @@ import { FieldError, ValidationSummary } from "@/components/ValidationHints";
 interface Props {
   isActive: boolean;
   onCalculated: () => void;
+  prefill?: Record<string, unknown>;
 }
 
 const LABEL: Record<LivestockType, string> = {
@@ -24,11 +25,12 @@ const LABEL: Record<LivestockType, string> = {
   unta: "Unta",
 };
 
-export default function ZakatPeternakan({ isActive, onCalculated }: Props) {
-  const [type, setType] = useState<LivestockType>("kambing");
-  const [jumlah, setJumlah] = useState("");
-  const [harga, setHarga] = useState("");
+export default function ZakatPeternakan({ isActive, onCalculated, prefill }: Props) {
+  const [type, setType] = useState<LivestockType>(() => (prefill?.type as LivestockType) ?? "kambing");
+  const [jumlah, setJumlah] = useState<string>(() => (prefill?.jumlah as string) ?? "");
+  const [harga, setHarga] = useState<string>(() => (prefill?.harga as string) ?? "");
   const [attempted, setAttempted] = useState(false);
+
 
   const jumlahN = parseFormattedNumber(jumlah);
   const hargaN = parseFormattedNumber(harga);
@@ -57,7 +59,7 @@ export default function ZakatPeternakan({ isActive, onCalculated }: Props) {
     setAttempted(true);
     if (focusFirstInvalid(fields)) return;
     if (!result || result.zakatAmount <= 0) return;
-    addHistory({ type: "Peternakan", amount: result.zakatAmount, detail: detailRows });
+    addHistory({ type: "Peternakan", amount: result.zakatAmount, detail: detailRows, inputs: { type, jumlah, harga } });
     onCalculated();
     track("save", { type: "Peternakan" });
     toast.success("Tersimpan ke riwayat");

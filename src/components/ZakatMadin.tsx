@@ -16,11 +16,13 @@ interface Props {
   goldPrice: number;
   isActive: boolean;
   onCalculated: () => void;
+  prefill?: Record<string, unknown>;
 }
 
-export default function ZakatMadin({ goldPrice, isActive, onCalculated }: Props) {
-  const [nilai, setNilai] = useState("");
+export default function ZakatMadin({ goldPrice, isActive, onCalculated, prefill }: Props) {
+  const [nilai, setNilai] = useState<string>(() => (prefill?.nilai as string) ?? "");
   const [attempted, setAttempted] = useState(false);
+
 
   const nilaiN = parseFormattedNumber(nilai);
   const canCalc = nilaiN > 0;
@@ -43,7 +45,7 @@ export default function ZakatMadin({ goldPrice, isActive, onCalculated }: Props)
     setAttempted(true);
     if (focusFirstInvalid(fields)) return;
     if (!result || result.zakatAmount <= 0) return;
-    addHistory({ type: "Madin", amount: result.zakatAmount, detail: detailRows });
+    addHistory({ type: "Madin", amount: result.zakatAmount, detail: detailRows, inputs: { nilai } });
     onCalculated();
     track("save", { type: "Madin" });
     toast.success("Tersimpan ke riwayat");

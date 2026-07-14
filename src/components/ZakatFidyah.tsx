@@ -15,12 +15,14 @@ import { FieldError, ValidationSummary } from "@/components/ValidationHints";
 interface Props {
   isActive: boolean;
   onCalculated: () => void;
+  prefill?: Record<string, unknown>;
 }
 
-export default function ZakatFidyah({ isActive, onCalculated }: Props) {
-  const [hari, setHari] = useState("");
-  const [harga, setHarga] = useState("");
+export default function ZakatFidyah({ isActive, onCalculated, prefill }: Props) {
+  const [hari, setHari] = useState<string>(() => (prefill?.hari as string) ?? "");
+  const [harga, setHarga] = useState<string>(() => (prefill?.harga as string) ?? "");
   const [attempted, setAttempted] = useState(false);
+
 
   const hariN = Number(hari) || 0;
   const hargaN = parseFormattedNumber(harga);
@@ -45,7 +47,7 @@ export default function ZakatFidyah({ isActive, onCalculated }: Props) {
     setAttempted(true);
     if (focusFirstInvalid(fields)) return;
     if (!result || result.total <= 0) return;
-    addHistory({ type: "Fidyah", amount: result.total, detail: detailRows });
+    addHistory({ type: "Fidyah", amount: result.total, detail: detailRows, inputs: { hari, harga } });
     onCalculated();
     track("save", { type: "Fidyah" });
     toast.success("Tersimpan ke riwayat");
