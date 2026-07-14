@@ -345,6 +345,12 @@ export interface ZakatHistory {
   detail?: HistoryDetailRow[];
   /** Optional user-supplied note/label. */
   label?: string;
+  /**
+   * Optional raw input snapshot so the calculator can be re-opened with the
+   * previous values pre-filled ("edit ulang"). Shape is per-calculator; keep
+   * to serialisable primitives (string/number/boolean).
+   */
+  inputs?: Record<string, unknown>;
 }
 
 const STORAGE_KEY = "zakat-history";
@@ -393,6 +399,7 @@ export function addHistory(entry: Omit<ZakatHistory, "id" | "date">) {
   emitHistoryChange();
 }
 
+
 // Replace the whole history list (used by Import). Newest-first invariant kept.
 export function importHistory(items: ZakatHistory[], mode: "merge" | "replace" = "merge") {
   if (!Array.isArray(items)) return;
@@ -405,6 +412,8 @@ export function importHistory(items: ZakatHistory[], mode: "merge" | "replace" =
       amount: i.amount,
       detail: Array.isArray(i.detail) ? i.detail : undefined,
       label: typeof i.label === "string" ? i.label : undefined,
+      inputs: i.inputs && typeof i.inputs === "object" ? i.inputs : undefined,
+
     }));
   let merged: ZakatHistory[] = sanitized;
   if (mode === "merge") {

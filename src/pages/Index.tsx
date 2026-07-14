@@ -28,7 +28,7 @@ import ZakatFidyah from "@/components/ZakatFidyah";
 
 import ZakatRiwayat from "@/components/ZakatRiwayat";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calculator, Briefcase, Wallet, Wheat, Settings2, Loader2, Store, Sprout, Beef, Gem, Mountain, Info, Moon, LayoutGrid } from "lucide-react";
+import { Calculator, Briefcase, Wallet, Wheat, Settings2, Loader2, Store, Sprout, Beef, Gem, Mountain, Info, Moon, LayoutGrid, History } from "lucide-react";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -85,10 +85,27 @@ const Index = () => {
 
   const [refreshing, setRefreshing] = useState(false);
 
+  // Prefill delivered from the /riwayat "Edit ulang" flow via router state.
+  // Snapshot on first render so the calculator's lazy state initialiser sees
+  // it, then strip the state so navigation/refresh doesn't re-apply it.
+  const [prefill] = useState<Record<string, unknown> | undefined>(() => {
+    const s = (location.state as { prefill?: Record<string, unknown> } | null)?.prefill;
+    return s && typeof s === "object" ? s : undefined;
+  });
+  useEffect(() => {
+    if (prefill) {
+      toast.info("Data riwayat dimuat", {
+        description: "Silakan sesuaikan lalu simpan ulang.",
+      });
+      navigate(location.pathname + location.search, { replace: true, state: null });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const isMobile = useIsMobile();
   const activeTab = tabForPath(location.pathname);
   const activePage: ZakatPage | undefined = ALL_PAGES.find((p) => p.tab === activeTab);
+
 
   // Per-route SEO (title/meta/canonical/OG) — home keeps the generic title.
   // Also emits per-page JSON-LD (BreadcrumbList + HowTo) so category routes
@@ -249,29 +266,32 @@ const Index = () => {
 
   const renderCalc = (tab: string) => {
     const isActive = activeTab === tab;
+    // Only forward prefill to the tab that matches the incoming history entry.
+    const p = isActive ? prefill : undefined;
     switch (tab) {
       case "penghasilan":
-        return <ZakatPenghasilan metalPrice={metalPrice} nisabType={nisabType} isActive={isActive} onCalculated={refreshHistory} />;
+        return <ZakatPenghasilan metalPrice={metalPrice} nisabType={nisabType} isActive={isActive} onCalculated={refreshHistory} prefill={p} />;
       case "maal":
-        return <ZakatMaal goldPrice={goldPrice} silverPrice={silverPrice} nisabType={nisabType} isActive={isActive} onCalculated={refreshHistory} />;
+        return <ZakatMaal goldPrice={goldPrice} silverPrice={silverPrice} nisabType={nisabType} isActive={isActive} onCalculated={refreshHistory} prefill={p} />;
       case "perniagaan":
-        return <ZakatPerniagaan goldPrice={goldPrice} isActive={isActive} onCalculated={refreshHistory} />;
+        return <ZakatPerniagaan goldPrice={goldPrice} isActive={isActive} onCalculated={refreshHistory} prefill={p} />;
       case "pertanian":
-        return <ZakatPertanian isActive={isActive} onCalculated={refreshHistory} />;
+        return <ZakatPertanian isActive={isActive} onCalculated={refreshHistory} prefill={p} />;
       case "peternakan":
-        return <ZakatPeternakan isActive={isActive} onCalculated={refreshHistory} />;
+        return <ZakatPeternakan isActive={isActive} onCalculated={refreshHistory} prefill={p} />;
       case "rikaz":
-        return <ZakatRikaz isActive={isActive} onCalculated={refreshHistory} />;
+        return <ZakatRikaz isActive={isActive} onCalculated={refreshHistory} prefill={p} />;
       case "madin":
-        return <ZakatMadin goldPrice={goldPrice} isActive={isActive} onCalculated={refreshHistory} />;
+        return <ZakatMadin goldPrice={goldPrice} isActive={isActive} onCalculated={refreshHistory} prefill={p} />;
       case "fitrah":
-        return <ZakatFitrah isActive={isActive} onCalculated={refreshHistory} />;
+        return <ZakatFitrah isActive={isActive} onCalculated={refreshHistory} prefill={p} />;
       case "fidyah":
-        return <ZakatFidyah isActive={isActive} onCalculated={refreshHistory} />;
+        return <ZakatFidyah isActive={isActive} onCalculated={refreshHistory} prefill={p} />;
       default:
         return null;
     }
   };
+
 
   const NavButton = ({ tab, short }: { tab: string; short: string }) => {
     const Icon = TAB_ICONS[tab] ?? Briefcase;
@@ -316,19 +336,17 @@ const Index = () => {
             </span>
           </Link>
           <div className="flex items-center gap-1">
-            {/* Settings: dedicated page */}
+            <Button asChild variant="ghost" size="icon" className="h-11 w-11 sm:h-10 sm:w-10 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" aria-label="Riwayat Perhitungan">
+              <Link to="/riwayat"><History className="h-5 w-5" /></Link>
+            </Button>
             <Button asChild variant="ghost" size="icon" className="h-11 w-11 sm:h-10 sm:w-10 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" aria-label="Pengaturan">
               <Link to="/pengaturan"><Settings2 className="h-5 w-5" /></Link>
             </Button>
-
-
-            {/* Info: go straight to the full guide page (no popup) */}
             <Button asChild variant="ghost" size="icon" className="h-11 w-11 sm:h-10 sm:w-10 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" aria-label="Panduan Zakat">
               <Link to="/panduan-zakat"><Info className="h-5 w-5" /></Link>
             </Button>
-
-            
           </div>
+
         </div>
       </header>
 

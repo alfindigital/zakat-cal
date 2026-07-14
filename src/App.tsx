@@ -7,6 +7,7 @@ import Index from "./pages/Index.tsx";
 import PanduanZakat from "./pages/PanduanZakat.tsx";
 import Tentang from "./pages/Tentang.tsx";
 import Pengaturan from "./pages/Pengaturan.tsx";
+import Riwayat from "./pages/Riwayat.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import { ALL_PAGES } from "@/lib/seo";
 
@@ -26,6 +27,8 @@ const App = () => (
           <Route path="/panduan-zakat" element={<PanduanZakat />} />
           <Route path="/tentang" element={<Tentang />} />
           <Route path="/pengaturan" element={<Pengaturan />} />
+          <Route path="/riwayat" element={<Riwayat />} />
+
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

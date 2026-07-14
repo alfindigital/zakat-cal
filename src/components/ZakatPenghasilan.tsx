@@ -18,14 +18,16 @@ interface Props {
   nisabType: NisabType;
   isActive: boolean;
   onCalculated: () => void;
+  prefill?: Record<string, unknown>;
 }
 
-export default function ZakatPenghasilan({ metalPrice, nisabType, isActive, onCalculated }: Props) {
-  const [monthly, setMonthly] = useState("");
-  const [bonus, setBonus] = useState("");
-  const [method, setMethod] = useState<"bruto" | "netto">("bruto");
-  const [deduction, setDeduction] = useState("");
+export default function ZakatPenghasilan({ metalPrice, nisabType, isActive, onCalculated, prefill }: Props) {
+  const [monthly, setMonthly] = useState<string>(() => (prefill?.monthly as string) ?? "");
+  const [bonus, setBonus] = useState<string>(() => (prefill?.bonus as string) ?? "");
+  const [method, setMethod] = useState<"bruto" | "netto">(() => (prefill?.method as "bruto" | "netto") ?? "bruto");
+  const [deduction, setDeduction] = useState<string>(() => (prefill?.deduction as string) ?? "");
   const [attempted, setAttempted] = useState(false);
+
 
   const monthlyNum = parseFormattedNumber(monthly);
   const deductionNum = method === "netto" ? parseFormattedNumber(deduction) : 0;
@@ -63,7 +65,7 @@ export default function ZakatPenghasilan({ metalPrice, nisabType, isActive, onCa
     setAttempted(true);
     if (focusFirstInvalid(fields)) return;
     if (!result || result.zakatAmount <= 0) return;
-    addHistory({ type: "Penghasilan", amount: result.zakatAmount, detail: detailRows });
+    addHistory({ type: "Penghasilan", amount: result.zakatAmount, detail: detailRows, inputs: { monthly, bonus, method, deduction } });
     onCalculated();
     track("save", { type: "Penghasilan" });
     toast.success("Tersimpan ke riwayat");

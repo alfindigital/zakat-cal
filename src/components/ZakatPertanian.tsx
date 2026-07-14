@@ -16,13 +16,15 @@ import { FieldError, ValidationSummary } from "@/components/ValidationHints";
 interface Props {
   isActive: boolean;
   onCalculated: () => void;
+  prefill?: Record<string, unknown>;
 }
 
-export default function ZakatPertanian({ isActive, onCalculated }: Props) {
-  const [hasilKg, setHasilKg] = useState("");
-  const [hargaKg, setHargaKg] = useState("");
-  const [irr, setIrr] = useState<IrrigationType>("tadah_hujan");
+export default function ZakatPertanian({ isActive, onCalculated, prefill }: Props) {
+  const [hasilKg, setHasilKg] = useState<string>(() => (prefill?.hasilKg as string) ?? "");
+  const [hargaKg, setHargaKg] = useState<string>(() => (prefill?.hargaKg as string) ?? "");
+  const [irr, setIrr] = useState<IrrigationType>(() => (prefill?.irr as IrrigationType) ?? "tadah_hujan");
   const [attempted, setAttempted] = useState(false);
+
 
   const hasilN = parseQuantity(hasilKg);
   const hargaN = parseFormattedNumber(hargaKg);
@@ -51,7 +53,7 @@ export default function ZakatPertanian({ isActive, onCalculated }: Props) {
     setAttempted(true);
     if (focusFirstInvalid(fields)) return;
     if (!result || result.zakatAmount <= 0) return;
-    addHistory({ type: "Pertanian", amount: result.zakatAmount, detail: detailRows });
+    addHistory({ type: "Pertanian", amount: result.zakatAmount, detail: detailRows, inputs: { hasilKg, hargaKg, irr } });
     onCalculated();
     track("save", { type: "Pertanian" });
     toast.success("Tersimpan ke riwayat");

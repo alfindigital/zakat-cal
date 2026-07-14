@@ -16,14 +16,16 @@ interface Props {
   goldPrice: number;
   isActive: boolean;
   onCalculated: () => void;
+  prefill?: Record<string, unknown>;
 }
 
-export default function ZakatPerniagaan({ goldPrice, isActive, onCalculated }: Props) {
-  const [modal, setModal] = useState("");
-  const [piutang, setPiutang] = useState("");
-  const [stok, setStok] = useState("");
-  const [hutang, setHutang] = useState("");
+export default function ZakatPerniagaan({ goldPrice, isActive, onCalculated, prefill }: Props) {
+  const [modal, setModal] = useState<string>(() => (prefill?.modal as string) ?? "");
+  const [piutang, setPiutang] = useState<string>(() => (prefill?.piutang as string) ?? "");
+  const [stok, setStok] = useState<string>(() => (prefill?.stok as string) ?? "");
+  const [hutang, setHutang] = useState<string>(() => (prefill?.hutang as string) ?? "");
   const [attempted, setAttempted] = useState(false);
+
 
   const modalN = parseFormattedNumber(modal);
   const piutangN = parseFormattedNumber(piutang);
@@ -58,7 +60,7 @@ export default function ZakatPerniagaan({ goldPrice, isActive, onCalculated }: P
     setAttempted(true);
     if (focusFirstInvalid(fields)) return;
     if (!result || result.zakatAmount <= 0) return;
-    addHistory({ type: "Perniagaan", amount: result.zakatAmount, detail: detailRows });
+    addHistory({ type: "Perniagaan", amount: result.zakatAmount, detail: detailRows, inputs: { modal, piutang, stok, hutang } });
     onCalculated();
     track("save", { type: "Perniagaan" });
     toast.success("Tersimpan ke riwayat");
