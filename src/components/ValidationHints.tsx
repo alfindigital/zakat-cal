@@ -21,12 +21,15 @@ export function FieldError({
     <p
       id={`${id}-error`}
       role="alert"
+      aria-live="assertive"
+      aria-atomic="true"
       className={`flex items-start gap-1.5 text-xs text-destructive ${className}`}
     >
       <AlertCircle aria-hidden="true" className="h-3.5 w-3.5 mt-0.5 shrink-0" />
       <span>{message}</span>
     </p>
   );
+
 }
 
 /**
