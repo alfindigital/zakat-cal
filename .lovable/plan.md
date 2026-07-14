@@ -1,43 +1,43 @@
+## Halaman Riwayat + Detail + Edit Ulang
 
-# Kalkulator Zakat — All-in-One
+Bangun halaman `/riwayat` yang menampilkan daftar semua perhitungan zakat, membuka detail lengkap per item, dan mengarahkan kembali ke kalkulator dengan field yang sudah terisi ulang siap diedit.
 
-## Overview
-Kalkulator zakat lengkap dengan tampilan modern & minimalis, mencakup semua jenis zakat dengan navigasi tab.
+### Yang akan dibangun
 
-## Halaman & Layout
-- **Single page** dengan header "Kalkulator Zakat" dan 3 tab: **Penghasilan**, **Maal (Harta)**, **Fitrah**
-- Clean white card di tengah halaman, rounded corners, subtle shadow
+1. **Route baru `/riwayat`** — halaman penuh terpisah dari beranda, dengan header + tautan balik. Riwayat kompak yang sudah ada di beranda tetap dipertahankan (untuk chart & undo cepat) tapi diberi link "Lihat semua riwayat".
 
-## Tab 1: Zakat Penghasilan
-- Input: Penghasilan bulanan (Rp), bonus/THR tahunan (opsional)
-- Otomatis hitung penghasilan tahunan
-- Tampilkan nisab (setara 85g emas × harga emas terkini dari API)
-- Hasil: 2.5% dari penghasilan jika melebihi nisab
-- Tampilkan breakdown: penghasilan tahunan, nisab, status wajib/tidak, jumlah zakat
+2. **Daftar item riwayat** — pakai komponen list yang sudah ada (badge tipe, tanggal, jumlah, swipe-to-delete di mobile), plus dua aksi baru pada tiap item:
+   - **Detail** — buka dialog berisi seluruh baris breakdown (`detail[]`) + tombol Unduh PDF & Bagikan.
+   - **Edit ulang** — navigasi ke route kalkulator terkait (`/`, `/zakat-maal`, dll.) dengan `location.state.prefill` sehingga input terisi otomatis. Item lama tanpa snapshot input akan menampilkan tombol "Buka Kalkulator" saja (tanpa prefill).
 
-## Tab 2: Zakat Maal (Harta)
-- Input fields: Tabungan (Rp), Emas (gram), Perak (gram), Investasi/Saham (Rp), Properti investasi (Rp), Hutang (Rp)
-- Hitung total harta bersih (total - hutang)
-- Nisab otomatis dari harga emas 85g
-- Hasil: 2.5% jika melebihi nisab
+3. **Snapshot input pada `addHistory`** — perluas `ZakatHistory` dengan `inputs?: Record<string, unknown>` opsional. Setiap kalkulator (9 buah) menyimpan raw form state saat "Simpan ke Riwayat" ditekan, dan mem-baca `useLocation().state?.prefill` saat mount untuk menyeed state-nya. Skema `inputs` per kalkulator sederhana — cukup nilai string dari tiap `useState` input.
 
-## Tab 3: Zakat Fitrah
-- Input: Jumlah jiwa/anggota keluarga
-- Pilih jenis beras (standar / premium) dengan harga per kg
-- Hasil: 2.5kg × harga beras × jumlah jiwa
+4. **Navigasi** — tambahkan ikon History di header (samping Settings/Info) yang mengarah ke `/riwayat`. Item bottom-nav mobile tidak diubah agar tab kalkulator tetap dominan.
 
-## Nisab Otomatis
-- Fetch harga emas dari public API (fallback ke harga default jika API gagal)
-- Tampilkan harga emas yang digunakan & tanggal update
+### Detail teknis
 
-## Riwayat Perhitungan
-- Simpan setiap hasil kalkulasi ke localStorage
-- Section "Riwayat" di bawah kalkulator, tampilkan tanggal, jenis zakat, jumlah
-- Tombol hapus per-item dan hapus semua
+- **File baru**: `src/pages/Riwayat.tsx`, `src/components/HistoryDetailDialog.tsx`.
+- **File diubah**:
+  - `src/lib/zakat.ts` — tambah field `inputs` di `ZakatHistory` + `addHistory` signature; migrasi backward-compatible (opsional, default undefined).
+  - `src/App.tsx` — daftarkan route `/riwayat`.
+  - `src/lib/seo.ts` (kalau perlu meta) atau langsung `useSeo` di halaman.
+  - `src/components/ZakatRiwayat.tsx` — tambah tombol/ikon "Detail" & "Edit ulang" per item, plus link "Lihat semua" ke `/riwayat`.
+  - `src/pages/Index.tsx` — header: tombol History; teruskan `location.state?.prefill` ke `<ZakatXxx>` sebagai prop opsional `prefill`.
+  - 9 kalkulator (`ZakatPenghasilan`, `Maal`, `Fitrah`, `Perniagaan`, `Pertanian`, `Peternakan`, `Rikaz`, `Madin`, `Fidyah`) — terima `prefill?: Record<string, unknown>`, gunakan sebagai initial state via lazy `useState(() => prefill?.x ?? "")`, dan sertakan snapshot `inputs` saat `addHistory`.
 
-## Design
-- Background putih/abu sangat terang, card putih dengan shadow
-- Accent color hijau subtle (emerald-600) untuk tombol & highlight
-- Typography clean, angka besar untuk hasil zakat
-- Responsive: full-width card di mobile, max-w-2xl di desktop
-- Gunakan Tabs dari shadcn/ui, input fields, dan badge untuk status
+- **Peta prefill (contoh)**:
+  - Penghasilan → `{ monthly, bonus, method, deduction }`
+  - Maal → `{ tabungan, emas, perak, investasi, properti, hutang }`
+  - Fitrah → `{ mode, jiwa, riceIdx, customPrice, perJiwaUang }`
+  - Rikaz → `{ nilai }`
+  - dll.
+
+- **Toast konfirmasi** — saat prefill dari edit ulang tersedia, tampilkan `toast.info("Data riwayat dimuat — silakan sesuaikan lalu simpan.")` sekali.
+
+- **Test**: build + `bunx vitest run` (157 test yang ada tidak menyentuh signature `addHistory` selain field wajib, jadi backward-compatible).
+
+### Yang tidak dilakukan
+
+- Tidak menyentuh logika perhitungan/kadar zakat.
+- Tidak menyentuh Cloud/backend — riwayat tetap di `localStorage` seperti sekarang.
+- Tidak mengubah desain bottom-nav mobile (tetap 3 tab kalkulator utama).
