@@ -85,10 +85,27 @@ const Index = () => {
 
   const [refreshing, setRefreshing] = useState(false);
 
+  // Prefill delivered from the /riwayat "Edit ulang" flow via router state.
+  // Snapshot on first render so the calculator's lazy state initialiser sees
+  // it, then strip the state so navigation/refresh doesn't re-apply it.
+  const [prefill] = useState<Record<string, unknown> | undefined>(() => {
+    const s = (location.state as { prefill?: Record<string, unknown> } | null)?.prefill;
+    return s && typeof s === "object" ? s : undefined;
+  });
+  useEffect(() => {
+    if (prefill) {
+      toast.info("Data riwayat dimuat", {
+        description: "Silakan sesuaikan lalu simpan ulang.",
+      });
+      navigate(location.pathname + location.search, { replace: true, state: null });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const isMobile = useIsMobile();
   const activeTab = tabForPath(location.pathname);
   const activePage: ZakatPage | undefined = ALL_PAGES.find((p) => p.tab === activeTab);
+
 
   // Per-route SEO (title/meta/canonical/OG) — home keeps the generic title.
   // Also emits per-page JSON-LD (BreadcrumbList + HowTo) so category routes
