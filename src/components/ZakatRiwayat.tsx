@@ -155,8 +155,11 @@ function HistoryItem({
 
 export default function ZakatRiwayat({ history, onChanged }: Props) {
   const isMobile = useIsMobile();
+  const location = useLocation();
+  const isRiwayatPage = location.pathname === "/riwayat";
   const [showClearDialog, setShowClearDialog] = useState(false);
   const [clearSnapshot, setClearSnapshot] = useState<ZakatHistory[]>([]);
+  const [detailItem, setDetailItem] = useState<ZakatHistory | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
 
   const yearTotal = useMemo(() => {
@@ -165,6 +168,12 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
   }, [history]);
 
   if (history.length === 0) return null;
+
+  // On the home page, keep the embedded list compact — show the 5 latest and
+  // link to /riwayat for the full experience. On /riwayat, show everything.
+  const displayed = isRiwayatPage ? history : history.slice(0, 5);
+  const hasMore = !isRiwayatPage && history.length > displayed.length;
+
 
   const handleRemove = (item: ZakatHistory) => {
     const snapshot = getHistory();
