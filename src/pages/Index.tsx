@@ -266,29 +266,32 @@ const Index = () => {
 
   const renderCalc = (tab: string) => {
     const isActive = activeTab === tab;
+    // Only forward prefill to the tab that matches the incoming history entry.
+    const p = isActive ? prefill : undefined;
     switch (tab) {
       case "penghasilan":
-        return <ZakatPenghasilan metalPrice={metalPrice} nisabType={nisabType} isActive={isActive} onCalculated={refreshHistory} />;
+        return <ZakatPenghasilan metalPrice={metalPrice} nisabType={nisabType} isActive={isActive} onCalculated={refreshHistory} prefill={p} />;
       case "maal":
-        return <ZakatMaal goldPrice={goldPrice} silverPrice={silverPrice} nisabType={nisabType} isActive={isActive} onCalculated={refreshHistory} />;
+        return <ZakatMaal goldPrice={goldPrice} silverPrice={silverPrice} nisabType={nisabType} isActive={isActive} onCalculated={refreshHistory} prefill={p} />;
       case "perniagaan":
-        return <ZakatPerniagaan goldPrice={goldPrice} isActive={isActive} onCalculated={refreshHistory} />;
+        return <ZakatPerniagaan goldPrice={goldPrice} isActive={isActive} onCalculated={refreshHistory} prefill={p} />;
       case "pertanian":
-        return <ZakatPertanian isActive={isActive} onCalculated={refreshHistory} />;
+        return <ZakatPertanian isActive={isActive} onCalculated={refreshHistory} prefill={p} />;
       case "peternakan":
-        return <ZakatPeternakan isActive={isActive} onCalculated={refreshHistory} />;
+        return <ZakatPeternakan isActive={isActive} onCalculated={refreshHistory} prefill={p} />;
       case "rikaz":
-        return <ZakatRikaz isActive={isActive} onCalculated={refreshHistory} />;
+        return <ZakatRikaz isActive={isActive} onCalculated={refreshHistory} prefill={p} />;
       case "madin":
-        return <ZakatMadin goldPrice={goldPrice} isActive={isActive} onCalculated={refreshHistory} />;
+        return <ZakatMadin goldPrice={goldPrice} isActive={isActive} onCalculated={refreshHistory} prefill={p} />;
       case "fitrah":
-        return <ZakatFitrah isActive={isActive} onCalculated={refreshHistory} />;
+        return <ZakatFitrah isActive={isActive} onCalculated={refreshHistory} prefill={p} />;
       case "fidyah":
-        return <ZakatFidyah isActive={isActive} onCalculated={refreshHistory} />;
+        return <ZakatFidyah isActive={isActive} onCalculated={refreshHistory} prefill={p} />;
       default:
         return null;
     }
   };
+
 
   const NavButton = ({ tab, short }: { tab: string; short: string }) => {
     const Icon = TAB_ICONS[tab] ?? Briefcase;
