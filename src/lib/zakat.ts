@@ -345,6 +345,12 @@ export interface ZakatHistory {
   detail?: HistoryDetailRow[];
   /** Optional user-supplied note/label. */
   label?: string;
+  /**
+   * Optional raw input snapshot so the calculator can be re-opened with the
+   * previous values pre-filled ("edit ulang"). Shape is per-calculator; keep
+   * to serialisable primitives (string/number/boolean).
+   */
+  inputs?: Record<string, unknown>;
 }
 
 const STORAGE_KEY = "zakat-history";
@@ -392,6 +398,7 @@ export function addHistory(entry: Omit<ZakatHistory, "id" | "date">) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(history.slice(0, 50)));
   emitHistoryChange();
 }
+
 
 // Replace the whole history list (used by Import). Newest-first invariant kept.
 export function importHistory(items: ZakatHistory[], mode: "merge" | "replace" = "merge") {
