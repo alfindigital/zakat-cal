@@ -336,19 +336,17 @@ const Index = () => {
             </span>
           </Link>
           <div className="flex items-center gap-1">
-            {/* Settings: dedicated page */}
+            <Button asChild variant="ghost" size="icon" className="h-11 w-11 sm:h-10 sm:w-10 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" aria-label="Riwayat Perhitungan">
+              <Link to="/riwayat"><History className="h-5 w-5" /></Link>
+            </Button>
             <Button asChild variant="ghost" size="icon" className="h-11 w-11 sm:h-10 sm:w-10 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" aria-label="Pengaturan">
               <Link to="/pengaturan"><Settings2 className="h-5 w-5" /></Link>
             </Button>
-
-
-            {/* Info: go straight to the full guide page (no popup) */}
             <Button asChild variant="ghost" size="icon" className="h-11 w-11 sm:h-10 sm:w-10 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" aria-label="Panduan Zakat">
               <Link to="/panduan-zakat"><Info className="h-5 w-5" /></Link>
             </Button>
-
-            
           </div>
+
         </div>
       </header>
 
