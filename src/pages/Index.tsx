@@ -28,7 +28,7 @@ import ZakatFidyah from "@/components/ZakatFidyah";
 
 import ZakatRiwayat from "@/components/ZakatRiwayat";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calculator, Briefcase, Wallet, Wheat, Settings2, Loader2, Store, Sprout, Beef, Gem, Mountain, Info, Moon, LayoutGrid } from "lucide-react";
+import { Calculator, Briefcase, Wallet, Wheat, Settings2, Loader2, Store, Sprout, Beef, Gem, Mountain, Info, Moon, LayoutGrid, History } from "lucide-react";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
