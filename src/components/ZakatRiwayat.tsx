@@ -53,11 +53,13 @@ function HistoryItem({
   h,
   onRemove,
   onExportPdf,
+  onOpenDetail,
   isMobile,
 }: {
   h: ZakatHistory;
   onRemove: () => void;
   onExportPdf: () => void;
+  onOpenDetail: () => void;
   isMobile: boolean;
 }) {
   const [revealed, setRevealed] = useState(false);
@@ -84,7 +86,12 @@ function HistoryItem({
         onDragEnd={(_, info) => setRevealed(info.offset.x < -40)}
         className="relative flex items-center justify-between rounded-lg border bg-card p-3 sm:p-3 min-h-[56px] touch-pan-y"
       >
-        <div className="flex items-center gap-3 min-w-0">
+        <button
+          type="button"
+          onClick={onOpenDetail}
+          aria-label={`Lihat detail riwayat ${h.type} ${formatRupiah(h.amount)}`}
+          className="flex items-center gap-3 min-w-0 flex-1 text-left rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
           <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
             <Icon aria-hidden="true" className="h-4 w-4 text-primary" />
           </div>
@@ -93,15 +100,29 @@ function HistoryItem({
               <Badge variant="secondary" className="text-[10px] sm:text-xs shrink-0">
                 {h.type}
               </Badge>
+              {h.inputs && (
+                <span className="text-[9px] sm:text-[10px] text-muted-foreground uppercase tracking-wide">
+                  · dapat diedit
+                </span>
+              )}
             </div>
             <p className="font-semibold text-sm sm:text-base text-primary truncate mt-0.5">
               {formatRupiah(h.amount)}
             </p>
             <p className="text-[10px] sm:text-xs text-muted-foreground">{h.date}</p>
           </div>
-        </div>
-        {!isMobile && (
+        </button>
+        {!isMobile ? (
           <div className="flex items-center gap-1 shrink-0">
+            <Button
+              aria-label="Lihat detail"
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10"
+              onClick={onOpenDetail}
+            >
+              <Eye aria-hidden="true" className="h-4 w-4" />
+            </Button>
             {h.detail && h.detail.length > 0 && (
               <Button
                 aria-label="Unduh PDF riwayat"
@@ -123,11 +144,14 @@ function HistoryItem({
               <Trash2 aria-hidden="true" className="h-4 w-4" />
             </Button>
           </div>
+        ) : (
+          <ChevronRight aria-hidden="true" className="h-4 w-4 text-muted-foreground shrink-0" />
         )}
       </motion.div>
     </div>
   );
 }
+
 
 export default function ZakatRiwayat({ history, onChanged }: Props) {
   const isMobile = useIsMobile();
