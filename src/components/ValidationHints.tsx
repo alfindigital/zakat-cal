@@ -50,15 +50,19 @@ export function ValidationSummary({
   if (!visible || invalid.length === 0) return null;
   return (
     <div
-      role="alert"
+      role="region"
+      aria-labelledby="validation-summary-title"
       aria-live="polite"
-      className="rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm space-y-1.5"
+      aria-atomic="true"
+      aria-relevant="additions text"
+      tabIndex={-1}
+      className="rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm space-y-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-destructive/60"
     >
-      <p className="flex items-center gap-1.5 font-medium text-destructive">
+      <p id="validation-summary-title" className="flex items-center gap-1.5 font-medium text-destructive">
         <AlertCircle aria-hidden="true" className="h-4 w-4" />
         {title}
       </p>
-      <ul className="space-y-1 pl-5 list-disc marker:text-destructive/60">
+      <ul className="space-y-1 pl-5 list-disc marker:text-destructive/60" aria-label="Daftar field yang perlu diperbaiki">
         {invalid.map((f) => (
           <li key={f.id}>
             <button
