@@ -10,7 +10,9 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:e2e": "playwright test --config=playwright.ci.config.ts",
+    "test:e2e:a11y": "playwright test --config=playwright.ci.config.ts e2e/aria-live-validation.spec.ts e2e/fitrah-aria.spec.ts e2e/focus-first-invalid.spec.ts e2e/keyboard-nav.spec.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
