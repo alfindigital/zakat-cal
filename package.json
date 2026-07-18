@@ -12,7 +12,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test --config=playwright.ci.config.ts",
-    "test:e2e:a11y": "playwright test --config=playwright.ci.config.ts e2e/aria-live-validation.spec.ts e2e/fitrah-aria.spec.ts e2e/fitrah-beras-only-jiwa.spec.ts e2e/fitrah-mode-switch-cleanup.spec.ts e2e/fitrah-rice-select-cleanup.spec.ts e2e/focus-first-invalid.spec.ts e2e/focus-invalid-on-save.spec.ts e2e/keyboard-nav.spec.ts e2e/penghasilan-aria.spec.ts e2e/penghasilan-partial-fix.spec.ts e2e/validation-summary-navigation.spec.ts e2e/validation-summary-region.spec.ts"
+    "test:e2e:a11y": "playwright test --config=playwright.ci.config.ts e2e/aria-live-validation.spec.ts e2e/fitrah-aria.spec.ts e2e/fitrah-beras-only-jiwa.spec.ts e2e/fitrah-mode-switch-cleanup.spec.ts e2e/fitrah-rice-select-cleanup.spec.ts e2e/focus-first-invalid.spec.ts e2e/focus-invalid-on-save.spec.ts e2e/keyboard-nav.spec.ts e2e/penghasilan-aria.spec.ts e2e/penghasilan-keyboard-nav.spec.ts e2e/penghasilan-partial-fix.spec.ts e2e/validation-summary-navigation.spec.ts e2e/validation-summary-region.spec.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
