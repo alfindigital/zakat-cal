@@ -94,7 +94,7 @@ export default function ZakatPenghasilan({ metalPrice, nisabType, isActive, onCa
             onChange={(e) => formattedChange(e, setMonthly, formatNumberInput)}
             aria-invalid={attempted && fields[0].invalid}
             aria-describedby={attempted && fields[0].invalid ? "penghasilan-bulanan-error" : undefined}
-            className="h-12 sm:h-10 text-base"
+            className="h-11 sm:h-10 text-base"
           />
           {attempted && <FieldError id="penghasilan-bulanan" message={fields[0].invalid ? fields[0].message : undefined} />}
         </div>
@@ -108,7 +108,7 @@ export default function ZakatPenghasilan({ metalPrice, nisabType, isActive, onCa
             placeholder="0"
             value={bonus}
             onChange={(e) => formattedChange(e, setBonus, formatNumberInput)}
-            className="h-12 sm:h-10 text-base"
+            className="h-11 sm:h-10 text-base"
           />
         </div>
       </div>
@@ -141,7 +141,7 @@ export default function ZakatPenghasilan({ metalPrice, nisabType, isActive, onCa
             placeholder="0"
             value={deduction}
             onChange={(e) => formattedChange(e, setDeduction, formatNumberInput)}
-            className="h-12 sm:h-10 text-base"
+            className="h-11 sm:h-10 text-base"
           />
           <p className="text-xs text-muted-foreground">Pendapat sebagian ulama: nafkah pokok boleh dipotong sebelum zakat.</p>
         </div>
@@ -150,7 +150,7 @@ export default function ZakatPenghasilan({ metalPrice, nisabType, isActive, onCa
       <ValidationSummary fields={fields} visible={attempted} />
 
       <div className="space-y-1.5">
-        <Button onClick={handleSave} aria-disabled={!canCalc} className="w-full h-11">
+        <Button onClick={handleSave} aria-disabled={!canCalc} className="w-full h-11 sm:h-10">
           Simpan ke Riwayat
         </Button>
         <p aria-live="polite" className="text-xs text-muted-foreground text-center">

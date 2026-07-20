@@ -113,7 +113,7 @@ export default function ZakatMaal({ goldPrice, silverPrice, nisabType, isActive,
         placeholder="0"
         value={value}
         onChange={(e) => formattedChange(e, set, quantity ? formatQuantityInput : formatNumberInput)}
-        className="h-12 sm:h-10 text-base"
+        className="h-11 sm:h-10 text-base"
       />
     </div>
   );
@@ -136,7 +136,7 @@ export default function ZakatMaal({ goldPrice, silverPrice, nisabType, isActive,
       <ValidationSummary fields={fields} visible={attempted} />
 
       <div className="space-y-1.5">
-        <Button onClick={handleSave} aria-disabled={!canCalc} className="w-full h-11">
+        <Button onClick={handleSave} aria-disabled={!canCalc} className="w-full h-11 sm:h-10">
           Simpan ke Riwayat
         </Button>
         <p aria-live="polite" className="text-xs text-muted-foreground text-center">
