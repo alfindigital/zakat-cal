@@ -367,8 +367,8 @@ const Index = () => {
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
-        className="mx-auto max-w-2xl w-full px-4 py-5 sm:px-6 sm:py-8 space-y-5 sm:space-y-7 flex-1"
-        style={{ paddingBottom: "calc(12rem + env(safe-area-inset-bottom, 0px))" }}
+        className="mx-auto max-w-2xl w-full px-4 py-4 sm:px-6 sm:py-6 space-y-3 sm:space-y-4 flex-1"
+        style={{ paddingBottom: "calc(5.5rem + env(safe-area-inset-bottom, 0px))" }}
       >
         {/* Desktop nav — 4 primary + Lainnya. On desktop, "Lainnya" expands the
             remaining categories inline (not a bottom drawer). Mobile still uses the drawer. */}
