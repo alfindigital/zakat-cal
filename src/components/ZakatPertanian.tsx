@@ -73,7 +73,7 @@ export default function ZakatPertanian({ isActive, onCalculated, prefill }: Prop
   };
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-3 sm:space-y-4">
       <div className="space-y-2">
         <Label className="text-sm text-muted-foreground font-medium">Jenis Pengairan</Label>
         <ToggleGroup type="single" value={irr} onValueChange={(v) => v && setIrr(v as IrrigationType)}

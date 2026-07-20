@@ -59,7 +59,7 @@ export default function ZakatRikaz({ isActive, onCalculated, prefill }: Props) {
   };
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-3 sm:space-y-4">
       <p className="text-xs text-muted-foreground bg-muted/50 rounded-lg p-3 border border-border/60">
         Rikaz = harta terpendam / karun yang ditemukan. Wajib zakat <strong>20%</strong> langsung tanpa menunggu haul dan tanpa syarat nisab.
       </p>
