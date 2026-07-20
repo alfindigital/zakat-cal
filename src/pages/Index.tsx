@@ -418,7 +418,7 @@ const Index = () => {
 
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
           <Card className="overflow-hidden transition-shadow duration-300 hover:shadow-lg border-border/60">
-            <CardContent className="px-4 pt-4 sm:px-6 sm:pt-5">
+            <CardContent className="px-4 pt-3 sm:px-6 sm:pt-4">
               <div className="mb-1">
                 <h1 className="text-lg sm:text-xl font-bold tracking-tight">
                   {activePage?.h1 ?? "Kalkulator Zakat"}
@@ -435,7 +435,7 @@ const Index = () => {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -16 }}
                   transition={{ duration: 0.25, ease: "easeInOut" }}
-                  className="mt-3"
+                  className="mt-2"
                 >
                   {renderCalc(activeTab)}
                 </motion.div>
