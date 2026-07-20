@@ -136,7 +136,7 @@ export default function ZakatFitrah({ isActive, onCalculated, prefill }: Props) 
             onChange={(e) => setJiwa(e.target.value.replace(/\D/g, ""))}
             aria-invalid={attempted && fields[0].invalid}
             aria-describedby={attempted && fields[0].invalid ? "fitrah-jiwa-error" : undefined}
-            className="h-12 sm:h-10 text-base"
+            className="h-11 sm:h-10 text-base"
           />
           {attempted && <FieldError id="fitrah-jiwa" message={fields[0].invalid ? fields[0].message : undefined} />}
         </div>
@@ -145,7 +145,7 @@ export default function ZakatFitrah({ isActive, onCalculated, prefill }: Props) 
           <div className="space-y-2">
             <Label className="text-sm">Jenis Beras</Label>
             <Select value={riceIdx} onValueChange={setRiceIdx}>
-              <SelectTrigger className="h-12 sm:h-10 text-base">
+              <SelectTrigger className="h-11 sm:h-10 text-base">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -170,7 +170,7 @@ export default function ZakatFitrah({ isActive, onCalculated, prefill }: Props) 
               onChange={(e) => formattedChange(e, setPerJiwaUang, formatNumberInput)}
               aria-invalid={attempted && fields[1].invalid}
               aria-describedby={attempted && fields[1].invalid ? "fitrah-uang-error" : undefined}
-              className="h-12 sm:h-10 text-base"
+              className="h-11 sm:h-10 text-base"
             />
             {attempted && <FieldError id="fitrah-uang" message={fields[1].invalid ? fields[1].message : undefined} />}
           </div>
@@ -188,7 +188,7 @@ export default function ZakatFitrah({ isActive, onCalculated, prefill }: Props) 
             placeholder="kosongkan untuk pakai preset"
             value={customPrice}
             onChange={(e) => formattedChange(e, setCustomPrice, formatNumberInput)}
-            className="h-12 sm:h-10 text-base"
+            className="h-11 sm:h-10 text-base"
           />
         </div>
       )}
@@ -196,7 +196,7 @@ export default function ZakatFitrah({ isActive, onCalculated, prefill }: Props) 
       <ValidationSummary fields={fields} visible={attempted} />
 
       <div className="space-y-1.5">
-        <Button onClick={handleSave} aria-disabled={!canCalc} className="w-full h-11">
+        <Button onClick={handleSave} aria-disabled={!canCalc} className="w-full h-11 sm:h-10">
           Simpan ke Riwayat
         </Button>
         <p aria-live="polite" className="text-xs text-muted-foreground text-center">

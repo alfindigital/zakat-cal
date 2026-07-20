@@ -69,12 +69,12 @@ export default function ZakatRikaz({ isActive, onCalculated, prefill }: Props) {
           value={nilai} onChange={(e) => formattedChange(e, setNilai, formatNumberInput)}
           aria-invalid={attempted && fields[0].invalid}
           aria-describedby={attempted && fields[0].invalid ? "rikaz-nilai-error" : undefined}
-          className="h-12 sm:h-10 text-base" />
+          className="h-11 sm:h-10 text-base" />
         {attempted && <FieldError id="rikaz-nilai" message={fields[0].invalid ? fields[0].message : undefined} />}
       </div>
       <ValidationSummary fields={fields} visible={attempted} />
       <div className="space-y-1.5">
-        <Button onClick={handleSave} aria-disabled={!canCalc} className="w-full h-11">
+        <Button onClick={handleSave} aria-disabled={!canCalc} className="w-full h-11 sm:h-10">
           Simpan ke Riwayat
         </Button>
         <p aria-live="polite" className="text-xs text-muted-foreground text-center">

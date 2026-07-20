@@ -133,7 +133,7 @@ export default function HaulReminder({ embedded = false }: Props) {
               value={label}
               onChange={(e) => setLabel(e.target.value)}
               placeholder="mis. Hartaku"
-              className="h-10 w-full border-border bg-muted text-sm text-card-foreground placeholder:text-muted-foreground/60 transition-shadow focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/25 sm:h-11 md:h-12"
+              className="h-11 w-full border-border bg-muted text-sm text-card-foreground placeholder:text-muted-foreground/60 transition-shadow focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/25 sm:h-11 md:h-11"
               maxLength={40}
             />
           </div>
@@ -154,7 +154,7 @@ export default function HaulReminder({ embedded = false }: Props) {
                   setDate(e.target.value);
                   setDateError(validateDate(e.target.value));
                 }}
-                className="no-calendar-picker h-10 w-full border-border bg-muted pr-10 text-sm text-card-foreground transition-shadow focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/25 sm:h-11 sm:pr-11 md:h-12 md:pr-12"
+                className="no-calendar-picker h-11 w-full border-border bg-muted pr-10 text-sm text-card-foreground transition-shadow focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/25 sm:h-11 sm:pr-11 md:h-11 md:pr-12"
               />
               <Calendar
                 aria-hidden="true"
@@ -168,7 +168,7 @@ export default function HaulReminder({ embedded = false }: Props) {
             )}
           </div>
         </div>
-        <Button onClick={handleAdd} disabled={!date || !!dateError} className="h-11 w-full gap-1 text-sm font-semibold shadow-sm transition-transform active:scale-[0.98] sm:h-12 sm:w-auto">
+        <Button onClick={handleAdd} disabled={!date || !!dateError} className="h-11 w-full gap-1 text-sm font-semibold shadow-sm transition-transform active:scale-[0.98] sm:h-11 sm:w-auto">
           <Plus className="h-4 w-4" /> Tambah pengingat
         </Button>
       </div>

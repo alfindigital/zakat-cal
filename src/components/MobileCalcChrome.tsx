@@ -73,7 +73,7 @@ export function ResultCard({
       target="_blank"
       rel="noopener noreferrer"
       onClick={() => track("pay_click", { type: waType! })}
-      className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 h-12 text-base font-semibold text-primary-foreground shadow-sm transition-transform hover:scale-[1.01] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+      className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 h-11 sm:h-10 text-base font-semibold text-primary-foreground shadow-sm transition-transform hover:scale-[1.01] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
     >
       <Send aria-hidden="true" className="h-5 w-5" />
       Tunaikan {formatRupiah(amount)}

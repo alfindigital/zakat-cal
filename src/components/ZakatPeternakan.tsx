@@ -82,7 +82,7 @@ export default function ZakatPeternakan({ isActive, onCalculated, prefill }: Pro
       <div className="space-y-2">
         <Label className="text-sm">Jenis Hewan</Label>
         <Select value={type} onValueChange={(v) => setType(v as LivestockType)}>
-          <SelectTrigger className="h-12 sm:h-10 text-base"><SelectValue /></SelectTrigger>
+          <SelectTrigger className="h-11 sm:h-10 text-base"><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="kambing">Kambing / Domba (nisab 40 ekor)</SelectItem>
             <SelectItem value="sapi">Sapi / Kerbau (nisab 30 ekor)</SelectItem>
@@ -97,7 +97,7 @@ export default function ZakatPeternakan({ isActive, onCalculated, prefill }: Pro
             value={jumlah} onChange={(e) => formattedChange(e, setJumlah, formatNumberInput)}
             aria-invalid={attempted && fields[0].invalid}
             aria-describedby={attempted && fields[0].invalid ? "ternak-jumlah-error" : undefined}
-            className="h-12 sm:h-10 text-base" />
+            className="h-11 sm:h-10 text-base" />
           {attempted && <FieldError id="ternak-jumlah" message={fields[0].invalid ? fields[0].message : undefined} />}
         </div>
         <div className="space-y-2">
@@ -106,13 +106,13 @@ export default function ZakatPeternakan({ isActive, onCalculated, prefill }: Pro
             value={harga} onChange={(e) => formattedChange(e, setHarga, formatNumberInput)}
             aria-invalid={attempted && fields[1].invalid}
             aria-describedby={attempted && fields[1].invalid ? "ternak-harga-error" : undefined}
-            className="h-12 sm:h-10 text-base" />
+            className="h-11 sm:h-10 text-base" />
           {attempted && <FieldError id="ternak-harga" message={fields[1].invalid ? fields[1].message : undefined} />}
         </div>
       </div>
       <ValidationSummary fields={fields} visible={attempted} />
       <div className="space-y-1.5">
-        <Button onClick={handleSave} aria-disabled={!canCalc} className="w-full h-11">
+        <Button onClick={handleSave} aria-disabled={!canCalc} className="w-full h-11 sm:h-10">
           Simpan ke Riwayat
         </Button>
         <p aria-live="polite" className="text-xs text-muted-foreground text-center">

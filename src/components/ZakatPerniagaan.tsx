@@ -85,7 +85,7 @@ export default function ZakatPerniagaan({ goldPrice, isActive, onCalculated, pre
       <Label htmlFor={id} className="text-sm">{label}</Label>
       <Input id={id} type="text" inputMode="decimal" pattern="[0-9]*" placeholder="0"
         value={value} onChange={(e) => formattedChange(e, set, formatNumberInput)}
-        className="h-12 sm:h-10 text-base" />
+        className="h-11 sm:h-10 text-base" />
     </div>
   );
 
@@ -102,7 +102,7 @@ export default function ZakatPerniagaan({ goldPrice, isActive, onCalculated, pre
       </p>
       <ValidationSummary fields={fields} visible={attempted} />
       <div className="space-y-1.5">
-        <Button onClick={handleSave} aria-disabled={!canCalc} className="w-full h-11">
+        <Button onClick={handleSave} aria-disabled={!canCalc} className="w-full h-11 sm:h-10">
           Simpan ke Riwayat
         </Button>
         <p aria-live="polite" className="text-xs text-muted-foreground text-center">
