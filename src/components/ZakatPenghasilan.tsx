@@ -80,8 +80,8 @@ export default function ZakatPenghasilan({ metalPrice, nisabType, isActive, onCa
   };
 
   return (
-    <div className="space-y-4 sm:space-y-6">
-      <div className="grid gap-4 sm:gap-4 sm:grid-cols-2">
+    <div className="space-y-3 sm:space-y-4">
+      <div className="grid gap-3 sm:gap-4 sm:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="penghasilan-bulanan" className="text-sm">Penghasilan Bulanan (Rp)</Label>
           <Input

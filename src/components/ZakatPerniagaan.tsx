@@ -90,7 +90,7 @@ export default function ZakatPerniagaan({ goldPrice, isActive, onCalculated, pre
   );
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-3 sm:space-y-4">
       <div className="grid gap-4 sm:grid-cols-2">
         {field("perniagaan-modal", "Modal Kerja (Rp)", modal, setModal)}
         {field("perniagaan-piutang", "Piutang Lancar (Rp)", piutang, setPiutang)}

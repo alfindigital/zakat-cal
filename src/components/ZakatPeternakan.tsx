@@ -78,7 +78,7 @@ export default function ZakatPeternakan({ isActive, onCalculated, prefill }: Pro
   };
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-3 sm:space-y-4">
       <div className="space-y-2">
         <Label className="text-sm">Jenis Hewan</Label>
         <Select value={type} onValueChange={(v) => setType(v as LivestockType)}>

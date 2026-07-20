@@ -60,7 +60,7 @@ export default function ZakatFidyah({ isActive, onCalculated, prefill }: Props) 
   };
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-3 sm:space-y-4">
       <p className="text-xs text-muted-foreground bg-muted/50 rounded-lg p-3 border border-border/60">
         Fidyah = denda bagi yang meninggalkan puasa Ramadhan dan tidak mampu menggantinya (mis. lansia, sakit menahun, ibu hamil/menyusui sesuai pendapat tertentu).
         Besarnya ±1 mud (<strong>±0,75 kg</strong>) makanan pokok per hari, atau senilai uang.

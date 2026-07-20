@@ -62,7 +62,7 @@ export default function ZakatMadin({ goldPrice, isActive, onCalculated, prefill 
   };
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-3 sm:space-y-4">
       <p className="text-xs text-muted-foreground bg-muted/50 rounded-lg p-3 border border-border/60">
         Ma'din = hasil tambang (emas, perak, minyak, mineral). Menurut jumhur ulama: nisab setara 85g emas, kadar <strong>2,5%</strong>, dibayar saat hasil tambang diperoleh.
       </p>

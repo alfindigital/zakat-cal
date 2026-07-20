@@ -119,7 +119,7 @@ export default function ZakatMaal({ goldPrice, silverPrice, nisabType, isActive,
   );
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-3 sm:space-y-4">
       <div className="grid gap-4 sm:gap-4 sm:grid-cols-2">
         {numField("maal-tabungan", "Tabungan (Rp)", tabungan, setTabungan)}
         {numField("maal-emas", "Emas (gram)", emas, setEmas, true)}

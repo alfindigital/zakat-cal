@@ -86,7 +86,7 @@ export function ResultCard({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -12 }}
       transition={{ duration: 0.35 }}
-      className="rounded-xl border bg-muted/50 p-4 sm:p-5 space-y-3"
+      className="rounded-xl border bg-muted/50 p-3.5 sm:p-4 space-y-2.5"
     >
       {/* Headline: always visible */}
       <div className="space-y-2">

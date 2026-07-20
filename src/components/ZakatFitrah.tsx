@@ -87,7 +87,7 @@ export default function ZakatFitrah({ isActive, onCalculated, prefill }: Props) 
   const showCountdown = idulFitri && idulFitri.daysLeft >= 0 && idulFitri.daysLeft <= 60;
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-3 sm:space-y-4">
       {showCountdown && (
         <div className="rounded-lg border border-primary/30 bg-primary/5 p-3 flex items-center gap-3">
           <CalendarClock aria-hidden="true" className="h-5 w-5 text-primary shrink-0" />
