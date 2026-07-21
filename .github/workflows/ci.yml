@@ -86,10 +86,10 @@ jobs:
       - name: Pasang dependency
         run: npm install --no-audit --no-fund
 
-      - name: Pasang browser Playwright
-        run: npx playwright install --with-deps chromium
+      - name: Pasang browser Playwright (Chromium + Firefox)
+        run: npx playwright install --with-deps chromium firefox
 
-      - name: Jalankan visual regression (Beranda)
+      - name: Jalankan visual regression (Beranda, Chromium + Firefox)
         run: npm run test:e2e:visual
 
       - name: Unggah snapshot & laporan (bila gagal)
