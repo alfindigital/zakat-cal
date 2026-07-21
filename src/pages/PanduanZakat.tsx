@@ -1,9 +1,7 @@
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-
-import { ArrowLeft } from "lucide-react";
 import { useSeo } from "@/lib/seo";
+import { AppShell } from "@/components/AppShell";
 
 const sections = [
   {
@@ -66,49 +64,41 @@ export default function PanduanZakat() {
     path: "/panduan-zakat",
   });
   return (
-    <div className="min-h-dvh bg-background px-4 py-6 sm:py-12">
-      <div className="mx-auto max-w-2xl space-y-4 sm:space-y-6">
-        <div className="flex items-center justify-between">
-          <Button variant="ghost" size="sm" asChild>
-            <Link to="/"><ArrowLeft className="mr-2 h-4 w-4" />Kembali</Link>
-          </Button>
-        </div>
-
-        <div className="text-center space-y-1 sm:space-y-2">
-          <h1 className="text-xl font-bold tracking-tight sm:text-3xl lg:text-4xl">Panduan Zakat</h1>
-          <p className="text-xs text-muted-foreground sm:text-base">Syarat, jenis, dan ketentuan zakat</p>
-        </div>
-
-        <div className="space-y-3 sm:space-y-4">
-          {sections.map((s) => (
-            <Card key={s.title}>
-              <CardHeader className="pb-2 px-4 pt-4 sm:px-6 sm:pt-5">
-                <CardTitle className="text-base sm:text-lg">{s.title}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3 text-xs text-muted-foreground leading-relaxed px-4 pb-4 sm:px-6 sm:pb-5 sm:text-sm">
-                {s.content && <p>{s.content}</p>}
-                {s.list && (
-                  <ol className="list-decimal list-inside space-y-2">
-                    {s.list.map((item, i) => {
-                      const [term, ...rest] = item.split(" — ");
-                      return (
-                        <li key={i}>
-                          <span className="text-foreground font-medium">{term}</span>
-                          {rest.length > 0 && <> — {rest.join(" — ")}</>}
-                        </li>
-                      );
-                    })}
-                  </ol>
-                )}
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        <div className="flex flex-wrap justify-center gap-4 pt-2 text-xs sm:text-sm">
-          <Link to="/" className="font-semibold text-primary hover:underline">← Kembali ke kalkulator</Link>
-        </div>
+    <AppShell>
+      <div className="text-center space-y-1 sm:space-y-2">
+        <h1 className="text-xl font-bold tracking-tight sm:text-3xl">Panduan Zakat</h1>
+        <p className="text-xs text-muted-foreground sm:text-base">Syarat, jenis, dan ketentuan zakat</p>
       </div>
-    </div>
+
+      <div className="space-y-3 sm:space-y-4">
+        {sections.map((s) => (
+          <Card key={s.title}>
+            <CardHeader className="pb-2 px-4 pt-4 sm:px-6 sm:pt-5">
+              <CardTitle className="text-base sm:text-lg">{s.title}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3 text-xs text-muted-foreground leading-relaxed px-4 pb-4 sm:px-6 sm:pb-5 sm:text-sm">
+              {s.content && <p>{s.content}</p>}
+              {s.list && (
+                <ol className="list-decimal list-inside space-y-2">
+                  {s.list.map((item, i) => {
+                    const [term, ...rest] = item.split(" — ");
+                    return (
+                      <li key={i}>
+                        <span className="text-foreground font-medium">{term}</span>
+                        {rest.length > 0 && <> — {rest.join(" — ")}</>}
+                      </li>
+                    );
+                  })}
+                </ol>
+              )}
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      <div className="flex flex-wrap justify-center gap-4 pt-2 text-xs sm:text-sm">
+        <Link to="/" className="font-semibold text-primary hover:underline">← Kembali ke kalkulator</Link>
+      </div>
+    </AppShell>
   );
 }

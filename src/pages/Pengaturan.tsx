@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
-import { ArrowLeft, RefreshCw, Coins } from "lucide-react";
+import { RefreshCw, Coins } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import HaulReminder from "@/components/HaulReminder";
+import { AppShell } from "@/components/AppShell";
 import { toast } from "sonner";
 import {
   fetchGoldPrice,
@@ -124,26 +124,18 @@ export default function Pengaturan() {
   const currentNisab = getNisab(metalPrice, nisabType);
 
   return (
-    <div className="min-h-dvh bg-background px-4 py-6 sm:px-8 sm:py-12">
-      <div className="mx-auto max-w-lg space-y-6">
-        {/* Header */}
-        <div className="mb-6 sm:mb-8">
-          <Button variant="ghost" size="sm" asChild className="group -ml-2 mb-3 h-auto px-2 py-1 text-muted-foreground hover:text-primary">
-            <Link to="/" className="flex items-center gap-1">
-              <ArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1" />
-              <span className="font-medium">Kembali</span>
-            </Link>
-          </Button>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-            Pengaturan
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Atur nisab, harga logam, dan pengingat haul.
-          </p>
-        </div>
+    <AppShell mainClassName="mx-auto max-w-lg w-full px-4 py-6 sm:px-6 sm:py-8 flex-1 space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+          Pengaturan
+        </h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Atur nisab, harga logam, dan pengingat haul.
+        </p>
+      </div>
 
-        {/* Hero Nisab Card */}
-        <div className="relative overflow-hidden rounded-3xl bg-primary p-6 text-primary-foreground shadow-xl shadow-primary/25">
+      {/* Hero Nisab Card */}
+      <div className="relative overflow-hidden rounded-3xl bg-primary p-6 text-primary-foreground shadow-xl shadow-primary/25">
           <div className="relative z-10">
             <div className="flex items-start justify-between">
               <p className="text-xs font-medium uppercase tracking-wider text-primary-foreground/80">
@@ -298,7 +290,6 @@ export default function Pengaturan() {
             <HaulReminder embedded />
           </div>
         </div>
-      </div>
-    </div>
+    </AppShell>
   );
 }

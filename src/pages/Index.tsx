@@ -28,46 +28,17 @@ import ZakatFidyah from "@/components/ZakatFidyah";
 
 import ZakatRiwayat from "@/components/ZakatRiwayat";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calculator, Briefcase, Wallet, Wheat, Settings2, Loader2, Store, Sprout, Beef, Gem, Mountain, Info, Moon, LayoutGrid, History } from "lucide-react";
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
-import { Button } from "@/components/ui/button";
+import { Briefcase, Loader2, LayoutGrid } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ALL_PAGES, HOME_SEO, getPageBySlug, useSeo, type ZakatPage } from "@/lib/seo";
 import { track } from "@/lib/analytics";
 import { formatMetalPrice } from "@/lib/format";
+import { AppShell, PRIMARY_TABS, TAB_ICONS, labelForTab, pathForTab, tabForPath as tabForPathShared } from "@/components/AppShell";
 
 
-type IconType = typeof Briefcase;
-const TAB_ICONS: Record<string, IconType> = {
-  penghasilan: Briefcase,
-  maal: Wallet,
-  perniagaan: Store,
-  pertanian: Sprout,
-  peternakan: Beef,
-  rikaz: Gem,
-  madin: Mountain,
-  fitrah: Wheat,
-  fidyah: Moon,
-};
-
-// 4 most common types are always visible (top on desktop, bottom bar on mobile);
-// the rest open via the shared "Lainnya" drawer — identical structure everywhere.
-const PRIMARY_TABS = ["penghasilan", "maal", "fitrah", "perniagaan"];
-
-const labelForTab = (tab: string) => ALL_PAGES.find((p) => p.tab === tab)?.label ?? tab;
-
-const pathForTab = (tab: string) => {
-  if (tab === "penghasilan") return "/";
-  const page = ALL_PAGES.find((p) => p.tab === tab);
-  return page ? `/${page.slug}` : "/";
-};
-const tabForPath = (pathname: string) => {
-  if (pathname === "/" || pathname === "") return "penghasilan";
-  const slug = pathname.replace(/^\//, "");
-  return getPageBySlug(slug)?.tab ?? "penghasilan";
-};
+const tabForPath = (pathname: string) => tabForPathShared(pathname) ?? "penghasilan";
 
 const Index = () => {
   const location = useLocation();
@@ -80,7 +51,6 @@ const Index = () => {
   const [nisabType] = useState<NisabType>("gold");
   const [roundUp] = useState(() => loadRoundUp());
   const [history, setHistory] = useState(getHistory());
-  const [moreOpen, setMoreOpen] = useState(false); // mobile drawer
   const [moreExpanded, setMoreExpanded] = useState(false); // desktop inline expansion
 
   const [refreshing, setRefreshing] = useState(false);
@@ -293,240 +263,126 @@ const Index = () => {
   };
 
 
-  const NavButton = ({ tab, short }: { tab: string; short: string }) => {
-    const Icon = TAB_ICONS[tab] ?? Briefcase;
-    const active = activeTab === tab;
-    return (
-      <button
-        type="button"
-        onClick={() => setActiveTab(tab)}
-        aria-current={active ? "page" : undefined}
-        aria-label={`Zakat ${labelForTab(tab)}`}
-        title={`Zakat ${labelForTab(tab)}`}
-        className="group relative flex flex-1 shrink-0 flex-col items-center justify-center gap-1 min-w-[60px] px-1 active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground/70 focus-visible:ring-inset rounded-md"
-      >
-        <span className={`flex items-center justify-center h-10 w-10 rounded-full transition-all ${active ? "bg-primary-foreground" : "group-hover:bg-primary-foreground/10"}`}>
-          <Icon aria-hidden="true" strokeWidth={2.25} className={`h-6 w-6 transition-colors ${active ? "text-primary" : "text-primary-foreground group-hover:text-primary-foreground"}`} />
-        </span>
-        <span className={`text-[11px] font-semibold transition-colors ${active ? "text-primary-foreground" : "text-primary-foreground/90"}`}>
-          {short}
-        </span>
-      </button>
-    );
-  };
-
   const moreActive = !PRIMARY_TABS.includes(activeTab);
 
   // Shared desktop pill styling for primary tabs + the "Lainnya" trigger.
   const desktopPill = (active: boolean) =>
     `inline-flex items-center gap-1.5 rounded-lg px-3 h-9 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${active ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/70 hover:text-foreground"}`;
 
+  const pullToRefreshSlot = isMobile && (pullDistance > 0 || refreshing) ? (
+    <div className="flex items-center justify-center text-xs text-muted-foreground overflow-hidden" style={{ height: refreshing ? 48 : pullDistance }}>
+      <div className="flex items-center gap-2">
+        <Loader2 className={`h-4 w-4 ${refreshing || pullDistance > 60 ? "animate-spin" : ""}`} />
+        <span>{refreshing ? "Memuat harga emas..." : pullDistance > 60 ? "Lepas untuk refresh" : "Tarik untuk refresh"}</span>
+      </div>
+    </div>
+  ) : null;
+
   return (
     <RoundUpContext.Provider value={roundUp}>
-    <div className="min-h-dvh bg-background flex flex-col">
-      {/* Sticky Header */}
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/40">
-        <div className="mx-auto max-w-2xl flex items-center justify-between px-4 py-3 sm:px-6 sm:py-4 gap-2">
-          <Link to="/" className="flex items-center gap-2.5 min-w-0 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label="ZakatCal — beranda">
-            <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-              <Calculator className="w-5 h-5 text-primary" />
-            </div>
-            <span className="text-xl font-extrabold tracking-tight sm:text-2xl truncate">
-              Zakat<span className="text-primary">Cal</span>
-            </span>
-          </Link>
-          <div className="flex items-center gap-1">
-            <Button asChild variant="ghost" size="icon" className="h-11 w-11 sm:h-10 sm:w-10 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" aria-label="Riwayat Perhitungan">
-              <Link to="/riwayat"><History className="h-5 w-5" /></Link>
-            </Button>
-            <Button asChild variant="ghost" size="icon" className="h-11 w-11 sm:h-10 sm:w-10 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" aria-label="Pengaturan">
-              <Link to="/pengaturan"><Settings2 className="h-5 w-5" /></Link>
-            </Button>
-            <Button asChild variant="ghost" size="icon" className="h-11 w-11 sm:h-10 sm:w-10 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" aria-label="Panduan Zakat">
-              <Link to="/panduan-zakat"><Info className="h-5 w-5" /></Link>
-            </Button>
-          </div>
-
-        </div>
-      </header>
-
-
-      {/* Pull-to-refresh indicator (mobile) */}
-      {isMobile && (pullDistance > 0 || refreshing) && (
-        <div className="flex items-center justify-center text-xs text-muted-foreground overflow-hidden" style={{ height: refreshing ? 48 : pullDistance }}>
-          <div className="flex items-center gap-2">
-            <Loader2 className={`h-4 w-4 ${refreshing || pullDistance > 60 ? "animate-spin" : ""}`} />
-            <span>{refreshing ? "Memuat harga emas..." : pullDistance > 60 ? "Lepas untuk refresh" : "Tarik untuk refresh"}</span>
-          </div>
-        </div>
-      )}
-
-      {/* Content */}
-      <main
-        ref={mainRef}
-        onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}
-        className="mx-auto max-w-2xl w-full px-4 py-3 sm:px-5 sm:py-4 md:py-5 space-y-2.5 sm:space-y-3 md:space-y-4 flex-1"
-        style={{ paddingBottom: "calc(5.5rem + env(safe-area-inset-bottom, 0px))" }}
+      <AppShell
+        headerSlot={pullToRefreshSlot}
+        bareMain
       >
-        {/* Desktop nav — 4 primary + Lainnya. On desktop, "Lainnya" expands the
-            remaining categories inline (not a bottom drawer). Mobile still uses the drawer. */}
-        <nav aria-label="Kategori zakat" className="hidden md:flex flex-wrap gap-1.5">
-          {PRIMARY_TABS.map((tab) => {
-            const Icon = TAB_ICONS[tab] ?? Briefcase;
-            const active = activeTab === tab;
-            return (
-              <button key={tab} type="button" onClick={() => setActiveTab(tab)} aria-current={active ? "page" : undefined} className={desktopPill(active)}>
-                <Icon aria-hidden="true" className="h-4 w-4" /> {labelForTab(tab)}
-              </button>
-            );
-          })}
-          <button
-            type="button"
-            onClick={() => setMoreExpanded((v) => !v)}
-            aria-expanded={moreExpanded}
-            aria-current={moreActive ? "page" : undefined}
-            className={desktopPill(moreActive || moreExpanded)}
-          >
-            <LayoutGrid aria-hidden="true" className="h-4 w-4" /> {moreActive ? `Lainnya · ${labelForTab(activeTab)}` : "Lainnya"}
-          </button>
-          <AnimatePresence initial={false}>
-            {moreExpanded && ALL_PAGES.filter((p) => !PRIMARY_TABS.includes(p.tab)).map((p) => {
-              const Icon = TAB_ICONS[p.tab] ?? Briefcase;
-              const active = activeTab === p.tab;
+        <main
+          ref={mainRef}
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+          className="mx-auto max-w-2xl w-full px-4 py-3 sm:px-5 sm:py-4 md:py-5 space-y-2.5 sm:space-y-3 md:space-y-4 flex-1"
+          style={{ paddingBottom: "calc(5.5rem + env(safe-area-inset-bottom, 0px))" }}
+        >
+          <nav aria-label="Kategori zakat" className="hidden md:flex flex-wrap gap-1.5">
+            {PRIMARY_TABS.map((tab) => {
+              const Icon = TAB_ICONS[tab] ?? Briefcase;
+              const active = activeTab === tab;
               return (
-                <motion.button
-                  key={p.tab}
-                  type="button"
-                  initial={{ opacity: 0, x: -8, scale: 0.95 }}
-                  animate={{ opacity: 1, x: 0, scale: 1 }}
-                  exit={{ opacity: 0, x: -8, scale: 0.95 }}
-                  transition={{ duration: 0.18 }}
-                  onClick={() => { setActiveTab(p.tab); }}
-                  aria-current={active ? "page" : undefined}
-                  className={desktopPill(active)}
-                >
-                  <Icon aria-hidden="true" className="h-4 w-4" /> {p.label}
-                </motion.button>
-              );
-            })}
-          </AnimatePresence>
-
-        </nav>
-
-
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-          <Card className="overflow-hidden transition-shadow duration-300 hover:shadow-lg border-border/60">
-            <CardContent className="px-4 pt-3 sm:px-5 sm:pt-3.5 pb-4 sm:pb-5">
-              <div className="mb-0.5">
-                <h1 className="text-lg sm:text-xl font-bold tracking-tight">
-                  {activePage?.h1 ?? "Kalkulator Zakat"}
-                </h1>
-                {activePage?.intro && (
-                  <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 leading-relaxed">{activePage.intro}</p>
-                )}
-              </div>
-
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeTab}
-                  initial={{ opacity: 0, x: 16 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -16 }}
-                  transition={{ duration: 0.25, ease: "easeInOut" }}
-                  className="mt-1.5"
-                >
-                  {renderCalc(activeTab)}
-                </motion.div>
-              </AnimatePresence>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-
-
-
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.15 }}>
-          <ZakatRiwayat history={history} onChanged={refreshHistory} />
-        </motion.div>
-
-        {/* Per-route SEO content — visually distinct (tinted bg + serif type) */}
-        {activePage && activePage.sections.length > 0 && (
-          <section className="rounded-2xl border border-border/60 bg-secondary p-3.5 sm:p-4 space-y-2">
-            <h2 className="text-lg sm:text-xl font-bold text-foreground tracking-tight">
-              Tentang {activePage.h1.replace("Kalkulator ", "")}
-            </h2>
-            <div className="space-y-1.5">
-              {activePage.sections.map((s) => (
-                <article key={s.heading} className="rounded-xl bg-card border border-border/50 p-3">
-                  <h3 className="font-bold text-foreground mb-0.5 text-sm sm:text-base">{s.heading}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{s.body}</p>
-                </article>
-              ))}
-            </div>
-          </section>
-        )}
-
-
-
-      </main>
-
-
-      {/* Bottom Tab Navigation (mobile) — same set as desktop: 4 primary + Lainnya */}
-      <nav
-        className="md:hidden fixed z-50 left-0 right-0 bottom-0 bg-primary border-t border-primary-foreground/10 shadow-[0_-4px_20px_-4px_hsl(var(--primary)/0.4)]"
-        style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
-        aria-label="Navigasi utama"
-      >
-        <div className="mx-auto max-w-3xl flex items-stretch h-20 justify-around px-1">
-          <NavButton tab="penghasilan" short="Gaji" />
-          <NavButton tab="maal" short="Maal" />
-          <NavButton tab="fitrah" short="Fitrah" />
-          <NavButton tab="perniagaan" short="Dagang" />
-          <button
-            type="button"
-            onClick={() => setMoreOpen(true)}
-            aria-haspopup="dialog"
-            aria-label="Kategori zakat lainnya"
-            aria-current={moreActive ? "page" : undefined}
-            className="group relative flex flex-1 shrink-0 flex-col items-center justify-center gap-1 min-w-[60px] px-1 active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground/70 focus-visible:ring-inset rounded-md"
-          >
-            <span className={`flex items-center justify-center h-10 w-10 rounded-full transition-all ${moreActive ? "bg-primary-foreground" : "group-hover:bg-primary-foreground/10"}`}>
-              <LayoutGrid aria-hidden="true" strokeWidth={2.25} className={`h-6 w-6 ${moreActive ? "text-primary" : "text-primary-foreground"}`} />
-            </span>
-            <span className={`text-[11px] font-semibold ${moreActive ? "text-primary-foreground" : "text-primary-foreground/90"}`}>Lainnya</span>
-          </button>
-        </div>
-      </nav>
-
-      {/* Shared "Lainnya" drawer — opened from both desktop pill and mobile bar */}
-      <Drawer open={moreOpen} onOpenChange={setMoreOpen}>
-        <DrawerContent>
-          <DrawerHeader>
-            <DrawerTitle>Semua Kategori</DrawerTitle>
-          </DrawerHeader>
-          <div className="grid grid-cols-3 gap-3 px-4 pb-8 w-full max-w-md mx-auto">
-            {ALL_PAGES.map((p) => {
-              const Icon = TAB_ICONS[p.tab] ?? Briefcase;
-              const active = activeTab === p.tab;
-              return (
-                <button
-                  key={p.tab}
-                  type="button"
-                  onClick={() => { setActiveTab(p.tab); setMoreOpen(false); }}
-                  aria-current={active ? "page" : undefined}
-                  className={`flex flex-col items-center justify-center gap-1.5 rounded-xl border p-3 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${active ? "border-primary bg-primary/10" : "border-border/60 hover:bg-muted"}`}
-                >
-                  <Icon aria-hidden="true" className={`h-6 w-6 ${active ? "text-primary" : "text-foreground"}`} />
-                  <span className="text-xs font-medium">{p.label}</span>
+                <button key={tab} type="button" onClick={() => setActiveTab(tab)} aria-current={active ? "page" : undefined} className={desktopPill(active)}>
+                  <Icon aria-hidden="true" className="h-4 w-4" /> {labelForTab(tab)}
                 </button>
               );
             })}
-          </div>
-        </DrawerContent>
-      </Drawer>
-    </div>
+            <button
+              type="button"
+              onClick={() => setMoreExpanded((v) => !v)}
+              aria-expanded={moreExpanded}
+              aria-current={moreActive ? "page" : undefined}
+              className={desktopPill(moreActive || moreExpanded)}
+            >
+              <LayoutGrid aria-hidden="true" className="h-4 w-4" /> {moreActive ? `Lainnya · ${labelForTab(activeTab)}` : "Lainnya"}
+            </button>
+            <AnimatePresence initial={false}>
+              {moreExpanded && ALL_PAGES.filter((p) => !PRIMARY_TABS.includes(p.tab)).map((p) => {
+                const Icon = TAB_ICONS[p.tab] ?? Briefcase;
+                const active = activeTab === p.tab;
+                return (
+                  <motion.button
+                    key={p.tab}
+                    type="button"
+                    initial={{ opacity: 0, x: -8, scale: 0.95 }}
+                    animate={{ opacity: 1, x: 0, scale: 1 }}
+                    exit={{ opacity: 0, x: -8, scale: 0.95 }}
+                    transition={{ duration: 0.18 }}
+                    onClick={() => { setActiveTab(p.tab); }}
+                    aria-current={active ? "page" : undefined}
+                    className={desktopPill(active)}
+                  >
+                    <Icon aria-hidden="true" className="h-4 w-4" /> {p.label}
+                  </motion.button>
+                );
+              })}
+            </AnimatePresence>
+          </nav>
+
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+            <Card className="overflow-hidden transition-shadow duration-300 hover:shadow-lg border-border/60">
+              <CardContent className="px-4 pt-3 sm:px-5 sm:pt-3.5 pb-4 sm:pb-5">
+                <div className="mb-0.5">
+                  <h1 className="text-lg sm:text-xl font-bold tracking-tight">
+                    {activePage?.h1 ?? "Kalkulator Zakat"}
+                  </h1>
+                  {activePage?.intro && (
+                    <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 leading-relaxed">{activePage.intro}</p>
+                  )}
+                </div>
+
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeTab}
+                    initial={{ opacity: 0, x: 16 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -16 }}
+                    transition={{ duration: 0.25, ease: "easeInOut" }}
+                    className="mt-1.5"
+                  >
+                    {renderCalc(activeTab)}
+                  </motion.div>
+                </AnimatePresence>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.15 }}>
+            <ZakatRiwayat history={history} onChanged={refreshHistory} />
+          </motion.div>
+
+          {activePage && activePage.sections.length > 0 && (
+            <section className="rounded-2xl border border-border/60 bg-secondary p-3.5 sm:p-4 space-y-2">
+              <h2 className="text-lg sm:text-xl font-bold text-foreground tracking-tight">
+                Tentang {activePage.h1.replace("Kalkulator ", "")}
+              </h2>
+              <div className="space-y-1.5">
+                {activePage.sections.map((s) => (
+                  <article key={s.heading} className="rounded-xl bg-card border border-border/50 p-3">
+                    <h3 className="font-bold text-foreground mb-0.5 text-sm sm:text-base">{s.heading}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{s.body}</p>
+                  </article>
+                ))}
+              </div>
+            </section>
+          )}
+        </main>
+      </AppShell>
     </RoundUpContext.Provider>
   );
 };
