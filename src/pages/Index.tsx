@@ -51,7 +51,6 @@ const Index = () => {
   const [nisabType] = useState<NisabType>("gold");
   const [roundUp] = useState(() => loadRoundUp());
   const [history, setHistory] = useState(getHistory());
-  const [moreOpen, setMoreOpen] = useState(false); // mobile drawer
   const [moreExpanded, setMoreExpanded] = useState(false); // desktop inline expansion
 
   const [refreshing, setRefreshing] = useState(false);
