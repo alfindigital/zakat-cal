@@ -69,3 +69,38 @@ jobs:
           path: playwright-report
           retention-days: 7
 
+  e2e-visual:
+    name: E2E visual regression (Beranda)
+    runs-on: ubuntu-latest
+    needs: check
+    steps:
+      - name: Ambil kode
+        uses: actions/checkout@v4
+
+      - name: Siapkan Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Pasang dependency
+        run: npm install --no-audit --no-fund
+
+      - name: Pasang browser Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Jalankan visual regression (Beranda)
+        run: npm run test:e2e:visual
+
+      - name: Unggah snapshot & laporan (bila gagal)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-visual-report
+          path: |
+            playwright-report
+            e2e/beranda-visual.spec.ts-snapshots
+            test-results
+          retention-days: 7
+
+
