@@ -28,46 +28,17 @@ import ZakatFidyah from "@/components/ZakatFidyah";
 
 import ZakatRiwayat from "@/components/ZakatRiwayat";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calculator, Briefcase, Wallet, Wheat, Settings2, Loader2, Store, Sprout, Beef, Gem, Mountain, Info, Moon, LayoutGrid, History } from "lucide-react";
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
-import { Button } from "@/components/ui/button";
+import { Briefcase, Loader2, LayoutGrid } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ALL_PAGES, HOME_SEO, getPageBySlug, useSeo, type ZakatPage } from "@/lib/seo";
 import { track } from "@/lib/analytics";
 import { formatMetalPrice } from "@/lib/format";
+import { AppShell, PRIMARY_TABS, TAB_ICONS, labelForTab, pathForTab, tabForPath as tabForPathShared } from "@/components/AppShell";
 
 
-type IconType = typeof Briefcase;
-const TAB_ICONS: Record<string, IconType> = {
-  penghasilan: Briefcase,
-  maal: Wallet,
-  perniagaan: Store,
-  pertanian: Sprout,
-  peternakan: Beef,
-  rikaz: Gem,
-  madin: Mountain,
-  fitrah: Wheat,
-  fidyah: Moon,
-};
-
-// 4 most common types are always visible (top on desktop, bottom bar on mobile);
-// the rest open via the shared "Lainnya" drawer — identical structure everywhere.
-const PRIMARY_TABS = ["penghasilan", "maal", "fitrah", "perniagaan"];
-
-const labelForTab = (tab: string) => ALL_PAGES.find((p) => p.tab === tab)?.label ?? tab;
-
-const pathForTab = (tab: string) => {
-  if (tab === "penghasilan") return "/";
-  const page = ALL_PAGES.find((p) => p.tab === tab);
-  return page ? `/${page.slug}` : "/";
-};
-const tabForPath = (pathname: string) => {
-  if (pathname === "/" || pathname === "") return "penghasilan";
-  const slug = pathname.replace(/^\//, "");
-  return getPageBySlug(slug)?.tab ?? "penghasilan";
-};
+const tabForPath = (pathname: string) => tabForPathShared(pathname) ?? "penghasilan";
 
 const Index = () => {
   const location = useLocation();
