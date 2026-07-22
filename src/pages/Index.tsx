@@ -35,7 +35,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { ALL_PAGES, HOME_SEO, getPageBySlug, useSeo, type ZakatPage } from "@/lib/seo";
 import { track } from "@/lib/analytics";
 import { formatMetalPrice } from "@/lib/format";
-import { AppShell, PRIMARY_TABS, TAB_ICONS, labelForTab, pathForTab, tabForPath as tabForPathShared } from "@/components/AppShell";
+import { PRIMARY_TABS, TAB_ICONS, labelForTab, pathForTab, tabForPath as tabForPathShared } from "@/components/AppShell";
 
 
 const tabForPath = (pathname: string) => tabForPathShared(pathname) ?? "penghasilan";
@@ -280,18 +280,16 @@ const Index = () => {
 
   return (
     <RoundUpContext.Provider value={roundUp}>
-      <AppShell
-        headerSlot={pullToRefreshSlot}
-        bareMain
+      <main
+        ref={mainRef}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+        className="mx-auto max-w-2xl w-full px-4 py-3 sm:px-5 sm:py-4 md:py-5 space-y-2.5 sm:space-y-3 md:space-y-4 flex-1"
+        style={{ paddingBottom: "calc(5.5rem + env(safe-area-inset-bottom, 0px))" }}
       >
-        <main
-          ref={mainRef}
-          onTouchStart={onTouchStart}
-          onTouchMove={onTouchMove}
-          onTouchEnd={onTouchEnd}
-          className="mx-auto max-w-2xl w-full px-4 py-3 sm:px-5 sm:py-4 md:py-5 space-y-2.5 sm:space-y-3 md:space-y-4 flex-1"
-          style={{ paddingBottom: "calc(5.5rem + env(safe-area-inset-bottom, 0px))" }}
-        >
+        {pullToRefreshSlot}
+
           <nav aria-label="Kategori zakat" className="hidden md:flex flex-wrap gap-1.5">
             {PRIMARY_TABS.map((tab) => {
               const Icon = TAB_ICONS[tab] ?? Briefcase;
@@ -381,10 +379,10 @@ const Index = () => {
               </div>
             </section>
           )}
-        </main>
-      </AppShell>
+      </main>
     </RoundUpContext.Provider>
   );
+
 };
 
 export default Index;
