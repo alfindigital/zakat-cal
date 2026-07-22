@@ -5,7 +5,6 @@ import { Calculator, History } from "lucide-react";
 import { getHistory, subscribeHistory } from "@/lib/zakat";
 import ZakatRiwayat from "@/components/ZakatRiwayat";
 import { useSeo } from "@/lib/seo";
-import { AppShell } from "@/components/AppShell";
 
 export default function RiwayatPage() {
   const [history, setHistory] = useState(getHistory());
@@ -20,7 +19,10 @@ export default function RiwayatPage() {
   });
 
   return (
-    <AppShell>
+    <main
+      className="mx-auto max-w-2xl w-full px-4 py-5 sm:px-6 sm:py-8 flex-1 space-y-5"
+      style={{ paddingBottom: "calc(5.5rem + env(safe-area-inset-bottom, 0px))" }}
+    >
       <div className="flex items-center gap-2">
         <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
           <History className="w-5 h-5 text-primary" aria-hidden="true" />
@@ -51,6 +53,7 @@ export default function RiwayatPage() {
       ) : (
         <ZakatRiwayat history={history} onChanged={refresh} />
       )}
-    </AppShell>
+    </main>
   );
 }
+

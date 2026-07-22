@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import HaulReminder from "@/components/HaulReminder";
-import { AppShell } from "@/components/AppShell";
+
 import { toast } from "sonner";
 import {
   fetchGoldPrice,
@@ -124,7 +124,11 @@ export default function Pengaturan() {
   const currentNisab = getNisab(metalPrice, nisabType);
 
   return (
-    <AppShell mainClassName="mx-auto max-w-lg w-full px-4 py-6 sm:px-6 sm:py-8 flex-1 space-y-6">
+    <main
+      className="mx-auto max-w-lg w-full px-4 py-6 sm:px-6 sm:py-8 flex-1 space-y-6"
+      style={{ paddingBottom: "calc(5.5rem + env(safe-area-inset-bottom, 0px))" }}
+    >
+
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
           Pengaturan
@@ -290,6 +294,7 @@ export default function Pengaturan() {
             <HaulReminder embedded />
           </div>
         </div>
-    </AppShell>
+    </main>
   );
 }
+

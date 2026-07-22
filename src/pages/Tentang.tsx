@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Send } from "lucide-react";
 import { TELEGRAM_BASE } from "@/lib/contact";
 import { useSeo, SITE_URL } from "@/lib/seo";
-import { AppShell } from "@/components/AppShell";
 
 export default function Tentang() {
   useSeo({
@@ -21,7 +20,10 @@ export default function Tentang() {
   });
 
   return (
-    <AppShell>
+    <main
+      className="mx-auto max-w-2xl w-full px-4 py-5 sm:px-6 sm:py-8 flex-1 space-y-5"
+      style={{ paddingBottom: "calc(5.5rem + env(safe-area-inset-bottom, 0px))" }}
+    >
       <div className="text-center space-y-1.5">
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Tentang ZakatCal</h1>
         <p className="text-sm text-muted-foreground sm:text-base">
@@ -73,6 +75,7 @@ export default function Tentang() {
       <div className="flex justify-center pt-2 text-sm">
         <Link to="/" className="font-semibold text-primary hover:underline">← Kembali ke kalkulator</Link>
       </div>
-    </AppShell>
+    </main>
   );
 }
+
