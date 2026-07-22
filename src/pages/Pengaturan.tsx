@@ -129,14 +129,7 @@ export default function Pengaturan() {
       style={{ paddingBottom: "calc(5.5rem + env(safe-area-inset-bottom, 0px))" }}
     >
 
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-          Pengaturan
-        </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Atur nisab, harga logam, dan pengingat haul.
-        </p>
-      </div>
+
 
       {/* Hero Nisab Card */}
       <div className="relative overflow-hidden rounded-3xl bg-primary p-6 text-primary-foreground shadow-xl shadow-primary/25">
