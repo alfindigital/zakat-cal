@@ -379,10 +379,10 @@ const Index = () => {
               </div>
             </section>
           )}
-        </main>
-      </AppShell>
+      </main>
     </RoundUpContext.Provider>
   );
+
 };
 
 export default Index;
