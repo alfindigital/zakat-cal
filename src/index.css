@@ -115,6 +115,35 @@
       transition: none !important;
     }
   }
+
+  /* Print / PDF preview: always use the light brand theme so printed pages
+     stay legible regardless of the in-app dark mode preference. */
+  @media print {
+    html,
+    html.dark {
+      --background: 0 0% 100%;
+      --foreground: 155 40% 10%;
+      --card: 0 0% 100%;
+      --card-foreground: 155 40% 10%;
+      --popover: 0 0% 100%;
+      --popover-foreground: 155 40% 10%;
+      --primary: 158 64% 32%;
+      --primary-foreground: 0 0% 100%;
+      --secondary: 155 30% 96%;
+      --secondary-foreground: 155 40% 10%;
+      --muted: 155 20% 96%;
+      --muted-foreground: 155 12% 38%;
+      --accent: 155 30% 96%;
+      --accent-foreground: 155 40% 10%;
+      --border: 155 20% 88%;
+      --input: 155 20% 88%;
+      color-scheme: light;
+    }
+    body {
+      background: #fff !important;
+      color: #0f172a !important;
+    }
+  }
 }
 
 @layer utilities {
