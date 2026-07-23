@@ -1,16 +1,11 @@
 import { Moon, Sun, Monitor } from "lucide-react";
 import { useEffect, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 type ThemeMode = "light" | "dark" | "system";
 
 const STORAGE_KEY = "theme";
+const ORDER: ThemeMode[] = ["light", "dark", "system"];
 
 function readStoredMode(): ThemeMode {
   if (typeof window === "undefined") return "light";
@@ -35,16 +30,19 @@ function applyTheme(mode: ThemeMode) {
 export function DarkModeToggle() {
   const [mode, setMode] = useState<ThemeMode>(() => readStoredMode());
 
-  const setAndPersist = useCallback((next: ThemeMode) => {
-    setMode(next);
-    localStorage.setItem(STORAGE_KEY, next);
+  const cycle = useCallback(() => {
+    setMode((prev) => {
+      const next = ORDER[(ORDER.indexOf(prev) + 1) % ORDER.length];
+      localStorage.setItem(STORAGE_KEY, next);
+      return next;
+    });
   }, []);
 
   useEffect(() => {
     applyTheme(mode);
   }, [mode]);
 
-  // Follow OS preference live when in "system" mode.
+  // Follow OS preference live while in "system" mode.
   useEffect(() => {
     if (mode !== "system" || !window.matchMedia) return;
     const mql = window.matchMedia("(prefers-color-scheme: dark)");
@@ -56,32 +54,20 @@ export function DarkModeToggle() {
   const Icon = mode === "dark" ? Sun : mode === "system" ? Monitor : Moon;
   const label =
     mode === "system"
-      ? "Tema: mengikuti sistem"
+      ? "Tema: Sistem (klik untuk ganti)"
       : mode === "dark"
-        ? "Tema: gelap"
-        : "Tema: terang";
+        ? "Tema: Gelap (klik untuk ganti)"
+        : "Tema: Terang (klik untuk ganti)";
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label={label} title={label}>
-          <Icon className="h-5 w-5" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setAndPersist("light")}>
-          <Sun className="mr-2 h-4 w-4" /> Terang
-          {mode === "light" && <span className="ml-auto text-xs text-muted-foreground">✓</span>}
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setAndPersist("dark")}>
-          <Moon className="mr-2 h-4 w-4" /> Gelap
-          {mode === "dark" && <span className="ml-auto text-xs text-muted-foreground">✓</span>}
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setAndPersist("system")}>
-          <Monitor className="mr-2 h-4 w-4" /> Sistem
-          {mode === "system" && <span className="ml-auto text-xs text-muted-foreground">✓</span>}
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={cycle}
+      aria-label={label}
+      title={label}
+    >
+      <Icon className="h-5 w-5" />
+    </Button>
   );
 }
