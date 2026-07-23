@@ -143,6 +143,7 @@ export function AppLayout() {
                 <Info className="h-5 w-5" />
               </Link>
             </Button>
+            <DarkModeToggle />
           </div>
         </div>
       </header>
