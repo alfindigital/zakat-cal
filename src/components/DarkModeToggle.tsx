@@ -10,8 +10,12 @@ export function DarkModeToggle() {
   });
 
   useEffect(() => {
-    document.documentElement.classList.toggle("dark", dark);
+    const root = document.documentElement;
+    root.classList.add("theme-transition");
+    root.classList.toggle("dark", dark);
     localStorage.setItem("theme", dark ? "dark" : "light");
+    const t = window.setTimeout(() => root.classList.remove("theme-transition"), 350);
+    return () => window.clearTimeout(t);
   }, [dark]);
 
   return (
