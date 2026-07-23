@@ -22,16 +22,16 @@
     --secondary-foreground: 155 30% 12%;
 
     --muted: 145 18% 92%;
-    --muted-foreground: 155 14% 32%;
+    --muted-foreground: 155 16% 28%;
 
-    --accent: 42 80% 52%;
+    --accent: 42 82% 48%;
     --accent-foreground: 35 90% 10%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 74% 45%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 145 18% 86%;
-    --input: 145 18% 86%;
+    --border: 145 16% 82%;
+    --input: 145 16% 82%;
     --ring: 158 64% 32%;
 
     --radius: 0.875rem;
