@@ -68,10 +68,6 @@ export default function PanduanZakat() {
       className="mx-auto max-w-2xl w-full px-4 py-5 sm:px-6 sm:py-8 flex-1 space-y-5"
       style={{ paddingBottom: "calc(5.5rem + env(safe-area-inset-bottom, 0px))" }}
     >
-      <div className="text-center space-y-1 sm:space-y-2">
-        <h1 className="text-xl font-bold tracking-tight sm:text-3xl">Panduan Zakat</h1>
-        <p className="text-xs text-muted-foreground sm:text-base">Syarat, jenis, dan ketentuan zakat</p>
-      </div>
 
       <div className="space-y-3 sm:space-y-4">
         {sections.map((s) => (
