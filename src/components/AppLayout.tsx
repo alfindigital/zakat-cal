@@ -20,6 +20,7 @@ import {
   pathForTab,
   tabForPath,
 } from "@/components/AppShell";
+import { DarkModeToggle } from "@/components/DarkModeToggle";
 
 /**
  * Shared app chrome rendered once as a layout route via <Outlet />.
