@@ -75,14 +75,14 @@
     --input: 155 16% 22%;
     --ring: 158 60% 55%;
 
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 155 20% 7%;
+    --sidebar-foreground: 145 20% 95%;
+    --sidebar-primary: 158 60% 55%;
+    --sidebar-primary-foreground: 155 40% 6%;
+    --sidebar-accent: 155 18% 16%;
+    --sidebar-accent-foreground: 145 20% 96%;
+    --sidebar-border: 155 16% 22%;
+    --sidebar-ring: 158 60% 55%;
   }
 }
 
