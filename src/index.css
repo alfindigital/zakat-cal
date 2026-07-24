@@ -96,6 +96,30 @@
     font-family: 'Plus Jakarta Sans', sans-serif;
   }
 
+  /* Universal focus-visible fallback — guarantees a visible outline on every
+     interactive element in both light and dark mode, even where component
+     libraries don't ship their own ring (native <a>, <summary>, custom
+     [role=button], etc.). Uses --ring for hue harmony and stacks on top of
+     shadcn's box-shadow ring so primary-colored surfaces still get a clearly
+     contrasting outer edge. */
+  :where(a, button, [role="button"], [role="link"], [role="tab"],
+    [role="menuitem"], [role="option"], [role="switch"], [role="checkbox"],
+    [role="radio"], summary, input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+    border-radius: var(--radius-focus, 4px);
+  }
+
+  /* On primary/accent surfaces the --ring hue matches the background, so add
+     an inner high-contrast halo (primary-foreground) between element and
+     outer ring for guaranteed separation. */
+  :where(.bg-primary, .bg-accent, [data-state="active"].bg-primary):focus-visible {
+    box-shadow:
+      0 0 0 2px hsl(var(--primary-foreground)),
+      0 0 0 4px hsl(var(--ring));
+    outline: none;
+  }
+
   /* Smooth theme transition */
   html.theme-transition,
   html.theme-transition *,
