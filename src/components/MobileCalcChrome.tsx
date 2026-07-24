@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, Download, Send, Share2 } from "lucide-react";
+import { CheckCircle2, ChevronDown, Download, Info, Send, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -91,7 +91,20 @@ export function ResultCard({
       {/* Headline: always visible */}
       <div className="space-y-2">
         {statusLabel !== undefined && (
-          <Badge variant={isWajib ? "default" : "secondary"} className="text-xs">
+          <Badge
+            variant={isWajib ? "default" : "secondary"}
+            className={`text-xs inline-flex items-center gap-1 border ${
+              isWajib
+                ? "border-primary/40 ring-1 ring-primary/30"
+                : "border-border ring-1 ring-border"
+            }`}
+          >
+            {isWajib ? (
+              <CheckCircle2 aria-hidden="true" className="h-3.5 w-3.5" />
+            ) : (
+              <Info aria-hidden="true" className="h-3.5 w-3.5" />
+            )}
+            <span className="sr-only">{isWajib ? "Status: " : "Status: "}</span>
             {statusLabel}
           </Badge>
         )}
