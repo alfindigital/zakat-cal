@@ -135,7 +135,7 @@ export default function Pengaturan() {
       <div className="relative overflow-hidden rounded-3xl bg-primary p-6 text-primary-foreground shadow-xl shadow-primary/25">
           <div className="relative z-10">
             <div className="flex items-start justify-between">
-              <p className="text-xs font-medium uppercase tracking-wider text-primary-foreground/80">
+              <p className="text-xs font-medium uppercase tracking-wider text-primary-foreground/95">
                 Nisab saat ini
               </p>
               <Coins className="h-6 w-6 text-primary-foreground/40" />
@@ -144,11 +144,11 @@ export default function Pengaturan() {
               <h2 className="text-2xl font-bold tabular-nums sm:text-3xl">
                 {formatRupiah(currentNisab)}
               </h2>
-              <span className="text-sm font-light text-primary-foreground/80">
+              <span className="text-sm font-light text-primary-foreground/95">
                 / {nisabType === "gold" ? "85g emas" : "595g perak"}
               </span>
             </div>
-            <p className="mt-2 text-xs font-medium uppercase tracking-tight text-primary-foreground/70">
+            <p className="mt-2 text-xs font-medium uppercase tracking-tight text-primary-foreground/90">
               {nisabType === "gold" ? "Emas" : "Perak"} Rp {formatMetalPrice(metalPrice)}/gr
             </p>
           </div>
