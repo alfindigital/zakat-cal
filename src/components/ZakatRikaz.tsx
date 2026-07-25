@@ -42,7 +42,7 @@ export default function ZakatRikaz({ isActive, onCalculated, prefill }: Props) {
   const handleSave = () => {
     setAttempted(true);
     if (focusFirstInvalid(fields)) return;
-    if (!result || result.zakatAmount <= 0) return;
+    if (!result) return;
     addHistory({ type: "Rikaz", amount: result.zakatAmount, detail: detailRows, inputs: { nilai } });
     onCalculated();
     track("save", { type: "Rikaz" });

@@ -46,7 +46,7 @@ export default function ZakatFidyah({ isActive, onCalculated, prefill }: Props) 
   const handleSave = () => {
     setAttempted(true);
     if (focusFirstInvalid(fields)) return;
-    if (!result || result.total <= 0) return;
+    if (!result) return;
     addHistory({ type: "Fidyah", amount: result.total, detail: detailRows, inputs: { hari, harga } });
     onCalculated();
     track("save", { type: "Fidyah" });

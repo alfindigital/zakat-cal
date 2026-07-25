@@ -44,7 +44,7 @@ export default function ZakatMadin({ goldPrice, isActive, onCalculated, prefill 
   const handleSave = () => {
     setAttempted(true);
     if (focusFirstInvalid(fields)) return;
-    if (!result || result.zakatAmount <= 0) return;
+    if (!result) return;
     addHistory({ type: "Madin", amount: result.zakatAmount, detail: detailRows, inputs: { nilai } });
     onCalculated();
     track("save", { type: "Madin" });

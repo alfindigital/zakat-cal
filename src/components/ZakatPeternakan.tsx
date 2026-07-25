@@ -58,7 +58,7 @@ export default function ZakatPeternakan({ isActive, onCalculated, prefill }: Pro
   const handleSave = () => {
     setAttempted(true);
     if (focusFirstInvalid(fields)) return;
-    if (!result || result.zakatAmount <= 0) return;
+    if (!result) return;
     addHistory({ type: "Peternakan", amount: result.zakatAmount, detail: detailRows, inputs: { type, jumlah, harga } });
     onCalculated();
     track("save", { type: "Peternakan" });

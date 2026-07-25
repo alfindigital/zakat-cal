@@ -69,7 +69,7 @@ export default function ZakatMaal({ goldPrice, silverPrice, nisabType, isActive,
   const handleSave = () => {
     setAttempted(true);
     if (focusFirstInvalid(fields)) return;
-    if (!result || result.zakatAmount <= 0) return;
+    if (!result) return;
     addHistory({ type: "Maal", amount: result.zakatAmount, detail: detailRows, inputs: { tabungan, emas, perak, investasi, properti, hutang } });
     onCalculated();
     track("save", { type: "Maal" });
