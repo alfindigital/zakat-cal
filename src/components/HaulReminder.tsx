@@ -133,7 +133,7 @@ export default function HaulReminder({ embedded = false }: Props) {
               value={label}
               onChange={(e) => setLabel(e.target.value)}
               placeholder="mis. Hartaku"
-              className="h-11 w-full border-border bg-muted text-sm text-card-foreground placeholder:text-muted-foreground/60 transition-shadow focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/25 sm:h-11 md:h-11"
+              className="h-11 w-full border-border bg-muted text-sm text-card-foreground placeholder:text-muted-foreground transition-shadow focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/25 sm:h-11 md:h-11"
               maxLength={40}
             />
           </div>
