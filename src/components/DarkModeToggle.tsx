@@ -8,11 +8,13 @@ const STORAGE_KEY = "theme";
 const ORDER: ThemeMode[] = ["light", "dark", "system"];
 
 function readStoredMode(): ThemeMode {
-  if (typeof window === "undefined") return "light";
+  if (typeof window === "undefined") return "system";
   const v = localStorage.getItem(STORAGE_KEY);
   if (v === "dark" || v === "light" || v === "system") return v;
-  return "light";
+  // No explicit choice yet → follow the OS preference.
+  return "system";
 }
+
 
 function systemPrefersDark(): boolean {
   if (typeof window === "undefined" || !window.matchMedia) return false;

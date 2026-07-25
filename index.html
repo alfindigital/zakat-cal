@@ -3,16 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <!-- Apply theme before paint to avoid a flash of the wrong color scheme. Default: light. -->
+    <!-- Apply theme before paint to avoid a flash of the wrong color scheme. Default: follow OS. -->
     <script>
       (function () {
         try {
-          if (localStorage.getItem("theme") === "dark") {
-            document.documentElement.classList.add("dark");
-          }
+          var stored = localStorage.getItem("theme");
+          var mode = stored === "dark" || stored === "light" || stored === "system" ? stored : "system";
+          var isDark =
+            mode === "dark" ||
+            (mode === "system" &&
+              window.matchMedia &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches);
+          if (isDark) document.documentElement.classList.add("dark");
         } catch (e) {}
       })();
     </script>
+
     <title>ZakatCal - Kalkulator Zakat Online Gratis</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
