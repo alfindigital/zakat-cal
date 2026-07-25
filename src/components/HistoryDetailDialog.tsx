@@ -37,7 +37,9 @@ const TYPE_TO_TAB: Record<string, string> = {
 function pathForType(type: string): string {
   const tab = TYPE_TO_TAB[type];
   if (!tab) return "/";
-  const page = getPageByTab(tab);
+  // "penghasilan" is served by the home route ("/"), it has no standalone route.
+  if (tab === "penghasilan") return "/";
+  const page = n(tab);
   if (!page) return "/";
   return page.slug ? `/${page.slug}` : "/";
 }
