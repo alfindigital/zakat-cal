@@ -64,7 +64,7 @@ export default function ZakatPenghasilan({ metalPrice, nisabType, isActive, onCa
   const handleSave = () => {
     setAttempted(true);
     if (focusFirstInvalid(fields)) return;
-    if (!result || result.zakatAmount <= 0) return;
+    if (!result) return;
     addHistory({ type: "Penghasilan", amount: result.zakatAmount, detail: detailRows, inputs: { monthly, bonus, method, deduction } });
     onCalculated();
     track("save", { type: "Penghasilan" });

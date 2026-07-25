@@ -52,7 +52,7 @@ export default function ZakatPertanian({ isActive, onCalculated, prefill }: Prop
   const handleSave = () => {
     setAttempted(true);
     if (focusFirstInvalid(fields)) return;
-    if (!result || result.zakatAmount <= 0) return;
+    if (!result) return;
     addHistory({ type: "Pertanian", amount: result.zakatAmount, detail: detailRows, inputs: { hasilKg, hargaKg, irr } });
     onCalculated();
     track("save", { type: "Pertanian" });

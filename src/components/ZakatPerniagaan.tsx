@@ -59,7 +59,7 @@ export default function ZakatPerniagaan({ goldPrice, isActive, onCalculated, pre
   const handleSave = () => {
     setAttempted(true);
     if (focusFirstInvalid(fields)) return;
-    if (!result || result.zakatAmount <= 0) return;
+    if (!result) return;
     addHistory({ type: "Perniagaan", amount: result.zakatAmount, detail: detailRows, inputs: { modal, piutang, stok, hutang } });
     onCalculated();
     track("save", { type: "Perniagaan" });
