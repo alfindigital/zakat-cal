@@ -120,25 +120,42 @@
     outline: none;
   }
 
-  /* Smooth theme transition */
+  /* Smooth theme transition — applied globally while the theme flips. */
   html.theme-transition,
   html.theme-transition *,
   html.theme-transition *::before,
-  html.theme-transition *::after {
+  html.theme-transition *::after,
+  html.theme-transition *::backdrop {
+    transition: background-color 300ms ease, background-image 300ms ease,
+      border-color 300ms ease, color 300ms ease, fill 300ms ease,
+      stroke 300ms ease, box-shadow 300ms ease, outline-color 300ms ease,
+      text-decoration-color 300ms ease !important;
+    transition-delay: 0s !important;
+  }
+
+  /* Always-on color transitions for main chrome & surfaces — navbar/header,
+     cards, popovers, tables and badges — so theme changes triggered outside
+     the toggle (e.g. the OS flipping to dark in "System" mode) also fade. */
+  :where(header, nav, footer, aside, dialog, table, thead, tbody, tr, th, td),
+  :where(
+      .bg-background, .bg-card, .bg-popover, .bg-muted, .bg-secondary,
+      .bg-primary, .bg-accent, .bg-destructive, .bg-sidebar
+    ) {
     transition: background-color 300ms ease, border-color 300ms ease,
-      color 300ms ease, fill 300ms ease, stroke 300ms ease,
-      box-shadow 300ms ease !important;
-    transition-delay: 0 !important;
+      color 300ms ease, box-shadow 300ms ease;
   }
 
   @media (prefers-reduced-motion: reduce) {
     html.theme-transition,
     html.theme-transition *,
     html.theme-transition *::before,
-    html.theme-transition *::after {
+    html.theme-transition *::after,
+    html.theme-transition *::backdrop,
+    :where(header, nav, footer, aside, dialog, table, thead, tbody, tr, th, td) {
       transition: none !important;
     }
   }
+
 
   /* Print / PDF preview: always use the light brand theme so printed pages
      stay legible regardless of the in-app dark mode preference. */
