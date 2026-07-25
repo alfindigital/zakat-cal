@@ -215,7 +215,7 @@ export default function Pengaturan() {
                     onChange={handleGoldChange}
                     aria-invalid={goldError ? true : undefined}
                     aria-describedby={goldError ? "gold-price-error" : undefined}
-                    className="h-12 border-border bg-muted pl-12 pr-4 text-base font-medium text-card-foreground placeholder:text-muted-foreground/60 transition-shadow focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/25"
+                    className="h-12 border-border bg-muted pl-12 pr-4 text-base font-medium text-card-foreground placeholder:text-muted-foreground transition-shadow focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/25"
                     placeholder="2.000.000"
                   />
                   <Label
@@ -244,7 +244,7 @@ export default function Pengaturan() {
                     onChange={handleSilverChange}
                     aria-invalid={silverError ? true : undefined}
                     aria-describedby={silverError ? "silver-price-error" : undefined}
-                    className="h-12 border-border bg-muted pl-12 pr-4 text-base font-medium text-card-foreground placeholder:text-muted-foreground/60 transition-shadow focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/25"
+                    className="h-12 border-border bg-muted pl-12 pr-4 text-base font-medium text-card-foreground placeholder:text-muted-foreground transition-shadow focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/25"
                     placeholder="28.000"
                   />
                   <Label
