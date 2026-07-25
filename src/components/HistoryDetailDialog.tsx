@@ -39,7 +39,7 @@ function pathForType(type: string): string {
   if (!tab) return "/";
   // "penghasilan" is served by the home route ("/"), it has no standalone route.
   if (tab === "penghasilan") return "/";
-  const page = n(tab);
+  const page = getPageByTab(tab);
   if (!page) return "/";
   return page.slug ? `/${page.slug}` : "/";
 }
