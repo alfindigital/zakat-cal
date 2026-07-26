@@ -427,13 +427,15 @@ export function getHistory(): ZakatHistory[] {
   }
 }
 
-export function addHistory(entry: Omit<ZakatHistory, "id" | "date">) {
+export function addHistory(entry: Omit<ZakatHistory, "id" | "date" | "createdAt">) {
   const history = getHistory();
+  const now = new Date();
   history.unshift({
     ...entry,
     amount: roundZakat(entry.amount),
     id: uid(),
-    date: new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }),
+    date: now.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }),
+    createdAt: now.toISOString(),
   });
   localStorage.setItem(STORAGE_KEY, JSON.stringify(history.slice(0, 50)));
   emitHistoryChange();
