@@ -3,6 +3,15 @@ import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -13,9 +22,10 @@ import {
   AlertDialogAction,
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
-import { Trash2, Briefcase, Wallet, Wheat, Store, Sprout, Beef, Gem, Mountain, Moon, Download, Upload, FileDown, Eye, ChevronRight } from "lucide-react";
+import { Trash2, Briefcase, Wallet, Wheat, Store, Sprout, Beef, Gem, Mountain, Moon, Download, Upload, FileDown, Eye, ChevronRight, Search, X } from "lucide-react";
 import {
   type ZakatHistory,
+  type ZakatType,
   formatRupiah,
   getHistory,
   removeHistory,
@@ -23,6 +33,7 @@ import {
   clearHistory,
   restoreAllHistory,
   importHistory,
+  historyItemDate,
 } from "@/lib/zakat";
 import { generateZakatPdf } from "@/lib/pdf-generator";
 // Recharts is heavy — load the chart lazily so it stays out of the initial bundle.
