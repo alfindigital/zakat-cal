@@ -3,6 +3,15 @@ import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -13,9 +22,10 @@ import {
   AlertDialogAction,
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
-import { Trash2, Briefcase, Wallet, Wheat, Store, Sprout, Beef, Gem, Mountain, Moon, Download, Upload, FileDown, Eye, ChevronRight } from "lucide-react";
+import { Trash2, Briefcase, Wallet, Wheat, Store, Sprout, Beef, Gem, Mountain, Moon, Download, Upload, FileDown, Eye, ChevronRight, Search, X } from "lucide-react";
 import {
   type ZakatHistory,
+  type ZakatType,
   formatRupiah,
   getHistory,
   removeHistory,
@@ -23,6 +33,7 @@ import {
   clearHistory,
   restoreAllHistory,
   importHistory,
+  historyItemDate,
 } from "@/lib/zakat";
 import { generateZakatPdf } from "@/lib/pdf-generator";
 // Recharts is heavy — load the chart lazily so it stays out of the initial bundle.
@@ -153,6 +164,18 @@ function HistoryItem({
 }
 
 
+const ZAKAT_TYPES: ZakatType[] = [
+  "Penghasilan",
+  "Maal",
+  "Fitrah",
+  "Perniagaan",
+  "Pertanian",
+  "Peternakan",
+  "Rikaz",
+  "Madin",
+  "Fidyah",
+];
+
 export default function ZakatRiwayat({ history, onChanged }: Props) {
   const isMobile = useIsMobile();
   const location = useLocation();
@@ -162,17 +185,65 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
   const [detailItem, setDetailItem] = useState<ZakatHistory | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
 
+  // Filters (only exposed on /riwayat; home page shows full recent list).
+  const [query, setQuery] = useState("");
+  const [typeFilter, setTypeFilter] = useState<string>("all");
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
+
+  const filteredHistory = useMemo(() => {
+    if (!isRiwayatPage) return history;
+    const q = query.trim().toLowerCase();
+    return history.filter((h) => {
+      if (typeFilter !== "all" && h.type !== typeFilter) return false;
+      const hDate = historyItemDate(h);
+      hDate.setHours(0, 0, 0, 0);
+      if (startDate) {
+        const start = new Date(startDate);
+        start.setHours(0, 0, 0, 0);
+        if (hDate < start) return false;
+      }
+      if (endDate) {
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+        if (hDate > end) return false;
+      }
+      if (q) {
+        const haystack = [
+          h.type,
+          h.label,
+          formatRupiah(h.amount),
+          ...(h.detail?.flatMap((d) => [d.label, d.value]) ?? []),
+        ]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
+        if (!haystack.includes(q)) return false;
+      }
+      return true;
+    });
+  }, [history, isRiwayatPage, query, typeFilter, startDate, endDate]);
+
+  const resetFilters = () => {
+    setQuery("");
+    setTypeFilter("all");
+    setStartDate("");
+    setEndDate("");
+  };
+
+  const activeFilters = query || typeFilter !== "all" || startDate || endDate;
+
   const yearTotal = useMemo(() => {
     const year = String(new Date().getFullYear());
-    return history.filter((h) => h.date.includes(year)).reduce((s, h) => s + h.amount, 0);
-  }, [history]);
-
-  if (history.length === 0) return null;
+    return filteredHistory.filter((h) => h.date.includes(year)).reduce((s, h) => s + h.amount, 0);
+  }, [filteredHistory]);
 
   // On the home page, keep the embedded list compact — show the 5 latest and
   // link to /riwayat for the full experience. On /riwayat, show everything.
-  const displayed = isRiwayatPage ? history : history.slice(0, 5);
+  const displayed = isRiwayatPage ? filteredHistory : history.slice(0, 5);
   const hasMore = !isRiwayatPage && history.length > displayed.length;
+
+  const noResults = isRiwayatPage && filteredHistory.length === 0 && history.length > 0;
 
 
   const handleRemove = (item: ZakatHistory) => {
@@ -263,10 +334,12 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
     });
   };
 
+  if (history.length === 0) return null;
+
   return (
     <div className="space-y-4 sm:space-y-5">
       <Suspense fallback={<div className="h-[180px] rounded-xl border bg-card animate-pulse" />}>
-        <ZakatChart history={history} />
+        <ZakatChart history={filteredHistory} />
       </Suspense>
 
       {/* Total zakat tahun berjalan */}
@@ -277,8 +350,74 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
         </div>
       </div>
 
+      {isRiwayatPage && (
+        <div className="rounded-xl border bg-card p-3 sm:p-4 space-y-3">
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-xs font-medium text-muted-foreground">Cari & Filter</p>
+            {activeFilters && (
+              <Button variant="ghost" size="sm" className="h-7 text-xs px-2" onClick={resetFilters}>
+                <X className="h-3.5 w-3.5 mr-1" />
+                Reset
+              </Button>
+            )}
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
+              <Input
+                type="text"
+                placeholder="Cari jenis, jumlah, label, rincian..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                className="pl-9 text-sm h-10"
+                aria-label="Cari riwayat"
+              />
+            </div>
+            <Select value={typeFilter} onValueChange={setTypeFilter}>
+              <SelectTrigger aria-label="Filter jenis zakat" className="h-10 text-sm">
+                <SelectValue placeholder="Semua jenis" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Semua jenis</SelectItem>
+                {ZAKAT_TYPES.map((t) => (
+                  <SelectItem key={t} value={t}>
+                    {t}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <div className="space-y-1.5 sm:col-span-2">
+              <Label className="text-xs text-muted-foreground">Rentang tanggal</Label>
+              <div className="grid grid-cols-2 gap-3">
+                <Input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  aria-label="Tanggal mulai"
+                  className="text-sm h-10"
+                />
+                <Input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  aria-label="Tanggal akhir"
+                  className="text-sm h-10"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center justify-between gap-2 flex-wrap">
-        <h2 className="text-base sm:text-lg font-semibold">Riwayat Perhitungan</h2>
+        <h2 className="text-base sm:text-lg font-semibold">
+          Riwayat Perhitungan
+          {isRiwayatPage && (
+            <span className="ml-2 text-xs font-normal text-muted-foreground">
+              {filteredHistory.length} / {history.length}
+            </span>
+          )}
+        </h2>
         <div className="flex items-center gap-1">
           <Button variant="ghost" size="sm" className="text-xs h-9" onClick={handleExportJson} aria-label="Ekspor riwayat">
             <Download className="h-4 w-4 sm:mr-1" /><span className="hidden sm:inline">Ekspor</span>
@@ -292,23 +431,37 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
           </Button>
         </div>
       </div>
-      {isMobile && (
+      {isMobile && !noResults && (
         <p className="text-[11px] text-muted-foreground -mt-2">
           Geser ke kiri untuk menghapus item
         </p>
       )}
-      <div className="space-y-2">
-        {displayed.map((h) => (
-          <HistoryItem
-            key={h.id}
-            h={h}
-            isMobile={isMobile}
-            onRemove={() => handleRemove(h)}
-            onExportPdf={() => handleExportPdf(h)}
-            onOpenDetail={() => setDetailItem(h)}
-          />
-        ))}
-      </div>
+
+      {noResults ? (
+        <div className="rounded-xl border border-dashed bg-card p-6 text-center space-y-2">
+          <p className="text-sm font-medium">Tidak ada riwayat yang cocok</p>
+          <p className="text-xs text-muted-foreground">
+            Coba ubah kata kunci, jenis zakat, atau rentang tanggal.
+          </p>
+          <Button variant="outline" size="sm" onClick={resetFilters} className="mt-2">
+            <X className="h-3.5 w-3.5 mr-1.5" />
+            Hapus filter
+          </Button>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {displayed.map((h) => (
+            <HistoryItem
+              key={h.id}
+              h={h}
+              isMobile={isMobile}
+              onRemove={() => handleRemove(h)}
+              onExportPdf={() => handleExportPdf(h)}
+              onOpenDetail={() => setDetailItem(h)}
+            />
+          ))}
+        </div>
+      )}
 
       {hasMore && (
         <div className="pt-1">

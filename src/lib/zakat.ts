@@ -351,6 +351,46 @@ export interface ZakatHistory {
    * to serialisable primitives (string/number/boolean).
    */
   inputs?: Record<string, unknown>;
+  /** ISO timestamp used for date-range filtering (newer entries). */
+  createdAt?: string;
+}
+
+const ID_MONTHS: Record<string, number> = {
+  Januari: 0,
+  Februari: 1,
+  Maret: 2,
+  April: 3,
+  Mei: 4,
+  Juni: 5,
+  Juli: 6,
+  Agustus: 7,
+  September: 8,
+  Oktober: 9,
+  November: 10,
+  Desember: 11,
+};
+
+/**
+ * Extract a usable Date from a history entry. Prefer the ISO `createdAt`
+ * field; fall back to parsing the Indonesian locale `date` string for
+ * backwards compatibility with older entries.
+ */
+export function historyItemDate(item: ZakatHistory): Date {
+  if (item.createdAt) {
+    const d = new Date(item.createdAt);
+    if (!Number.isNaN(d.getTime())) return d;
+  }
+  // Parse "26 Juli 2026" produced by toLocaleDateString("id-ID", ...).
+  const parts = item.date.split(" ");
+  if (parts.length === 3) {
+    const day = parseInt(parts[0], 10);
+    const month = ID_MONTHS[parts[1]];
+    const year = parseInt(parts[2], 10);
+    if (!Number.isNaN(day) && month !== undefined && !Number.isNaN(year)) {
+      return new Date(year, month, day);
+    }
+  }
+  return new Date(0);
 }
 
 const STORAGE_KEY = "zakat-history";
@@ -387,13 +427,15 @@ export function getHistory(): ZakatHistory[] {
   }
 }
 
-export function addHistory(entry: Omit<ZakatHistory, "id" | "date">) {
+export function addHistory(entry: Omit<ZakatHistory, "id" | "date" | "createdAt">) {
   const history = getHistory();
+  const now = new Date();
   history.unshift({
     ...entry,
     amount: roundZakat(entry.amount),
     id: uid(),
-    date: new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }),
+    date: now.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }),
+    createdAt: now.toISOString(),
   });
   localStorage.setItem(STORAGE_KEY, JSON.stringify(history.slice(0, 50)));
   emitHistoryChange();
@@ -413,7 +455,7 @@ export function importHistory(items: ZakatHistory[], mode: "merge" | "replace" =
       detail: Array.isArray(i.detail) ? i.detail : undefined,
       label: typeof i.label === "string" ? i.label : undefined,
       inputs: i.inputs && typeof i.inputs === "object" ? i.inputs : undefined,
-
+      createdAt: typeof i.createdAt === "string" ? i.createdAt : undefined,
     }));
   let merged: ZakatHistory[] = sanitized;
   if (mode === "merge") {
