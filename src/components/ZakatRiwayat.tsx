@@ -1,4 +1,4 @@
-import { lazy, Suspense, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -239,9 +239,38 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
   }, [filteredHistory]);
 
   // On the home page, keep the embedded list compact — show the 5 latest and
-  // link to /riwayat for the full experience. On /riwayat, show everything.
-  const displayed = isRiwayatPage ? filteredHistory : history.slice(0, 5);
+  // link to /riwayat for the full experience. On /riwayat, paginate lazily
+  // (infinite scroll) so long lists stay light to render.
+  const PAGE_SIZE = 10;
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+
+  // Reset pagination whenever the filtered result set changes.
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [query, typeFilter, startDate, endDate, isRiwayatPage]);
+
+  const displayed = isRiwayatPage
+    ? filteredHistory.slice(0, visibleCount)
+    : history.slice(0, 5);
+  const canLoadMore = isRiwayatPage && filteredHistory.length > displayed.length;
   const hasMore = !isRiwayatPage && history.length > displayed.length;
+
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (!canLoadMore) return;
+    const el = sentinelRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setVisibleCount((c) => c + PAGE_SIZE);
+        }
+      },
+      { rootMargin: "200px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [canLoadMore, displayed.length]);
 
   const noResults = isRiwayatPage && filteredHistory.length === 0 && history.length > 0;
 
