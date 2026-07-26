@@ -492,6 +492,25 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
         </div>
       )}
 
+      {canLoadMore && (
+        <div ref={sentinelRef} className="pt-1 space-y-2">
+          <div className="h-14 rounded-lg border bg-card/50 animate-pulse" aria-hidden="true" />
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+          >
+            Muat lebih banyak ({filteredHistory.length - displayed.length} lagi)
+          </Button>
+        </div>
+      )}
+
+      {isRiwayatPage && !canLoadMore && displayed.length > PAGE_SIZE && (
+        <p className="text-center text-[11px] text-muted-foreground">
+          Semua {filteredHistory.length} riwayat sudah ditampilkan
+        </p>
+      )}
+
       {hasMore && (
         <div className="pt-1">
           <Button asChild variant="outline" className="w-full">
