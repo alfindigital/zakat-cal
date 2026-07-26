@@ -455,7 +455,7 @@ export function importHistory(items: ZakatHistory[], mode: "merge" | "replace" =
       detail: Array.isArray(i.detail) ? i.detail : undefined,
       label: typeof i.label === "string" ? i.label : undefined,
       inputs: i.inputs && typeof i.inputs === "object" ? i.inputs : undefined,
-
+      createdAt: typeof i.createdAt === "string" ? i.createdAt : undefined,
     }));
   let merged: ZakatHistory[] = sanitized;
   if (mode === "merge") {
