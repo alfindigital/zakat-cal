@@ -334,10 +334,12 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
     });
   };
 
+  if (history.length === 0) return null;
+
   return (
     <div className="space-y-4 sm:space-y-5">
       <Suspense fallback={<div className="h-[180px] rounded-xl border bg-card animate-pulse" />}>
-        <ZakatChart history={history} />
+        <ZakatChart history={filteredHistory} />
       </Suspense>
 
       {/* Total zakat tahun berjalan */}
@@ -348,8 +350,74 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
         </div>
       </div>
 
+      {isRiwayatPage && (
+        <div className="rounded-xl border bg-card p-3 sm:p-4 space-y-3">
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-xs font-medium text-muted-foreground">Cari & Filter</p>
+            {activeFilters && (
+              <Button variant="ghost" size="sm" className="h-7 text-xs px-2" onClick={resetFilters}>
+                <X className="h-3.5 w-3.5 mr-1" />
+                Reset
+              </Button>
+            )}
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
+              <Input
+                type="text"
+                placeholder="Cari jenis, jumlah, label, rincian..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                className="pl-9 text-sm h-10"
+                aria-label="Cari riwayat"
+              />
+            </div>
+            <Select value={typeFilter} onValueChange={setTypeFilter}>
+              <SelectTrigger aria-label="Filter jenis zakat" className="h-10 text-sm">
+                <SelectValue placeholder="Semua jenis" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Semua jenis</SelectItem>
+                {ZAKAT_TYPES.map((t) => (
+                  <SelectItem key={t} value={t}>
+                    {t}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <div className="space-y-1.5 sm:col-span-2">
+              <Label className="text-xs text-muted-foreground">Rentang tanggal</Label>
+              <div className="grid grid-cols-2 gap-3">
+                <Input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  aria-label="Tanggal mulai"
+                  className="text-sm h-10"
+                />
+                <Input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  aria-label="Tanggal akhir"
+                  className="text-sm h-10"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center justify-between gap-2 flex-wrap">
-        <h2 className="text-base sm:text-lg font-semibold">Riwayat Perhitungan</h2>
+        <h2 className="text-base sm:text-lg font-semibold">
+          Riwayat Perhitungan
+          {isRiwayatPage && (
+            <span className="ml-2 text-xs font-normal text-muted-foreground">
+              {filteredHistory.length} / {history.length}
+            </span>
+          )}
+        </h2>
         <div className="flex items-center gap-1">
           <Button variant="ghost" size="sm" className="text-xs h-9" onClick={handleExportJson} aria-label="Ekspor riwayat">
             <Download className="h-4 w-4 sm:mr-1" /><span className="hidden sm:inline">Ekspor</span>
@@ -363,23 +431,37 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
           </Button>
         </div>
       </div>
-      {isMobile && (
+      {isMobile && !noResults && (
         <p className="text-[11px] text-muted-foreground -mt-2">
           Geser ke kiri untuk menghapus item
         </p>
       )}
-      <div className="space-y-2">
-        {displayed.map((h) => (
-          <HistoryItem
-            key={h.id}
-            h={h}
-            isMobile={isMobile}
-            onRemove={() => handleRemove(h)}
-            onExportPdf={() => handleExportPdf(h)}
-            onOpenDetail={() => setDetailItem(h)}
-          />
-        ))}
-      </div>
+
+      {noResults ? (
+        <div className="rounded-xl border border-dashed bg-card p-6 text-center space-y-2">
+          <p className="text-sm font-medium">Tidak ada riwayat yang cocok</p>
+          <p className="text-xs text-muted-foreground">
+            Coba ubah kata kunci, jenis zakat, atau rentang tanggal.
+          </p>
+          <Button variant="outline" size="sm" onClick={resetFilters} className="mt-2">
+            <X className="h-3.5 w-3.5 mr-1.5" />
+            Hapus filter
+          </Button>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {displayed.map((h) => (
+            <HistoryItem
+              key={h.id}
+              h={h}
+              isMobile={isMobile}
+              onRemove={() => handleRemove(h)}
+              onExportPdf={() => handleExportPdf(h)}
+              onOpenDetail={() => setDetailItem(h)}
+            />
+          ))}
+        </div>
+      )}
 
       {hasMore && (
         <div className="pt-1">
