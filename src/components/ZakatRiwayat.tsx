@@ -164,6 +164,18 @@ function HistoryItem({
 }
 
 
+const ZAKAT_TYPES: ZakatType[] = [
+  "Penghasilan",
+  "Maal",
+  "Fitrah",
+  "Perniagaan",
+  "Pertanian",
+  "Peternakan",
+  "Rikaz",
+  "Madin",
+  "Fidyah",
+];
+
 export default function ZakatRiwayat({ history, onChanged }: Props) {
   const isMobile = useIsMobile();
   const location = useLocation();
@@ -173,17 +185,65 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
   const [detailItem, setDetailItem] = useState<ZakatHistory | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
 
+  // Filters (only exposed on /riwayat; home page shows full recent list).
+  const [query, setQuery] = useState("");
+  const [typeFilter, setTypeFilter] = useState<string>("all");
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
+
+  const filteredHistory = useMemo(() => {
+    if (!isRiwayatPage) return history;
+    const q = query.trim().toLowerCase();
+    return history.filter((h) => {
+      if (typeFilter !== "all" && h.type !== typeFilter) return false;
+      const hDate = historyItemDate(h);
+      hDate.setHours(0, 0, 0, 0);
+      if (startDate) {
+        const start = new Date(startDate);
+        start.setHours(0, 0, 0, 0);
+        if (hDate < start) return false;
+      }
+      if (endDate) {
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+        if (hDate > end) return false;
+      }
+      if (q) {
+        const haystack = [
+          h.type,
+          h.label,
+          formatRupiah(h.amount),
+          ...(h.detail?.flatMap((d) => [d.label, d.value]) ?? []),
+        ]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
+        if (!haystack.includes(q)) return false;
+      }
+      return true;
+    });
+  }, [history, isRiwayatPage, query, typeFilter, startDate, endDate]);
+
+  const resetFilters = () => {
+    setQuery("");
+    setTypeFilter("all");
+    setStartDate("");
+    setEndDate("");
+  };
+
+  const activeFilters = query || typeFilter !== "all" || startDate || endDate;
+
   const yearTotal = useMemo(() => {
     const year = String(new Date().getFullYear());
-    return history.filter((h) => h.date.includes(year)).reduce((s, h) => s + h.amount, 0);
-  }, [history]);
-
-  if (history.length === 0) return null;
+    return filteredHistory.filter((h) => h.date.includes(year)).reduce((s, h) => s + h.amount, 0);
+  }, [filteredHistory]);
 
   // On the home page, keep the embedded list compact — show the 5 latest and
   // link to /riwayat for the full experience. On /riwayat, show everything.
-  const displayed = isRiwayatPage ? history : history.slice(0, 5);
+  const displayed = isRiwayatPage ? filteredHistory : history.slice(0, 5);
   const hasMore = !isRiwayatPage && history.length > displayed.length;
+
+  const noResults = isRiwayatPage && filteredHistory.length === 0 && history.length > 0;
 
 
   const handleRemove = (item: ZakatHistory) => {
