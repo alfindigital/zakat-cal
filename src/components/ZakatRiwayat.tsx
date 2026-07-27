@@ -520,6 +520,18 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
           )}
         </h2>
         <div className="flex items-center gap-1">
+          {isRiwayatPage && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-xs h-9"
+              onClick={() => (selectMode ? exitSelectMode() : setSelectMode(true))}
+              aria-pressed={selectMode}
+            >
+              <CheckSquare className="h-4 w-4 sm:mr-1" />
+              <span className="hidden sm:inline">{selectMode ? "Batal Pilih" : "Pilih"}</span>
+            </Button>
+          )}
           <Button variant="ghost" size="sm" className="text-xs h-9" onClick={handleExportJson} aria-label="Ekspor riwayat">
             <Download className="h-4 w-4 sm:mr-1" /><span className="hidden sm:inline">Ekspor</span>
           </Button>
@@ -532,11 +544,40 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
           </Button>
         </div>
       </div>
-      {isMobile && !noResults && (
+
+      {selectMode && !noResults && (
+        <div className="flex items-center justify-between gap-2 rounded-lg border bg-muted/40 p-2.5">
+          <label className="flex items-center gap-2 text-xs sm:text-sm cursor-pointer">
+            <input
+              type="checkbox"
+              checked={allVisibleSelected}
+              onChange={toggleSelectAll}
+              className="h-4 w-4 accent-[hsl(var(--primary))] cursor-pointer"
+              aria-label="Pilih semua riwayat yang tampil"
+            />
+            <span>Pilih semua ({selectableIds.length})</span>
+          </label>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">{selectedIds.length} dipilih</span>
+            <Button
+              size="sm"
+              className="h-8 text-xs bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={selectedIds.length === 0}
+              onClick={() => setShowBulkDialog(true)}
+            >
+              <Trash2 className="h-3.5 w-3.5 mr-1" />
+              Hapus
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {isMobile && !noResults && !selectMode && (
         <p className="text-[11px] text-muted-foreground -mt-2">
           Geser ke kiri untuk menghapus item
         </p>
       )}
+
 
       {noResults ? (
         <div className="rounded-xl border border-dashed bg-card p-6 text-center space-y-2">
