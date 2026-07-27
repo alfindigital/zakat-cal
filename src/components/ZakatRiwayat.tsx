@@ -213,6 +213,13 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
   const [selectMode, setSelectMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [showBulkDialog, setShowBulkDialog] = useState(false);
+  const [bulkVerify, setBulkVerify] = useState("");
+
+  // Reset verifikasi bulk delete setiap kali dialog ditutup.
+  useEffect(() => {
+    if (!showBulkDialog) setBulkVerify("");
+  }, [showBulkDialog]);
+
 
 
   // Filters (only exposed on /riwayat; home page shows full recent list).
