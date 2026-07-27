@@ -119,9 +119,13 @@ function HistoryItem({
         <button
           type="button"
           onClick={selectMode ? onToggleSelect : onOpenDetail}
-
-          aria-label={`Lihat detail riwayat ${h.type} ${formatRupiah(h.amount)}`}
+          aria-label={
+            selectMode
+              ? `Pilih riwayat ${h.type} ${formatRupiah(h.amount)}`
+              : `Lihat detail riwayat ${h.type} ${formatRupiah(h.amount)}`
+          }
           className="flex items-center gap-3 min-w-0 flex-1 text-left rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+
         >
           <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
             <Icon aria-hidden="true" className="h-4 w-4 text-primary" />
