@@ -285,6 +285,48 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
   const canLoadMore = isRiwayatPage && filteredHistory.length > displayed.length;
   const hasMore = !isRiwayatPage && history.length > displayed.length;
 
+  // Keep selection in sync with what is actually visible/filtered.
+  const selectableIds = useMemo(() => displayed.map((h) => h.id), [displayed]);
+  const selectedSet = useMemo(() => new Set(selectedIds), [selectedIds]);
+  const selectedVisible = selectableIds.filter((id) => selectedSet.has(id));
+  const allVisibleSelected =
+    selectableIds.length > 0 && selectedVisible.length === selectableIds.length;
+
+  const toggleSelect = (id: string) =>
+    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+
+  const toggleSelectAll = () =>
+    setSelectedIds(allVisibleSelected ? [] : selectableIds);
+
+  const exitSelectMode = () => {
+    setSelectMode(false);
+    setSelectedIds([]);
+  };
+
+  const handleBulkDelete = () => {
+    if (selectedIds.length === 0) return;
+    const snapshot = getHistory();
+    const ids = [...selectedIds];
+    const removed = removeHistoryMany(ids);
+    setShowBulkDialog(false);
+    exitSelectMode();
+    onChanged();
+
+    toast.success(`${removed} riwayat dihapus`, {
+      duration: 6000,
+      action: {
+        label: "Urungkan",
+        onClick: () => {
+          restoreAllHistory(snapshot);
+          onChanged();
+          toast.success("Riwayat dipulihkan");
+        },
+      },
+    });
+  };
+
+
+
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     if (!canLoadMore) return;
