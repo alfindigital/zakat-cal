@@ -597,10 +597,14 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
               key={h.id}
               h={h}
               isMobile={isMobile}
+              selectMode={selectMode}
+              selected={selectedSet.has(h.id)}
+              onToggleSelect={() => toggleSelect(h.id)}
               onRemove={() => handleRemove(h)}
               onExportPdf={() => handleExportPdf(h)}
               onOpenDetail={() => setDetailItem(h)}
             />
+
           ))}
         </div>
       )}
