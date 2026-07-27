@@ -147,7 +147,7 @@ function HistoryItem({
             <p className="text-[10px] sm:text-xs text-muted-foreground">{h.date}</p>
           </div>
         </button>
-        {!isMobile ? (
+        {!isMobile && !selectMode ? (
           <div className="flex items-center gap-1 shrink-0">
             <Button
               aria-label="Lihat detail"
