@@ -209,6 +209,12 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
   const [detailItem, setDetailItem] = useState<ZakatHistory | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
 
+  // Bulk selection (only on /riwayat)
+  const [selectMode, setSelectMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [showBulkDialog, setShowBulkDialog] = useState(false);
+
+
   // Filters (only exposed on /riwayat; home page shows full recent list).
   const [query, setQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState<string>("all");
