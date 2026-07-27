@@ -22,19 +22,21 @@ import {
   AlertDialogAction,
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
-import { Trash2, Briefcase, Wallet, Wheat, Store, Sprout, Beef, Gem, Mountain, Moon, Download, Upload, FileDown, Eye, ChevronRight, Search, X } from "lucide-react";
+import { Trash2, Briefcase, Wallet, Wheat, Store, Sprout, Beef, Gem, Mountain, Moon, Download, Upload, FileDown, Eye, ChevronRight, Search, X, CheckSquare } from "lucide-react";
 import {
   type ZakatHistory,
   type ZakatType,
   formatRupiah,
   getHistory,
   removeHistory,
+  removeHistoryMany,
   restoreHistory,
   clearHistory,
   restoreAllHistory,
   importHistory,
   historyItemDate,
 } from "@/lib/zakat";
+
 import { generateZakatPdf } from "@/lib/pdf-generator";
 // Recharts is heavy — load the chart lazily so it stays out of the initial bundle.
 const ZakatChart = lazy(() => import("./ZakatChart"));
