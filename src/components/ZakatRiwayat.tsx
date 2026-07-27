@@ -22,19 +22,21 @@ import {
   AlertDialogAction,
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
-import { Trash2, Briefcase, Wallet, Wheat, Store, Sprout, Beef, Gem, Mountain, Moon, Download, Upload, FileDown, Eye, ChevronRight, Search, X } from "lucide-react";
+import { Trash2, Briefcase, Wallet, Wheat, Store, Sprout, Beef, Gem, Mountain, Moon, Download, Upload, FileDown, Eye, ChevronRight, Search, X, CheckSquare } from "lucide-react";
 import {
   type ZakatHistory,
   type ZakatType,
   formatRupiah,
   getHistory,
   removeHistory,
+  removeHistoryMany,
   restoreHistory,
   clearHistory,
   restoreAllHistory,
   importHistory,
   historyItemDate,
 } from "@/lib/zakat";
+
 import { generateZakatPdf } from "@/lib/pdf-generator";
 // Recharts is heavy — load the chart lazily so it stays out of the initial bundle.
 const ZakatChart = lazy(() => import("./ZakatChart"));
@@ -66,12 +68,18 @@ function HistoryItem({
   onExportPdf,
   onOpenDetail,
   isMobile,
+  selectMode = false,
+  selected = false,
+  onToggleSelect,
 }: {
   h: ZakatHistory;
   onRemove: () => void;
   onExportPdf: () => void;
   onOpenDetail: () => void;
   isMobile: boolean;
+  selectMode?: boolean;
+  selected?: boolean;
+  onToggleSelect?: () => void;
 }) {
   const [revealed, setRevealed] = useState(false);
   const Icon = TYPE_ICON[h.type] ?? Briefcase;
@@ -79,7 +87,7 @@ function HistoryItem({
   return (
     <div data-history-id={h.id} className="relative overflow-hidden rounded-lg">
       {/* Delete background, revealed on swipe (mobile only) */}
-      {isMobile && (
+      {isMobile && !selectMode && (
         <button
           type="button"
           onClick={onRemove}
@@ -90,18 +98,34 @@ function HistoryItem({
         </button>
       )}
       <motion.div
-        drag={isMobile ? "x" : false}
+        drag={isMobile && !selectMode ? "x" : false}
         dragConstraints={{ left: -80, right: 0 }}
         dragElastic={0.15}
-        animate={{ x: revealed ? -80 : 0 }}
+        animate={{ x: revealed && !selectMode ? -80 : 0 }}
         onDragEnd={(_, info) => setRevealed(info.offset.x < -40)}
-        className="relative flex items-center justify-between rounded-lg border bg-card p-3 sm:p-3 min-h-[56px] touch-pan-y"
+        className={`relative flex items-center gap-2 justify-between rounded-lg border bg-card p-3 sm:p-3 min-h-[56px] touch-pan-y ${
+          selected ? "ring-2 ring-primary border-primary" : ""
+        }`}
       >
+        {selectMode && (
+          <input
+            type="checkbox"
+            checked={selected}
+            onChange={onToggleSelect}
+            aria-label={`Pilih riwayat ${h.type} ${formatRupiah(h.amount)}`}
+            className="h-4 w-4 shrink-0 accent-[hsl(var(--primary))] cursor-pointer"
+          />
+        )}
         <button
           type="button"
-          onClick={onOpenDetail}
-          aria-label={`Lihat detail riwayat ${h.type} ${formatRupiah(h.amount)}`}
+          onClick={selectMode ? onToggleSelect : onOpenDetail}
+          aria-label={
+            selectMode
+              ? `Pilih riwayat ${h.type} ${formatRupiah(h.amount)}`
+              : `Lihat detail riwayat ${h.type} ${formatRupiah(h.amount)}`
+          }
           className="flex items-center gap-3 min-w-0 flex-1 text-left rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+
         >
           <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
             <Icon aria-hidden="true" className="h-4 w-4 text-primary" />
@@ -123,7 +147,7 @@ function HistoryItem({
             <p className="text-[10px] sm:text-xs text-muted-foreground">{h.date}</p>
           </div>
         </button>
-        {!isMobile ? (
+        {!isMobile && !selectMode ? (
           <div className="flex items-center gap-1 shrink-0">
             <Button
               aria-label="Lihat detail"
@@ -184,6 +208,12 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
   const [clearSnapshot, setClearSnapshot] = useState<ZakatHistory[]>([]);
   const [detailItem, setDetailItem] = useState<ZakatHistory | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
+
+  // Bulk selection (only on /riwayat)
+  const [selectMode, setSelectMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [showBulkDialog, setShowBulkDialog] = useState(false);
+
 
   // Filters (only exposed on /riwayat; home page shows full recent list).
   const [query, setQuery] = useState("");
@@ -254,6 +284,48 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
     : history.slice(0, 5);
   const canLoadMore = isRiwayatPage && filteredHistory.length > displayed.length;
   const hasMore = !isRiwayatPage && history.length > displayed.length;
+
+  // Keep selection in sync with what is actually visible/filtered.
+  const selectableIds = useMemo(() => displayed.map((h) => h.id), [displayed]);
+  const selectedSet = useMemo(() => new Set(selectedIds), [selectedIds]);
+  const selectedVisible = selectableIds.filter((id) => selectedSet.has(id));
+  const allVisibleSelected =
+    selectableIds.length > 0 && selectedVisible.length === selectableIds.length;
+
+  const toggleSelect = (id: string) =>
+    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+
+  const toggleSelectAll = () =>
+    setSelectedIds(allVisibleSelected ? [] : selectableIds);
+
+  const exitSelectMode = () => {
+    setSelectMode(false);
+    setSelectedIds([]);
+  };
+
+  const handleBulkDelete = () => {
+    if (selectedIds.length === 0) return;
+    const snapshot = getHistory();
+    const ids = [...selectedIds];
+    const removed = removeHistoryMany(ids);
+    setShowBulkDialog(false);
+    exitSelectMode();
+    onChanged();
+
+    toast.success(`${removed} riwayat dihapus`, {
+      duration: 6000,
+      action: {
+        label: "Urungkan",
+        onClick: () => {
+          restoreAllHistory(snapshot);
+          onChanged();
+          toast.success("Riwayat dipulihkan");
+        },
+      },
+    });
+  };
+
+
 
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
@@ -448,6 +520,18 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
           )}
         </h2>
         <div className="flex items-center gap-1">
+          {isRiwayatPage && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-xs h-9"
+              onClick={() => (selectMode ? exitSelectMode() : setSelectMode(true))}
+              aria-pressed={selectMode}
+            >
+              <CheckSquare className="h-4 w-4 sm:mr-1" />
+              <span className="hidden sm:inline">{selectMode ? "Batal Pilih" : "Pilih"}</span>
+            </Button>
+          )}
           <Button variant="ghost" size="sm" className="text-xs h-9" onClick={handleExportJson} aria-label="Ekspor riwayat">
             <Download className="h-4 w-4 sm:mr-1" /><span className="hidden sm:inline">Ekspor</span>
           </Button>
@@ -460,11 +544,40 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
           </Button>
         </div>
       </div>
-      {isMobile && !noResults && (
+
+      {selectMode && !noResults && (
+        <div className="flex items-center justify-between gap-2 rounded-lg border bg-muted/40 p-2.5">
+          <label className="flex items-center gap-2 text-xs sm:text-sm cursor-pointer">
+            <input
+              type="checkbox"
+              checked={allVisibleSelected}
+              onChange={toggleSelectAll}
+              className="h-4 w-4 accent-[hsl(var(--primary))] cursor-pointer"
+              aria-label="Pilih semua riwayat yang tampil"
+            />
+            <span>Pilih semua ({selectableIds.length})</span>
+          </label>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">{selectedIds.length} dipilih</span>
+            <Button
+              size="sm"
+              className="h-8 text-xs bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={selectedIds.length === 0}
+              onClick={() => setShowBulkDialog(true)}
+            >
+              <Trash2 className="h-3.5 w-3.5 mr-1" />
+              Hapus
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {isMobile && !noResults && !selectMode && (
         <p className="text-[11px] text-muted-foreground -mt-2">
           Geser ke kiri untuk menghapus item
         </p>
       )}
+
 
       {noResults ? (
         <div className="rounded-xl border border-dashed bg-card p-6 text-center space-y-2">
@@ -484,10 +597,14 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
               key={h.id}
               h={h}
               isMobile={isMobile}
+              selectMode={selectMode}
+              selected={selectedSet.has(h.id)}
+              onToggleSelect={() => toggleSelect(h.id)}
               onRemove={() => handleRemove(h)}
               onExportPdf={() => handleExportPdf(h)}
               onOpenDetail={() => setDetailItem(h)}
             />
+
           ))}
         </div>
       )}
@@ -543,7 +660,25 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <AlertDialog open={showBulkDialog} onOpenChange={setShowBulkDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Hapus {selectedIds.length} riwayat terpilih?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Entri yang Anda pilih akan dihapus. Tindakan ini dapat diurungkan lewat notifikasi yang muncul.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Batal</AlertDialogCancel>
+            <AlertDialogAction onClick={handleBulkDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Hapus
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
+
 
 }

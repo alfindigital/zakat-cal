@@ -473,6 +473,17 @@ export function removeHistory(id: string) {
   emitHistoryChange();
 }
 
+/** Delete several entries at once (bulk selection). Returns how many were removed. */
+export function removeHistoryMany(ids: string[]): number {
+  const set = new Set(ids);
+  const history = getHistory();
+  const next = history.filter((h) => !set.has(h.id));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+  emitHistoryChange();
+  return history.length - next.length;
+}
+
+
 /**
  * Re-insert a previously removed entry (Undo).
  * Uses anchor ids to find the correct slot even if the list mutated since removal:
