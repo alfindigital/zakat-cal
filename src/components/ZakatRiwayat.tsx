@@ -213,6 +213,13 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
   const [selectMode, setSelectMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [showBulkDialog, setShowBulkDialog] = useState(false);
+  const [bulkVerify, setBulkVerify] = useState("");
+
+  // Reset verifikasi bulk delete setiap kali dialog ditutup.
+  useEffect(() => {
+    if (!showBulkDialog) setBulkVerify("");
+  }, [showBulkDialog]);
+
 
 
   // Filters (only exposed on /riwayat; home page shows full recent list).
@@ -669,14 +676,37 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
               Entri yang Anda pilih akan dihapus. Tindakan ini dapat diurungkan lewat notifikasi yang muncul.
             </AlertDialogDescription>
           </AlertDialogHeader>
+          <div className="space-y-2 py-1">
+            <Label htmlFor="bulk-verify" className="text-sm text-muted-foreground">
+              Ketik <span className="font-semibold text-destructive">HAPUS</span> untuk melanjutkan
+            </Label>
+            <Input
+              id="bulk-verify"
+              value={bulkVerify}
+              onChange={(e) => setBulkVerify(e.target.value)}
+              placeholder="HAPUS"
+              aria-label="Verifikasi hapus massal"
+              aria-describedby="bulk-verify-hint"
+              className="h-10 text-sm"
+              autoComplete="off"
+            />
+            <p id="bulk-verify-hint" className="text-xs text-muted-foreground">
+              Pengetikan ulang mencegah penghapusan tidak sengaja.
+            </p>
+          </div>
           <AlertDialogFooter>
             <AlertDialogCancel>Batal</AlertDialogCancel>
-            <AlertDialogAction onClick={handleBulkDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+            <AlertDialogAction
+              onClick={handleBulkDelete}
+              disabled={bulkVerify !== "HAPUS"}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               Hapus
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
     </div>
   );
 
