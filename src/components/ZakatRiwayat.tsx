@@ -68,12 +68,18 @@ function HistoryItem({
   onExportPdf,
   onOpenDetail,
   isMobile,
+  selectMode = false,
+  selected = false,
+  onToggleSelect,
 }: {
   h: ZakatHistory;
   onRemove: () => void;
   onExportPdf: () => void;
   onOpenDetail: () => void;
   isMobile: boolean;
+  selectMode?: boolean;
+  selected?: boolean;
+  onToggleSelect?: () => void;
 }) {
   const [revealed, setRevealed] = useState(false);
   const Icon = TYPE_ICON[h.type] ?? Briefcase;
@@ -81,7 +87,7 @@ function HistoryItem({
   return (
     <div data-history-id={h.id} className="relative overflow-hidden rounded-lg">
       {/* Delete background, revealed on swipe (mobile only) */}
-      {isMobile && (
+      {isMobile && !selectMode && (
         <button
           type="button"
           onClick={onRemove}
@@ -92,16 +98,28 @@ function HistoryItem({
         </button>
       )}
       <motion.div
-        drag={isMobile ? "x" : false}
+        drag={isMobile && !selectMode ? "x" : false}
         dragConstraints={{ left: -80, right: 0 }}
         dragElastic={0.15}
-        animate={{ x: revealed ? -80 : 0 }}
+        animate={{ x: revealed && !selectMode ? -80 : 0 }}
         onDragEnd={(_, info) => setRevealed(info.offset.x < -40)}
-        className="relative flex items-center justify-between rounded-lg border bg-card p-3 sm:p-3 min-h-[56px] touch-pan-y"
+        className={`relative flex items-center gap-2 justify-between rounded-lg border bg-card p-3 sm:p-3 min-h-[56px] touch-pan-y ${
+          selected ? "ring-2 ring-primary border-primary" : ""
+        }`}
       >
+        {selectMode && (
+          <input
+            type="checkbox"
+            checked={selected}
+            onChange={onToggleSelect}
+            aria-label={`Pilih riwayat ${h.type} ${formatRupiah(h.amount)}`}
+            className="h-4 w-4 shrink-0 accent-[hsl(var(--primary))] cursor-pointer"
+          />
+        )}
         <button
           type="button"
-          onClick={onOpenDetail}
+          onClick={selectMode ? onToggleSelect : onOpenDetail}
+
           aria-label={`Lihat detail riwayat ${h.type} ${formatRupiah(h.amount)}`}
           className="flex items-center gap-3 min-w-0 flex-1 text-left rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
