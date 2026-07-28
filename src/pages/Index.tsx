@@ -27,14 +27,14 @@ import ZakatFidyah from "@/components/ZakatFidyah";
 
 import ZakatRiwayat from "@/components/ZakatRiwayat";
 import { motion, AnimatePresence } from "framer-motion";
-import { Briefcase, Loader2, LayoutGrid } from "lucide-react";
+import { Briefcase, Loader2 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ALL_PAGES, HOME_SEO, getPageBySlug, useSeo, type ZakatPage } from "@/lib/seo";
 import { track } from "@/lib/analytics";
 import { formatMetalPrice } from "@/lib/format";
-import { PRIMARY_TABS, TAB_ICONS, labelForTab, pathForTab, tabForPath as tabForPathShared } from "@/components/AppShell";
+import { TAB_ICONS, pathForTab, tabForPath as tabForPathShared } from "@/components/AppShell";
 
 
 const tabForPath = (pathname: string) => tabForPathShared(pathname) ?? "maal";
@@ -50,7 +50,7 @@ const Index = () => {
   const [nisabType] = useState<NisabType>("gold");
   const [roundUp] = useState(() => loadRoundUp());
   const [history, setHistory] = useState(getHistory());
-  const [moreExpanded, setMoreExpanded] = useState(false); // desktop inline expansion
+  
 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -260,9 +260,7 @@ const Index = () => {
   };
 
 
-  const moreActive = !PRIMARY_TABS.includes(activeTab);
-
-  // Shared desktop pill styling for primary tabs + the "Lainnya" trigger.
+  // Desktop nav: show all zakat categories as individual pills (no "Lainnya" grouping).
   const desktopPill = (active: boolean) =>
     `inline-flex items-center gap-1.5 rounded-lg px-3 h-9 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${active ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/70 hover:text-foreground"}`;
 
@@ -288,45 +286,15 @@ const Index = () => {
         {pullToRefreshSlot}
 
           <nav aria-label="Kategori zakat" className="hidden md:flex flex-wrap gap-1.5">
-            {PRIMARY_TABS.map((tab) => {
-              const Icon = TAB_ICONS[tab] ?? Briefcase;
-              const active = activeTab === tab;
+            {ALL_PAGES.map((page) => {
+              const Icon = TAB_ICONS[page.tab] ?? Briefcase;
+              const active = activeTab === page.tab;
               return (
-                <button key={tab} type="button" onClick={() => setActiveTab(tab)} aria-current={active ? "page" : undefined} className={desktopPill(active)}>
-                  <Icon aria-hidden="true" className="h-4 w-4" /> {labelForTab(tab)}
+                <button key={page.tab} type="button" onClick={() => setActiveTab(page.tab)} aria-current={active ? "page" : undefined} className={desktopPill(active)}>
+                  <Icon aria-hidden="true" className="h-4 w-4" /> {page.label}
                 </button>
               );
             })}
-            <button
-              type="button"
-              onClick={() => setMoreExpanded((v) => !v)}
-              aria-expanded={moreExpanded}
-              aria-current={moreActive ? "page" : undefined}
-              className={desktopPill(moreActive || moreExpanded)}
-            >
-              <LayoutGrid aria-hidden="true" className="h-4 w-4" /> {moreActive ? `Lainnya · ${labelForTab(activeTab)}` : "Lainnya"}
-            </button>
-            <AnimatePresence initial={false}>
-              {moreExpanded && ALL_PAGES.filter((p) => !PRIMARY_TABS.includes(p.tab)).map((p) => {
-                const Icon = TAB_ICONS[p.tab] ?? Briefcase;
-                const active = activeTab === p.tab;
-                return (
-                  <motion.button
-                    key={p.tab}
-                    type="button"
-                    initial={{ opacity: 0, x: -8, scale: 0.95 }}
-                    animate={{ opacity: 1, x: 0, scale: 1 }}
-                    exit={{ opacity: 0, x: -8, scale: 0.95 }}
-                    transition={{ duration: 0.18 }}
-                    onClick={() => { setActiveTab(p.tab); }}
-                    aria-current={active ? "page" : undefined}
-                    className={desktopPill(active)}
-                  >
-                    <Icon aria-hidden="true" className="h-4 w-4" /> {p.label}
-                  </motion.button>
-                );
-              })}
-            </AnimatePresence>
           </nav>
 
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
