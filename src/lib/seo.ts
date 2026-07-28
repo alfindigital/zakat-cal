@@ -11,7 +11,7 @@ export interface ContentSection {
 }
 
 export interface ZakatPage {
-  /** URL slug, e.g. "zakat-penghasilan" (empty string = home "/"). */
+  /** URL slug, e.g. "zakat-maal" (empty string = home "/"). */
   slug: string;
   /** Tab id used by the calculator. */
   tab: string;
@@ -24,31 +24,9 @@ export interface ZakatPage {
   sections: ContentSection[];
 }
 
-// Single source of truth for the 8 zakat calculators + their SEO content.
-// The home route ("/") defaults to Penghasilan but keeps a generic title.
+// Single source of truth for the zakat calculators + their SEO content.
+// The home route ("/") defaults to Maal but keeps a generic title.
 export const ZAKAT_PAGES: ZakatPage[] = [
-  {
-    slug: "zakat-penghasilan",
-    tab: "penghasilan",
-    label: "Penghasilan",
-    short: "Gaji",
-    title: "Kalkulator Zakat Penghasilan (Profesi) 2,5% — ZakatCal",
-    description:
-      "Hitung zakat penghasilan/profesi dari gaji bulanan & bonus. Otomatis bandingkan dengan nisab 85g emas, kadar 2,5%. Bisa metode bruto atau netto.",
-    h1: "Kalkulator Zakat Penghasilan",
-    intro:
-      "Zakat penghasilan (zakat profesi) dikeluarkan dari gaji, honor, dan pendapatan rutin lain ketika total setahun mencapai nisab. Kadarnya 2,5%.",
-    sections: [
-      {
-        heading: "Cara menghitung zakat penghasilan",
-        body: "Jumlahkan penghasilan bersih setahun (gaji × 12 + bonus/THR). Jika mencapai nisab setara 85 gram emas, keluarkan 2,5%. Boleh dibayar tiap bulan agar ringan.",
-      },
-      {
-        heading: "Bruto atau netto?",
-        body: "Sebagian ulama membolehkan memotong kebutuhan pokok (nafkah wajib) lebih dulu (metode netto), sebagian menghitung dari penghasilan bruto. Kalkulator ini mendukung keduanya — sesuaikan dengan pendapat yang Anda ikuti.",
-      },
-    ],
-  },
   {
     slug: "zakat-maal",
     tab: "maal",
@@ -207,7 +185,7 @@ export const ALL_PAGES: ZakatPage[] = [...ZAKAT_PAGES, FIDYAH_PAGE];
 export const HOME_SEO = {
   title: "ZakatCal - Kalkulator Zakat Online Gratis",
   description:
-    "ZakatCal — kalkulator zakat online gratis untuk menghitung zakat penghasilan, maal, fitrah, perniagaan, pertanian, peternakan, rikaz & ma'din sesuai syariat Islam.",
+    "ZakatCal — kalkulator zakat online gratis untuk menghitung zakat maal, fitrah, perniagaan, pertanian, peternakan, rikaz & ma'din sesuai syariat Islam.",
 };
 
 export function getPageBySlug(slug: string): ZakatPage | undefined {

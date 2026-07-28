@@ -157,10 +157,10 @@ export function AppLayout() {
         aria-label="Navigasi utama"
       >
         <div className="mx-auto max-w-3xl flex items-stretch h-20 justify-around px-1">
-          <NavButton tab="penghasilan" short="Gaji" />
           <NavButton tab="maal" short="Maal" />
           <NavButton tab="fitrah" short="Fitrah" />
           <NavButton tab="perniagaan" short="Dagang" />
+          <NavButton tab="pertanian" short="Tani" />
           <button
             type="button"
             onClick={() => setMoreOpen(true)}

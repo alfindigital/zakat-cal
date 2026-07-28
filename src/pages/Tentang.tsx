@@ -36,8 +36,7 @@ export default function Tentang() {
         <CardContent className="space-y-3 text-sm text-muted-foreground leading-relaxed">
           <ul className="list-disc list-inside space-y-1.5">
             <li><span className="text-foreground font-medium">Nisab</span> — setara 85 gram emas atau 595 gram perak. Harga logam dapat Anda atur manual dan tersimpan di perangkat.</li>
-            <li><span className="text-foreground font-medium">Kadar</span> — 2,5% (penghasilan, maal, perniagaan, ma'din), 5%/10% (pertanian), 20% (rikaz), tabel khusus (peternakan), 2,5 kg/jiwa (fitrah).</li>
-            <li><span className="text-foreground font-medium">Penghasilan</span> — mendukung metode bruto maupun netto (potong kebutuhan pokok), mengikuti perbedaan pendapat ulama.</li>
+            <li><span className="text-foreground font-medium">Kadar</span> — 2,5% (maal, perniagaan, ma'din), 5%/10% (pertanian), 20% (rikaz), tabel khusus (peternakan), 2,5 kg/jiwa (fitrah).</li>
           </ul>
         </CardContent>
       </Card>

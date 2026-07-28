@@ -57,8 +57,8 @@ test.describe("Focus-first-invalid + validation summary a11y", () => {
     await expect(uang).toBeFocused();
   });
 
-  test("Zakat Penghasilan: setelah invalid dilanjutkan submit valid, fokus terarah dengan benar", async ({ page }) => {
-    // Klik Simpan tanpa mengisi apa pun (form default = Penghasilan)
+  test("Zakat Maal: setelah invalid dilanjutkan submit valid, fokus terarah dengan benar", async ({ page }) => {
+    // Klik Simpan tanpa mengisi apa pun (form default = Maal)
     await page.getByRole("button", { name: "Simpan ke Riwayat" }).first().click();
 
     // Input pertama yang invalid harus di-fokus

@@ -23,7 +23,7 @@ interface Props {
 
 // Map ZakatType (title-cased in history) → tab id used by SEO/router.
 const TYPE_TO_TAB: Record<string, string> = {
-  Penghasilan: "penghasilan",
+  Penghasilan: "maal",
   Maal: "maal",
   Fitrah: "fitrah",
   Perniagaan: "perniagaan",
@@ -37,8 +37,8 @@ const TYPE_TO_TAB: Record<string, string> = {
 function pathForType(type: string): string {
   const tab = TYPE_TO_TAB[type];
   if (!tab) return "/";
-  // "penghasilan" is served by the home route ("/"), it has no standalone route.
-  if (tab === "penghasilan") return "/";
+  // "maal" is served by the home route ("/"), it has no standalone route.
+  if (tab === "maal") return "/";
   const page = getPageByTab(tab);
   if (!page) return "/";
   return page.slug ? `/${page.slug}` : "/";

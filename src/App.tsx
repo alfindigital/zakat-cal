@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { MotionConfig } from "framer-motion";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -24,9 +24,12 @@ const App = () => (
             <Route element={<AppLayout />}>
               <Route path="/" element={<Index />} />
               {/* SEO-friendly deep links per zakat type, all served by the calculator. */}
-              {ALL_PAGES.filter((p) => p.tab !== "penghasilan").map((p) => (
+              {ALL_PAGES.filter((p) => p.tab !== "maal").map((p) => (
                 <Route key={p.slug} path={`/${p.slug}`} element={<Index />} />
               ))}
+              {/* Zakat penghasilan dilebur ke zakat maal */}
+              <Route path="/zakat-penghasilan" element={<Navigate to="/" replace />} />
+              <Route path="/zakat-maal" element={<Navigate to="/" replace />} />
               <Route path="/panduan-zakat" element={<PanduanZakat />} />
               <Route path="/tentang" element={<Tentang />} />
               <Route path="/pengaturan" element={<Pengaturan />} />
