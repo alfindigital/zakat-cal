@@ -27,7 +27,7 @@ const sections = [
     list: [
       "Zakat Fitrah — Wajib dikeluarkan sebelum shalat Idul Fitri, sebesar 2,5 kg makanan pokok per jiwa.",
       "Zakat Maal (Harta) — Dikeluarkan atas harta yang mencapai nisab dan haul, meliputi tabungan, emas, perak, investasi, dan aset produktif.",
-      "Zakat Penghasilan — Zakat atas pendapatan/gaji yang diqiyaskan pada zakat pertanian, dikeluarkan saat menerima penghasilan jika total tahunan mencapai nisab.",
+      "Zakat penghasilan/profesi termasuk bagian dari zakat maal — gaji dan pendapatan rutin dihitung bersama harta simpanan pada kalkulator Zakat Maal.",
     ],
   },
   {
