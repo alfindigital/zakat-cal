@@ -29,6 +29,7 @@ const App = () => (
               ))}
               {/* Zakat penghasilan dilebur ke zakat maal */}
               <Route path="/zakat-penghasilan" element={<Navigate to="/" replace />} />
+              <Route path="/zakat-maal" element={<Navigate to="/" replace />} />
               <Route path="/panduan-zakat" element={<PanduanZakat />} />
               <Route path="/tentang" element={<Tentang />} />
               <Route path="/pengaturan" element={<Pengaturan />} />
