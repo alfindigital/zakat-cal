@@ -26,7 +26,7 @@ import ZakatMadin from "@/components/ZakatMadin";
 import ZakatFidyah from "@/components/ZakatFidyah";
 
 import ZakatRiwayat from "@/components/ZakatRiwayat";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Briefcase, Loader2 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
