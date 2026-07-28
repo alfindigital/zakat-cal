@@ -189,7 +189,6 @@ function HistoryItem({
 
 
 const ZAKAT_TYPES: ZakatType[] = [
-  "Penghasilan",
   "Maal",
   "Fitrah",
   "Perniagaan",

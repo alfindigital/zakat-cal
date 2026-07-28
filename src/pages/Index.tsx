@@ -16,7 +16,6 @@ import {
 } from "@/lib/zakat";
 import { getHaulReminders, haulEndDate, daysUntil } from "@/lib/haul";
 import { RoundUpContext } from "@/lib/round-context";
-import ZakatPenghasilan from "@/components/ZakatPenghasilan";
 import ZakatMaal from "@/components/ZakatMaal";
 import ZakatFitrah from "@/components/ZakatFitrah";
 import ZakatPerniagaan from "@/components/ZakatPerniagaan";
@@ -38,7 +37,7 @@ import { formatMetalPrice } from "@/lib/format";
 import { PRIMARY_TABS, TAB_ICONS, labelForTab, pathForTab, tabForPath as tabForPathShared } from "@/components/AppShell";
 
 
-const tabForPath = (pathname: string) => tabForPathShared(pathname) ?? "penghasilan";
+const tabForPath = (pathname: string) => tabForPathShared(pathname) ?? "maal";
 
 const Index = () => {
   const location = useLocation();
@@ -239,8 +238,6 @@ const Index = () => {
     // Only forward prefill to the tab that matches the incoming history entry.
     const p = isActive ? prefill : undefined;
     switch (tab) {
-      case "penghasilan":
-        return <ZakatPenghasilan metalPrice={metalPrice} nisabType={nisabType} isActive={isActive} onCalculated={refreshHistory} prefill={p} />;
       case "maal":
         return <ZakatMaal goldPrice={goldPrice} silverPrice={silverPrice} nisabType={nisabType} isActive={isActive} onCalculated={refreshHistory} prefill={p} />;
       case "perniagaan":

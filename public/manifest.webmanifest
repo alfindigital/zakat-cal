@@ -1,7 +1,7 @@
 {
   "name": "ZakatCal — Kalkulator Zakat",
   "short_name": "ZakatCal",
-  "description": "Kalkulator zakat online gratis: penghasilan, maal, fitrah, perniagaan, pertanian, peternakan, rikaz, ma'din & fidyah.",
+  "description": "Kalkulator zakat online gratis: maal, fitrah, perniagaan, pertanian, peternakan, rikaz, ma'din & fidyah.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
