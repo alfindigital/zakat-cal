@@ -26,15 +26,15 @@ import ZakatMadin from "@/components/ZakatMadin";
 import ZakatFidyah from "@/components/ZakatFidyah";
 
 import ZakatRiwayat from "@/components/ZakatRiwayat";
-import { motion, AnimatePresence } from "framer-motion";
-import { Briefcase, Loader2, LayoutGrid } from "lucide-react";
+import { motion } from "framer-motion";
+import { Briefcase, Loader2 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ALL_PAGES, HOME_SEO, getPageBySlug, useSeo, type ZakatPage } from "@/lib/seo";
 import { track } from "@/lib/analytics";
 import { formatMetalPrice } from "@/lib/format";
-import { PRIMARY_TABS, TAB_ICONS, labelForTab, pathForTab, tabForPath as tabForPathShared } from "@/components/AppShell";
+import { TAB_ICONS, labelForTab, pathForTab, tabForPath as tabForPathShared } from "@/components/AppShell";
 
 
 const tabForPath = (pathname: string) => tabForPathShared(pathname) ?? "maal";
@@ -50,7 +50,7 @@ const Index = () => {
   const [nisabType] = useState<NisabType>("gold");
   const [roundUp] = useState(() => loadRoundUp());
   const [history, setHistory] = useState(getHistory());
-  const [moreExpanded, setMoreExpanded] = useState(false); // desktop inline expansion
+  
 
   const [refreshing, setRefreshing] = useState(false);
 
