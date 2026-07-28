@@ -17,15 +17,15 @@ test.describe("Mobile UX — ZakatCal", () => {
     await expect(page.getByRole("navigation", { name: "Navigasi utama" })).toBeVisible();
   });
 
-  test("bottom nav switches between Penghasilan, Maal, Fitrah", async ({ page }) => {
+  test("bottom nav switches between Maal, Fitrah, Perniagaan", async ({ page }) => {
     const nav = page.getByRole("navigation", { name: "Navigasi utama" });
-    const gaji = nav.getByRole("button", { name: "Zakat Penghasilan" });
+    const dagang = nav.getByRole("button", { name: "Zakat Perniagaan" });
     const maal = nav.getByRole("button", { name: "Zakat Maal" });
     const fitrah = nav.getByRole("button", { name: "Zakat Fitrah" });
 
-    // Default: Penghasilan
-    await expect(gaji).toHaveAttribute("aria-current", "page");
-    await expect(page.getByRole("heading", { name: "Kalkulator Zakat Penghasilan" })).toBeVisible();
+    // Default: Maal
+    await expect(maal).toHaveAttribute("aria-current", "page");
+    await expect(page.getByRole("heading", { name: /Kalkulator Zakat Maal/ })).toBeVisible();
 
     await maal.click();
     await expect(maal).toHaveAttribute("aria-current", "page");
@@ -35,8 +35,8 @@ test.describe("Mobile UX — ZakatCal", () => {
     await expect(fitrah).toHaveAttribute("aria-current", "page");
     await expect(page.getByRole("heading", { name: "Kalkulator Zakat Fitrah" })).toBeVisible();
 
-    await gaji.click();
-    await expect(gaji).toHaveAttribute("aria-current", "page");
+    await dagang.click();
+    await expect(dagang).toHaveAttribute("aria-current", "page");
   });
 
   test("result card appears live and detail collapsible opens/closes", async ({ page }) => {

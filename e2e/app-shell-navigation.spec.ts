@@ -8,7 +8,7 @@ import { test, expect } from "../playwright-fixture";
 test.use({ viewport: { width: 390, height: 844 } });
 
 const ROUTES: Array<{ path: string; heading: RegExp }> = [
-  { path: "/", heading: /Kalkulator Zakat Penghasilan/ },
+  { path: "/", heading: /Kalkulator Zakat Maal/ },
   { path: "/pengaturan", heading: /Pengaturan/ },
   { path: "/riwayat", heading: /Riwayat Perhitungan/ },
   { path: "/panduan-zakat", heading: /Panduan Zakat/ },
@@ -31,7 +31,7 @@ test.describe("AppShell — konsistensi header & bottom nav", () => {
       // Bottom nav (mobile)
       const nav = page.getByRole("navigation", { name: "Navigasi utama" });
       await expect(nav).toBeVisible();
-      await expect(nav.getByRole("button", { name: "Zakat Penghasilan" })).toBeVisible();
+      await expect(nav.getByRole("button", { name: "Zakat Maal" })).toBeVisible();
       await expect(nav.getByRole("button", { name: "Zakat Maal" })).toBeVisible();
       await expect(nav.getByRole("button", { name: "Zakat Fitrah" })).toBeVisible();
 
@@ -52,9 +52,9 @@ test.describe("AppShell — konsistensi header & bottom nav", () => {
     await expect(page).toHaveURL(/\/fitrah$/);
     await expect(nav.getByRole("button", { name: "Zakat Fitrah" })).toHaveAttribute("aria-current", "page");
 
-    await nav.getByRole("button", { name: "Zakat Penghasilan" }).click();
+    await nav.getByRole("button", { name: "Zakat Maal" }).click();
     await expect(page).toHaveURL(/\/$/);
-    await expect(nav.getByRole("button", { name: "Zakat Penghasilan" })).toHaveAttribute("aria-current", "page");
+    await expect(nav.getByRole("button", { name: "Zakat Maal" })).toHaveAttribute("aria-current", "page");
   });
 
   test("drawer Lainnya membuka kategori sekunder & navigasi bekerja", async ({ page }) => {

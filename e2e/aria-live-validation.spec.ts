@@ -54,8 +54,8 @@ test.describe("Inline validation a11y — aria-live & aria-describedby", () => {
 
   test("Zakat Fidyah: dua field kosong → keduanya diberi aria-describedby yang benar", async ({ page }) => {
     // Buka tab Maal lalu sub-kalkulator Fidyah (Fidyah hidup di dalam tab Maal via Select)
-    // Jalur paling andal: langsung fokus via url — namun tidak ada, jadi kita cek Fitrah + Penghasilan saja.
-    // Sebagai gantinya, uji Zakat Penghasilan (tab default).
+    // Jalur paling andal: langsung fokus via url — namun tidak ada, jadi kita cek Fitrah + Maal saja.
+    // Sebagai gantinya, uji Zakat Maal (tab default).
     const gaji = page.locator('input[inputmode="decimal"]').first();
     await expect(gaji).toBeVisible();
 
