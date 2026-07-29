@@ -280,12 +280,12 @@ const Index = () => {
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
-        className="mx-auto max-w-2xl w-full px-4 py-3 sm:px-5 sm:py-4 md:py-5 md:max-w-6xl lg:max-w-[80rem] space-y-2.5 sm:space-y-3 md:space-y-4 flex-1"
+        className="mx-auto max-w-2xl w-full px-4 py-3 sm:px-5 sm:py-4 md:py-5 md:max-w-7xl flex-1"
         style={{ paddingBottom: "calc(5.5rem + env(safe-area-inset-bottom, 0px))" }}
       >
         {pullToRefreshSlot}
 
-          <nav aria-label="Kategori zakat" className="hidden md:flex md:flex-nowrap gap-1.5 lg:gap-2 justify-center">
+          <nav aria-label="Kategori zakat" className="hidden md:flex md:flex-nowrap gap-1.5 lg:gap-2 justify-center w-full">
             {ALL_PAGES.map((page) => {
               const Icon = TAB_ICONS[page.tab] ?? Briefcase;
               const active = activeTab === page.tab;
@@ -296,6 +296,8 @@ const Index = () => {
               );
             })}
           </nav>
+
+          <div className="w-full max-w-2xl mx-auto space-y-2.5 sm:space-y-3 md:space-y-4">
 
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
             <Card className="overflow-hidden transition-shadow duration-300 hover:shadow-lg border-border/60">
