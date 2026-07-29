@@ -93,7 +93,7 @@ export function AppLayout() {
   return (
     <div className="min-h-dvh bg-background flex flex-col">
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/40">
-        <div className="mx-auto max-w-2xl flex items-center justify-between px-4 py-3 sm:px-6 sm:py-4 gap-2">
+        <div className="mx-auto max-w-2xl md:max-w-7xl flex items-center justify-between px-4 py-3 sm:px-6 sm:py-4 gap-2">
           <Link
             to="/"
             className="flex items-center gap-2.5 min-w-0 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
