@@ -280,7 +280,7 @@ const Index = () => {
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
-        className="mx-auto max-w-2xl w-full px-4 py-3 sm:px-5 sm:py-4 md:py-5 md:max-w-7xl flex-1"
+        className="mx-auto max-w-2xl w-full px-4 py-3 sm:px-5 sm:py-4 md:py-8 md:px-8 md:max-w-7xl flex-1"
         style={{ paddingBottom: "calc(5.5rem + env(safe-area-inset-bottom, 0px))" }}
       >
         {pullToRefreshSlot}
