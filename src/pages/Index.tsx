@@ -346,6 +346,7 @@ const Index = () => {
               </div>
             </section>
           )}
+      </div>
       </main>
     </RoundUpContext.Provider>
   );
