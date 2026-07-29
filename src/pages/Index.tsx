@@ -297,7 +297,7 @@ const Index = () => {
             })}
           </nav>
 
-          <div className="w-full max-w-2xl mx-auto space-y-2.5 sm:space-y-3 md:space-y-4">
+          <div className="w-full max-w-2xl mx-auto space-y-3 sm:space-y-4 md:space-y-6">
 
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
             <Card className="overflow-hidden transition-shadow duration-300 hover:shadow-lg border-border/60">
