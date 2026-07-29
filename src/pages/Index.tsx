@@ -285,7 +285,7 @@ const Index = () => {
       >
         {pullToRefreshSlot}
 
-          <nav aria-label="Kategori zakat" className="hidden md:flex md:flex-nowrap gap-1.5 lg:gap-2 justify-center w-full">
+          <nav aria-label="Kategori zakat" className="hidden md:flex md:flex-nowrap md:gap-2 lg:gap-3 justify-center w-full md:mb-6">
             {ALL_PAGES.map((page) => {
               const Icon = TAB_ICONS[page.tab] ?? Briefcase;
               const active = activeTab === page.tab;
