@@ -301,13 +301,13 @@ const Index = () => {
 
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
             <Card className="overflow-hidden transition-shadow duration-300 hover:shadow-lg border-border/60">
-              <CardContent className="px-4 pt-3 sm:px-5 sm:pt-3.5 pb-4 sm:pb-5">
-                <div className="mb-0.5">
-                  <h1 className="text-lg sm:text-xl font-bold tracking-tight">
+              <CardContent className="px-4 pt-4 sm:px-5 sm:pt-5 pb-4 sm:pb-5">
+                <div className="mb-1 md:mb-2">
+                  <h1 className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight">
                     {activePage?.h1 ?? "Kalkulator Zakat"}
                   </h1>
                   {activePage?.intro && (
-                    <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 leading-relaxed">{activePage.intro}</p>
+                    <p className="text-xs sm:text-sm text-muted-foreground mt-1 leading-relaxed">{activePage.intro}</p>
                   )}
                 </div>
 
