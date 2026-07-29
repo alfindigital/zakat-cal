@@ -332,14 +332,14 @@ const Index = () => {
           </motion.div>
 
           {activePage && activePage.sections.length > 0 && (
-            <section className="rounded-2xl border border-border/60 bg-secondary p-3.5 sm:p-4 space-y-2">
-              <h2 className="text-lg sm:text-xl font-bold text-foreground tracking-tight">
+            <section className="rounded-2xl border border-border/60 bg-secondary p-3.5 sm:p-4 md:p-5 space-y-2 md:space-y-3">
+              <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground tracking-tight">
                 Tentang {activePage.h1.replace("Kalkulator ", "")}
               </h2>
-              <div className="space-y-1.5">
+              <div className="space-y-1.5 md:space-y-2">
                 {activePage.sections.map((s) => (
-                  <article key={s.heading} className="rounded-xl bg-card border border-border/50 p-3">
-                    <h3 className="font-bold text-foreground mb-0.5 text-sm sm:text-base">{s.heading}</h3>
+                  <article key={s.heading} className="rounded-xl bg-card border border-border/50 p-3 md:p-4">
+                    <h3 className="font-bold text-foreground mb-0.5 md:mb-1 text-sm sm:text-base">{s.heading}</h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">{s.body}</p>
                   </article>
                 ))}
