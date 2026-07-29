@@ -262,7 +262,7 @@ const Index = () => {
 
   // Desktop nav: show all zakat categories as individual pills (no "Lainnya" grouping).
   const desktopPill = (active: boolean) =>
-    `inline-flex items-center justify-center gap-1.5 rounded-lg px-2.5 lg:px-3 h-9 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:flex-1 md:justify-center ${active ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/70 hover:text-foreground"}`;
+    `inline-flex items-center justify-center gap-1.5 rounded-lg px-2.5 sm:px-3 lg:px-4 h-9 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:flex-1 md:justify-center ${active ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/70 hover:text-foreground"}`;
 
   const pullToRefreshSlot = isMobile && (pullDistance > 0 || refreshing) ? (
     <div className="flex items-center justify-center text-xs text-muted-foreground overflow-hidden" style={{ height: refreshing ? 48 : pullDistance }}>
@@ -280,12 +280,12 @@ const Index = () => {
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
-        className="mx-auto max-w-2xl w-full px-4 py-3 sm:px-5 sm:py-4 md:py-5 md:max-w-7xl flex-1"
+        className="mx-auto max-w-2xl w-full px-4 py-3 sm:px-5 sm:py-4 md:py-8 md:px-8 md:max-w-7xl flex-1"
         style={{ paddingBottom: "calc(5.5rem + env(safe-area-inset-bottom, 0px))" }}
       >
         {pullToRefreshSlot}
 
-          <nav aria-label="Kategori zakat" className="hidden md:flex md:flex-nowrap gap-1.5 lg:gap-2 justify-center w-full">
+          <nav aria-label="Kategori zakat" className="hidden md:flex md:flex-nowrap md:gap-2 lg:gap-3 justify-center w-full md:mb-6">
             {ALL_PAGES.map((page) => {
               const Icon = TAB_ICONS[page.tab] ?? Briefcase;
               const active = activeTab === page.tab;
@@ -297,17 +297,17 @@ const Index = () => {
             })}
           </nav>
 
-          <div className="w-full max-w-2xl mx-auto space-y-2.5 sm:space-y-3 md:space-y-4">
+          <div className="w-full max-w-2xl mx-auto space-y-3 sm:space-y-4 md:space-y-6">
 
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
             <Card className="overflow-hidden transition-shadow duration-300 hover:shadow-lg border-border/60">
-              <CardContent className="px-4 pt-3 sm:px-5 sm:pt-3.5 pb-4 sm:pb-5">
-                <div className="mb-0.5">
-                  <h1 className="text-lg sm:text-xl font-bold tracking-tight">
+              <CardContent className="px-4 pt-4 sm:px-5 sm:pt-5 pb-4 sm:pb-5">
+                <div className="mb-1 md:mb-2">
+                  <h1 className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight">
                     {activePage?.h1 ?? "Kalkulator Zakat"}
                   </h1>
                   {activePage?.intro && (
-                    <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 leading-relaxed">{activePage.intro}</p>
+                    <p className="text-xs sm:text-sm text-muted-foreground mt-1 leading-relaxed">{activePage.intro}</p>
                   )}
                 </div>
 
@@ -318,7 +318,7 @@ const Index = () => {
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -16 }}
                     transition={{ duration: 0.25, ease: "easeInOut" }}
-                    className="mt-1.5"
+                    className="mt-2 md:mt-3"
                   >
                     {renderCalc(activeTab)}
                   </motion.div>
@@ -332,14 +332,14 @@ const Index = () => {
           </motion.div>
 
           {activePage && activePage.sections.length > 0 && (
-            <section className="rounded-2xl border border-border/60 bg-secondary p-3.5 sm:p-4 space-y-2">
-              <h2 className="text-lg sm:text-xl font-bold text-foreground tracking-tight">
+            <section className="rounded-2xl border border-border/60 bg-secondary p-3.5 sm:p-4 md:p-5 space-y-2 md:space-y-3">
+              <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground tracking-tight">
                 Tentang {activePage.h1.replace("Kalkulator ", "")}
               </h2>
-              <div className="space-y-1.5">
+              <div className="space-y-1.5 md:space-y-2">
                 {activePage.sections.map((s) => (
-                  <article key={s.heading} className="rounded-xl bg-card border border-border/50 p-3">
-                    <h3 className="font-bold text-foreground mb-0.5 text-sm sm:text-base">{s.heading}</h3>
+                  <article key={s.heading} className="rounded-xl bg-card border border-border/50 p-3 md:p-4">
+                    <h3 className="font-bold text-foreground mb-0.5 md:mb-1 text-sm sm:text-base">{s.heading}</h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">{s.body}</p>
                   </article>
                 ))}
