@@ -262,7 +262,7 @@ const Index = () => {
 
   // Desktop nav: show all zakat categories as individual pills (no "Lainnya" grouping).
   const desktopPill = (active: boolean) =>
-    `inline-flex items-center justify-center gap-1.5 rounded-lg px-2.5 lg:px-3 h-9 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:flex-1 md:justify-center ${active ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/70 hover:text-foreground"}`;
+    `inline-flex items-center justify-center gap-1.5 rounded-lg px-2.5 sm:px-3 lg:px-4 h-9 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:flex-1 md:justify-center ${active ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/70 hover:text-foreground"}`;
 
   const pullToRefreshSlot = isMobile && (pullDistance > 0 || refreshing) ? (
     <div className="flex items-center justify-center text-xs text-muted-foreground overflow-hidden" style={{ height: refreshing ? 48 : pullDistance }}>
