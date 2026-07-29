@@ -106,7 +106,7 @@ export function AppLayout() {
               Zakat<span className="text-primary">Cal</span>
             </span>
           </Link>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-2">
             <Button
               asChild
               variant="ghost"
