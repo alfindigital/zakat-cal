@@ -192,8 +192,6 @@ export function AppLayout() {
             </span>
           </button>
         </div>
-
-        </div>
       </nav>
 
       <Drawer open={moreOpen} onOpenChange={setMoreOpen}>
