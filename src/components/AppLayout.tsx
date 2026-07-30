@@ -49,41 +49,45 @@ export function AppLayout() {
     track("switch_tab", { tab });
   };
 
-  const NavButton = ({ tab, short }: { tab: string; short: string }) => {
+  // Bottom nav uses the SAME wording as the desktop pills and the "Semua
+  // Kategori" drawer (ALL_PAGES.label) so labels never drift.
+  const NavButton = ({ tab }: { tab: string }) => {
     const Icon = TAB_ICONS[tab] ?? Briefcase;
     const active = activeTab === tab;
+    const label = labelForTab(tab);
     return (
       <button
         type="button"
         onClick={() => goToTab(tab)}
         aria-current={active ? "page" : undefined}
-        aria-label={`Zakat ${labelForTab(tab)}`}
-        title={`Zakat ${labelForTab(tab)}`}
-        className="group relative flex flex-1 shrink-0 flex-col items-center justify-center gap-1 min-w-[60px] px-1 active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground/70 focus-visible:ring-inset rounded-md"
+        aria-label={`Zakat ${label}`}
+        title={`Zakat ${label}`}
+        className="group relative flex flex-1 shrink-0 flex-col items-center justify-center gap-1 min-w-0 px-0.5 active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground/70 focus-visible:ring-inset rounded-md"
       >
         <span
-          className={`flex items-center justify-center h-10 w-10 rounded-full transition-all ${
+          className={`flex items-center justify-center h-9 w-9 rounded-full transition-all ${
             active ? "bg-primary-foreground" : "group-hover:bg-primary-foreground/10"
           }`}
         >
           <Icon
             aria-hidden="true"
             strokeWidth={2.25}
-            className={`h-6 w-6 transition-colors ${
-              active ? "text-primary" : "text-primary-foreground group-hover:text-primary-foreground"
+            className={`h-5 w-5 transition-colors ${
+              active ? "text-primary" : "text-primary-foreground"
             }`}
           />
         </span>
         <span
-          className={`text-[11px] font-semibold transition-colors ${
+          className={`w-full truncate text-center text-[10px] leading-none font-semibold transition-colors ${
             active ? "text-primary-foreground" : "text-primary-foreground/90"
           }`}
         >
-          {short}
+          {label}
         </span>
       </button>
     );
   };
+
 
   const headerIconClass = (active: boolean) =>
     `h-11 w-11 sm:h-10 sm:w-10 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
