@@ -287,18 +287,21 @@ const Index = () => {
       >
         {pullToRefreshSlot}
 
-          <nav aria-label="Kategori zakat" className="hidden md:flex md:flex-nowrap md:gap-3 lg:gap-4 justify-center w-full md:mb-8">
-            {ALL_PAGES.map((page) => {
-              const Icon = TAB_ICONS[page.tab] ?? Briefcase;
-              const active = activeTab === page.tab;
-              return (
-                <button key={page.tab} type="button" onClick={() => setActiveTab(page.tab)} aria-current={active ? "page" : undefined} aria-label={page.label} title={page.label} className={desktopPill(active)}>
-                  <Icon aria-hidden="true" className="h-4 w-4 shrink-0" />
-                  <span className="hidden lg:inline">{page.label}</span>
-                </button>
-              );
-            })}
+          <nav aria-label="Kategori zakat" className="hidden md:flex justify-center w-full md:mb-8">
+            <div className="inline-flex items-center gap-1 rounded-full border border-border/60 bg-muted/60 p-1 lg:w-full lg:max-w-5xl">
+              {ALL_PAGES.map((page) => {
+                const Icon = TAB_ICONS[page.tab] ?? Briefcase;
+                const active = activeTab === page.tab;
+                return (
+                  <button key={page.tab} type="button" onClick={() => setActiveTab(page.tab)} aria-current={active ? "page" : undefined} aria-label={page.label} title={page.label} className={desktopPill(active)}>
+                    <Icon aria-hidden="true" className="h-4 w-4 shrink-0" />
+                    <span className="hidden lg:inline truncate">{page.label}</span>
+                  </button>
+                );
+              })}
+            </div>
           </nav>
+
 
           <div className="w-full max-w-2xl mx-auto space-y-4 sm:space-y-5 md:space-y-6">
 
