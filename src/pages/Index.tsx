@@ -336,13 +336,14 @@ const Index = () => {
           </motion.div>
 
           {activePage && activePage.sections.length > 0 && (
-            <section className="rounded-2xl border border-border/60 bg-secondary p-3.5 sm:p-4 md:p-5 space-y-2 md:space-y-3">
+            <section className="rounded-2xl border border-border/60 bg-secondary p-4 sm:p-5 md:p-6 space-y-3 md:space-y-4">
               <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground tracking-tight">
                 Tentang {activePage.h1.replace("Kalkulator ", "")}
               </h2>
-              <div className="space-y-1.5 md:space-y-2">
+              <div className="space-y-3">
                 {activePage.sections.map((s) => (
-                  <article key={s.heading} className="rounded-xl bg-card border border-border/50 p-3 md:p-4">
+                  <article key={s.heading} className="rounded-xl bg-card border border-border/50 p-4 md:p-5">
+
                     <h3 className="font-bold text-foreground mb-0.5 md:mb-1 text-sm sm:text-base">{s.heading}</h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">{s.body}</p>
                   </article>
