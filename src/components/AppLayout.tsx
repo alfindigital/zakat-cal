@@ -160,38 +160,39 @@ export function AppLayout() {
         style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
         aria-label="Navigasi utama"
       >
-        <div className="mx-auto max-w-3xl flex items-stretch h-20 justify-around px-1">
-          <NavButton tab="maal" short="Maal" />
-          <NavButton tab="fitrah" short="Fitrah" />
-          <NavButton tab="perniagaan" short="Dagang" />
-          <NavButton tab="pertanian" short="Tani" />
+        <div className="mx-auto max-w-3xl flex items-stretch h-[4.5rem] justify-around gap-0.5 px-1.5">
+          {PRIMARY_TABS.map((tab) => (
+            <NavButton key={tab} tab={tab} />
+          ))}
           <button
             type="button"
             onClick={() => setMoreOpen(true)}
             aria-haspopup="dialog"
             aria-label="Kategori zakat lainnya"
             aria-current={moreActive ? "page" : undefined}
-            className="group relative flex flex-1 shrink-0 flex-col items-center justify-center gap-1 min-w-[60px] px-1 active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground/70 focus-visible:ring-inset rounded-md"
+            className="group relative flex flex-1 shrink-0 flex-col items-center justify-center gap-1 min-w-0 px-0.5 active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground/70 focus-visible:ring-inset rounded-md"
           >
             <span
-              className={`flex items-center justify-center h-10 w-10 rounded-full transition-all ${
+              className={`flex items-center justify-center h-9 w-9 rounded-full transition-all ${
                 moreActive ? "bg-primary-foreground" : "group-hover:bg-primary-foreground/10"
               }`}
             >
               <LayoutGrid
                 aria-hidden="true"
                 strokeWidth={2.25}
-                className={`h-6 w-6 ${moreActive ? "text-primary" : "text-primary-foreground"}`}
+                className={`h-5 w-5 ${moreActive ? "text-primary" : "text-primary-foreground"}`}
               />
             </span>
             <span
-              className={`text-[11px] font-semibold ${
+              className={`w-full truncate text-center text-[10px] leading-none font-semibold ${
                 moreActive ? "text-primary-foreground" : "text-primary-foreground/90"
               }`}
             >
               Lainnya
             </span>
           </button>
+        </div>
+
         </div>
       </nav>
 
