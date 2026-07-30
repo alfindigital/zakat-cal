@@ -300,11 +300,12 @@ const Index = () => {
             })}
           </nav>
 
-          <div className="w-full max-w-2xl mx-auto space-y-3 sm:space-y-4 md:space-y-6">
+          <div className="w-full max-w-2xl mx-auto space-y-4 sm:space-y-5 md:space-y-6">
 
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
             <Card className="overflow-hidden transition-shadow duration-300 hover:shadow-lg border-border/60">
-              <CardContent className="px-4 pt-4 sm:px-5 sm:pt-5 pb-4 sm:pb-5">
+              <CardContent className="p-4 sm:p-5 md:p-6">
+
                 <div className="mb-1 md:mb-2">
                   <h1 className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight">
                     {activePage?.h1 ?? "Kalkulator Zakat"}
