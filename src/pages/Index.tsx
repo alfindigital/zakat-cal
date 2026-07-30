@@ -292,8 +292,9 @@ const Index = () => {
               const Icon = TAB_ICONS[page.tab] ?? Briefcase;
               const active = activeTab === page.tab;
               return (
-                <button key={page.tab} type="button" onClick={() => setActiveTab(page.tab)} aria-current={active ? "page" : undefined} className={desktopPill(active)}>
-                  <Icon aria-hidden="true" className="h-4 w-4" /> {page.label}
+                <button key={page.tab} type="button" onClick={() => setActiveTab(page.tab)} aria-current={active ? "page" : undefined} aria-label={page.label} title={page.label} className={desktopPill(active)}>
+                  <Icon aria-hidden="true" className="h-4 w-4 shrink-0" />
+                  <span className="hidden lg:inline">{page.label}</span>
                 </button>
               );
             })}
