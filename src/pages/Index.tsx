@@ -322,7 +322,7 @@ const Index = () => {
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -16 }}
                     transition={{ duration: 0.25, ease: "easeInOut" }}
-                    className="mt-2 md:mt-3"
+                    className="mt-4 md:mt-5"
                   >
                     {renderCalc(activeTab)}
                   </motion.div>
