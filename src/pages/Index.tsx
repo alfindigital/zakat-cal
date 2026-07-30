@@ -260,11 +260,11 @@ const Index = () => {
   };
 
 
-  // Desktop nav: show all zakat categories as individual pills (no "Lainnya" grouping).
-  // Tablet (md): icon-only pills so all categories fit in one row.
-  // Desktop (lg+): icon + label.
+  // Tablet & desktop nav: one segmented bar holding every zakat category.
+  // md = icon-only squares (all 8 fit in one row), lg+ = icon + label.
   const desktopPill = (active: boolean) =>
-    `inline-flex items-center justify-center gap-1.5 rounded-lg px-0 md:w-10 lg:w-auto lg:px-4 h-9 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:flex-1 ${active ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/70 hover:text-foreground"}`;
+    `inline-flex items-center justify-center gap-2 rounded-full h-10 w-10 lg:w-auto lg:flex-1 lg:px-4 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${active ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:bg-background hover:text-foreground"}`;
+
 
   const pullToRefreshSlot = isMobile && (pullDistance > 0 || refreshing) ? (
     <div className="flex items-center justify-center text-xs text-muted-foreground overflow-hidden" style={{ height: refreshing ? 48 : pullDistance }}>
@@ -287,18 +287,21 @@ const Index = () => {
       >
         {pullToRefreshSlot}
 
-          <nav aria-label="Kategori zakat" className="hidden md:flex md:flex-nowrap md:gap-3 lg:gap-4 justify-center w-full md:mb-8">
-            {ALL_PAGES.map((page) => {
-              const Icon = TAB_ICONS[page.tab] ?? Briefcase;
-              const active = activeTab === page.tab;
-              return (
-                <button key={page.tab} type="button" onClick={() => setActiveTab(page.tab)} aria-current={active ? "page" : undefined} aria-label={page.label} title={page.label} className={desktopPill(active)}>
-                  <Icon aria-hidden="true" className="h-4 w-4 shrink-0" />
-                  <span className="hidden lg:inline">{page.label}</span>
-                </button>
-              );
-            })}
+          <nav aria-label="Kategori zakat" className="hidden md:flex justify-center w-full md:mb-8">
+            <div className="inline-flex items-center gap-1 rounded-full border border-border/60 bg-muted/60 p-1 lg:w-full lg:max-w-5xl">
+              {ALL_PAGES.map((page) => {
+                const Icon = TAB_ICONS[page.tab] ?? Briefcase;
+                const active = activeTab === page.tab;
+                return (
+                  <button key={page.tab} type="button" onClick={() => setActiveTab(page.tab)} aria-current={active ? "page" : undefined} aria-label={page.label} title={page.label} className={desktopPill(active)}>
+                    <Icon aria-hidden="true" className="h-4 w-4 shrink-0" />
+                    <span className="hidden lg:inline truncate">{page.label}</span>
+                  </button>
+                );
+              })}
+            </div>
           </nav>
+
 
           <div className="w-full max-w-2xl mx-auto space-y-4 sm:space-y-5 md:space-y-6">
 
