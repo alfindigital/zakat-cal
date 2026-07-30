@@ -125,7 +125,7 @@ export default function Pengaturan() {
 
   return (
     <main
-      className="mx-auto max-w-lg w-full px-4 py-6 sm:px-6 sm:py-8 flex-1 space-y-6"
+      className="mx-auto w-full max-w-lg md:max-w-2xl px-4 py-4 sm:px-6 sm:py-6 md:px-10 lg:px-12 md:py-8 flex-1 space-y-4 sm:space-y-5 md:space-y-6"
       style={{ paddingBottom: "calc(5.5rem + env(safe-area-inset-bottom, 0px))" }}
     >
 

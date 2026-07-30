@@ -65,7 +65,7 @@ export default function PanduanZakat() {
   });
   return (
     <main
-      className="mx-auto max-w-2xl w-full px-4 py-5 sm:px-6 sm:py-8 flex-1 space-y-5"
+      className="mx-auto w-full max-w-2xl px-4 py-4 sm:px-6 sm:py-6 md:px-10 lg:px-12 md:py-8 flex-1 space-y-4 sm:space-y-5 md:space-y-6"
       style={{ paddingBottom: "calc(5.5rem + env(safe-area-inset-bottom, 0px))" }}
     >
 
