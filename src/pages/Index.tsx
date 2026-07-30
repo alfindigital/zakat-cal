@@ -260,11 +260,11 @@ const Index = () => {
   };
 
 
-  // Desktop nav: show all zakat categories as individual pills (no "Lainnya" grouping).
-  // Tablet (md): icon-only pills so all categories fit in one row.
-  // Desktop (lg+): icon + label.
+  // Tablet & desktop nav: one segmented bar holding every zakat category.
+  // md = icon-only squares (all 8 fit in one row), lg+ = icon + label.
   const desktopPill = (active: boolean) =>
-    `inline-flex items-center justify-center gap-1.5 rounded-lg px-0 md:w-10 lg:w-auto lg:px-4 h-9 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:flex-1 ${active ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/70 hover:text-foreground"}`;
+    `inline-flex items-center justify-center gap-2 rounded-full h-10 w-10 lg:w-auto lg:flex-1 lg:px-4 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${active ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:bg-background hover:text-foreground"}`;
+
 
   const pullToRefreshSlot = isMobile && (pullDistance > 0 || refreshing) ? (
     <div className="flex items-center justify-center text-xs text-muted-foreground overflow-hidden" style={{ height: refreshing ? 48 : pullDistance }}>
