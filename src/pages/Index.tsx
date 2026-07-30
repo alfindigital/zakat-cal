@@ -261,8 +261,10 @@ const Index = () => {
 
 
   // Desktop nav: show all zakat categories as individual pills (no "Lainnya" grouping).
+  // Tablet (md): icon-only pills so all categories fit in one row.
+  // Desktop (lg+): icon + label.
   const desktopPill = (active: boolean) =>
-    `inline-flex items-center justify-center gap-1.5 rounded-lg px-2.5 sm:px-3 lg:px-4 h-9 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:flex-1 md:justify-center ${active ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/70 hover:text-foreground"}`;
+    `inline-flex items-center justify-center gap-1.5 rounded-lg px-0 md:w-10 lg:w-auto lg:px-4 h-9 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:flex-1 ${active ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/70 hover:text-foreground"}`;
 
   const pullToRefreshSlot = isMobile && (pullDistance > 0 || refreshing) ? (
     <div className="flex items-center justify-center text-xs text-muted-foreground overflow-hidden" style={{ height: refreshing ? 48 : pullDistance }}>
@@ -290,8 +292,9 @@ const Index = () => {
               const Icon = TAB_ICONS[page.tab] ?? Briefcase;
               const active = activeTab === page.tab;
               return (
-                <button key={page.tab} type="button" onClick={() => setActiveTab(page.tab)} aria-current={active ? "page" : undefined} className={desktopPill(active)}>
-                  <Icon aria-hidden="true" className="h-4 w-4" /> {page.label}
+                <button key={page.tab} type="button" onClick={() => setActiveTab(page.tab)} aria-current={active ? "page" : undefined} aria-label={page.label} title={page.label} className={desktopPill(active)}>
+                  <Icon aria-hidden="true" className="h-4 w-4 shrink-0" />
+                  <span className="hidden lg:inline">{page.label}</span>
                 </button>
               );
             })}
