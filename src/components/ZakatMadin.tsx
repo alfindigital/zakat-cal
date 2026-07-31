@@ -77,7 +77,7 @@ export default function ZakatMadin({ goldPrice, isActive, onCalculated, prefill 
       </div>
       <ValidationSummary fields={fields} visible={attempted} />
       <div className="space-y-1.5">
-        <Button onClick={handleSave} aria-disabled={!canCalc} className="w-full h-11 sm:h-10">
+        <Button onClick={handleSave} className="w-full h-11 sm:h-10">
           Simpan ke Riwayat
         </Button>
         <p aria-live="polite" className="text-xs text-muted-foreground text-center">
