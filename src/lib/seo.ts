@@ -179,6 +179,25 @@ export const HOME_SEO = {
     "ZakatCal — kalkulator zakat online gratis untuk menghitung zakat maal, fitrah, perniagaan, pertanian, peternakan, rikaz & ma'din sesuai syariat Islam.",
 };
 
+/**
+ * Display label for a stored history ZakatType. Keeps history badges, PDF
+ * titles and filters using the SAME wording as the nav/drawer labels.
+ */
+export const ZAKAT_TYPE_LABELS: Record<string, string> = {
+  Penghasilan: "Maal",
+  Maal: "Maal",
+  Fitrah: "Fitrah",
+  Perniagaan: "Perniagaan",
+  Pertanian: "Pertanian",
+  Peternakan: "Peternakan",
+  Rikaz: "Rikaz",
+  Madin: "Ma'din",
+  Fidyah: "Fidyah",
+};
+
+export const labelForZakatType = (type: string): string =>
+  ZAKAT_TYPE_LABELS[type] ?? type;
+
 export function getPageBySlug(slug: string): ZakatPage | undefined {
   return ALL_PAGES.find((p) => p.slug === slug);
 }

@@ -112,7 +112,7 @@ function HistoryItem({
             type="checkbox"
             checked={selected}
             onChange={onToggleSelect}
-            aria-label={`Pilih riwayat ${h.type} ${formatRupiah(h.amount)}`}
+            aria-label={`Pilih riwayat ${labelForZakatType(h.type)} ${formatRupiah(h.amount)}`}
             className="h-4 w-4 shrink-0 accent-[hsl(var(--primary))] cursor-pointer"
           />
         )}
@@ -121,8 +121,8 @@ function HistoryItem({
           onClick={selectMode ? onToggleSelect : onOpenDetail}
           aria-label={
             selectMode
-              ? `Pilih riwayat ${h.type} ${formatRupiah(h.amount)}`
-              : `Lihat detail riwayat ${h.type} ${formatRupiah(h.amount)}`
+              ? `Pilih riwayat ${labelForZakatType(h.type)} ${formatRupiah(h.amount)}`
+              : `Lihat detail riwayat ${labelForZakatType(h.type)} ${formatRupiah(h.amount)}`
           }
           className="flex items-center gap-3 min-w-0 flex-1 text-left rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
 
@@ -133,7 +133,7 @@ function HistoryItem({
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               <Badge variant="secondary" className="text-[10px] sm:text-xs shrink-0">
-                {h.type}
+                {labelForZakatType(h.type)}
               </Badge>
               {h.inputs && (
                 <span className="text-[9px] sm:text-[10px] text-muted-foreground uppercase tracking-wide">
@@ -363,7 +363,7 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
     onChanged();
 
     toast.success("Riwayat dihapus", {
-      description: `${item.type} • ${formatRupiah(item.amount)}`,
+      description: `${labelForZakatType(item.type)} • ${formatRupiah(item.amount)}`,
       duration: 5000,
       action: {
         label: "Urungkan",
@@ -377,7 +377,7 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
   };
 
   const handleExportPdf = (item: ZakatHistory) => {
-    generateZakatPdf(item.type, item.detail ?? [], item.amount, true).catch(() =>
+    generateZakatPdf(labelForZakatType(item.type), item.detail ?? [], item.amount, true).catch(() =>
       toast.error("Gagal membuat PDF"),
     );
   };
@@ -488,7 +488,7 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
                 <SelectItem value="all">Semua jenis</SelectItem>
                 {ZAKAT_TYPES.map((t) => (
                   <SelectItem key={t} value={t}>
-                    {t}
+                    {labelForZakatType(t)}
                   </SelectItem>
                 ))}
               </SelectContent>
