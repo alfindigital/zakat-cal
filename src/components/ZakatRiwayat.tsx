@@ -41,6 +41,7 @@ import { generateZakatPdf } from "@/lib/pdf-generator";
 // Recharts is heavy — load the chart lazily so it stays out of the initial bundle.
 const ZakatChart = lazy(() => import("./ZakatChart"));
 import HistoryDetailDialog from "./HistoryDetailDialog";
+import { labelForZakatType } from "@/lib/seo";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
 
@@ -51,7 +52,7 @@ interface Props {
 }
 
 const TYPE_ICON: Record<string, typeof Briefcase> = {
-  Penghasilan: Briefcase,
+  Penghasilan: Wallet,
   Maal: Wallet,
   Fitrah: Wheat,
   Perniagaan: Store,
@@ -112,7 +113,7 @@ function HistoryItem({
             type="checkbox"
             checked={selected}
             onChange={onToggleSelect}
-            aria-label={`Pilih riwayat ${h.type} ${formatRupiah(h.amount)}`}
+            aria-label={`Pilih riwayat ${labelForZakatType(h.type)} ${formatRupiah(h.amount)}`}
             className="h-4 w-4 shrink-0 accent-[hsl(var(--primary))] cursor-pointer"
           />
         )}
@@ -121,8 +122,8 @@ function HistoryItem({
           onClick={selectMode ? onToggleSelect : onOpenDetail}
           aria-label={
             selectMode
-              ? `Pilih riwayat ${h.type} ${formatRupiah(h.amount)}`
-              : `Lihat detail riwayat ${h.type} ${formatRupiah(h.amount)}`
+              ? `Pilih riwayat ${labelForZakatType(h.type)} ${formatRupiah(h.amount)}`
+              : `Lihat detail riwayat ${labelForZakatType(h.type)} ${formatRupiah(h.amount)}`
           }
           className="flex items-center gap-3 min-w-0 flex-1 text-left rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
 
@@ -133,7 +134,7 @@ function HistoryItem({
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               <Badge variant="secondary" className="text-[10px] sm:text-xs shrink-0">
-                {h.type}
+                {labelForZakatType(h.type)}
               </Badge>
               {h.inputs && (
                 <span className="text-[9px] sm:text-[10px] text-muted-foreground uppercase tracking-wide">
@@ -231,7 +232,9 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
     if (!isRiwayatPage) return history;
     const q = query.trim().toLowerCase();
     return history.filter((h) => {
-      if (typeFilter !== "all" && h.type !== typeFilter) return false;
+      // Compare on display labels so legacy "Penghasilan" entries match "Maal".
+      if (typeFilter !== "all" && labelForZakatType(h.type) !== labelForZakatType(typeFilter))
+        return false;
       const hDate = historyItemDate(h);
       hDate.setHours(0, 0, 0, 0);
       if (startDate) {
@@ -247,6 +250,7 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
       if (q) {
         const haystack = [
           h.type,
+          labelForZakatType(h.type),
           h.label,
           formatRupiah(h.amount),
           ...(h.detail?.flatMap((d) => [d.label, d.value]) ?? []),
@@ -363,7 +367,7 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
     onChanged();
 
     toast.success("Riwayat dihapus", {
-      description: `${item.type} • ${formatRupiah(item.amount)}`,
+      description: `${labelForZakatType(item.type)} • ${formatRupiah(item.amount)}`,
       duration: 5000,
       action: {
         label: "Urungkan",
@@ -377,7 +381,7 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
   };
 
   const handleExportPdf = (item: ZakatHistory) => {
-    generateZakatPdf(item.type, item.detail ?? [], item.amount, true).catch(() =>
+    generateZakatPdf(labelForZakatType(item.type), item.detail ?? [], item.amount, true).catch(() =>
       toast.error("Gagal membuat PDF"),
     );
   };
@@ -488,7 +492,7 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
                 <SelectItem value="all">Semua jenis</SelectItem>
                 {ZAKAT_TYPES.map((t) => (
                   <SelectItem key={t} value={t}>
-                    {t}
+                    {labelForZakatType(t)}
                   </SelectItem>
                 ))}
               </SelectContent>

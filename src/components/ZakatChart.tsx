@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, PieChart, Pie } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { type ZakatHistory, formatRupiah } from "@/lib/zakat";
+import { labelForZakatType } from "@/lib/seo";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
@@ -13,13 +14,12 @@ interface Props {
 // Distinct hue per zakat type so the pie + legend stay readable for all
 // categories (previously only 3 had colors; the rest collapsed into one green).
 const TYPE_COLORS: Record<string, string> = {
-  Penghasilan: "hsl(160, 84%, 28%)",
   Maal: "hsl(200, 70%, 45%)",
   Perniagaan: "hsl(265, 60%, 55%)",
   Pertanian: "hsl(95, 55%, 40%)",
   Peternakan: "hsl(20, 75%, 50%)",
   Rikaz: "hsl(330, 65%, 52%)",
-  Madin: "hsl(220, 15%, 45%)",
+  "Ma'din": "hsl(220, 15%, 45%)",
   Fitrah: "hsl(35, 85%, 52%)",
   Fidyah: "hsl(48, 90%, 45%)",
 };
@@ -32,7 +32,8 @@ export default function ZakatChart({ history }: Props) {
   const summaryByType = useMemo(() => {
     const map: Record<string, number> = {};
     history.forEach((h) => {
-      map[h.type] = (map[h.type] || 0) + h.amount;
+      const key = labelForZakatType(h.type);
+      map[key] = (map[key] || 0) + h.amount;
     });
     return Object.entries(map).map(([type, total]) => ({
       type,

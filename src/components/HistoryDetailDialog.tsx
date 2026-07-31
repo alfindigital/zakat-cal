@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FileDown, Pencil, ExternalLink } from "lucide-react";
 import { formatRupiah, type ZakatHistory } from "@/lib/zakat";
-import { getPageByTab } from "@/lib/seo";
+import { getPageByTab, labelForZakatType } from "@/lib/seo";
 import { generateZakatPdf } from "@/lib/pdf-generator";
 import { toast } from "sonner";
 
@@ -68,7 +68,7 @@ export default function HistoryDetailDialog({ item, open, onOpenChange }: Props)
   };
 
   const handleExportPdf = () => {
-    generateZakatPdf(item.type, item.detail ?? [], item.amount, true).catch(() =>
+    generateZakatPdf(labelForZakatType(item.type), item.detail ?? [], item.amount, true).catch(() =>
       toast.error("Gagal membuat PDF"),
     );
   };
@@ -79,7 +79,7 @@ export default function HistoryDetailDialog({ item, open, onOpenChange }: Props)
         <DialogHeader className="text-left">
           <div className="flex items-center gap-2">
             <Badge variant="secondary" className="text-[10px]">
-              Zakat {item.type}
+              Zakat {labelForZakatType(item.type)}
             </Badge>
             <span className="text-xs text-muted-foreground">{item.date}</span>
           </div>
