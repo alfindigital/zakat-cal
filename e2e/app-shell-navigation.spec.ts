@@ -7,15 +7,15 @@ import { test, expect } from "../playwright-fixture";
  */
 test.use({ viewport: { width: 390, height: 844 } });
 
-const ROUTES: Array<{ path: string; heading: RegExp }> = [
-  { path: "/", heading: /Kalkulator Zakat Maal/ },
-  { path: "/pengaturan", heading: /Pengaturan/ },
-  { path: "/riwayat", heading: /Riwayat Perhitungan/ },
-  { path: "/panduan-zakat", heading: /Panduan Zakat/ },
+const ROUTES: Array<{ path: string; marker: string | RegExp }> = [
+  { path: "/", marker: /Kalkulator Zakat Maal/ },
+  { path: "/pengaturan", marker: "Nisab saat ini" },
+  { path: "/riwayat", marker: "Riwayat Perhitungan" },
+  { path: "/panduan-zakat", marker: "Apa Itu Zakat?" },
 ];
 
 test.describe("AppShell — konsistensi header & bottom nav", () => {
-  for (const { path, heading } of ROUTES) {
+  for (const { path, marker } of ROUTES) {
     test(`header + bottom nav muncul di ${path}`, async ({ page }) => {
       await page.goto(path);
 
@@ -31,30 +31,27 @@ test.describe("AppShell — konsistensi header & bottom nav", () => {
       // Bottom nav (mobile)
       const nav = page.getByRole("navigation", { name: "Navigasi utama" });
       await expect(nav).toBeVisible();
-      await expect(nav.getByRole("button", { name: "Zakat Maal" })).toBeVisible();
-      await expect(nav.getByRole("button", { name: "Zakat Maal" })).toBeVisible();
-      await expect(nav.getByRole("button", { name: "Zakat Fitrah" })).toBeVisible();
+      await expect(nav.getByRole("button", { name: "Maal" })).toBeVisible();
+      await expect(nav.getByRole("button", { name: "Fitrah" })).toBeVisible();
 
       // Halaman spesifik ter-render
-      await expect(page.getByRole("heading", { name: heading }).first()).toBeVisible();
+      await expect(page.getByText(marker).first()).toBeVisible();
     });
   }
 
   test("bottom nav berpindah antar kalkulator dgn aria-current", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/zakat-fitrah");
     const nav = page.getByRole("navigation", { name: "Navigasi utama" });
 
-    await nav.getByRole("button", { name: "Zakat Maal" }).click();
-    await expect(page).toHaveURL(/\/maal$/);
-    await expect(nav.getByRole("button", { name: "Zakat Maal" })).toHaveAttribute("aria-current", "page");
+    await expect(nav.getByRole("button", { name: "Fitrah" })).toHaveAttribute("aria-current", "page");
 
-    await nav.getByRole("button", { name: "Zakat Fitrah" }).click();
-    await expect(page).toHaveURL(/\/fitrah$/);
-    await expect(nav.getByRole("button", { name: "Zakat Fitrah" })).toHaveAttribute("aria-current", "page");
-
-    await nav.getByRole("button", { name: "Zakat Maal" }).click();
+    await nav.getByRole("button", { name: "Maal" }).click();
     await expect(page).toHaveURL(/\/$/);
-    await expect(nav.getByRole("button", { name: "Zakat Maal" })).toHaveAttribute("aria-current", "page");
+    await expect(nav.getByRole("button", { name: "Maal" })).toHaveAttribute("aria-current", "page");
+
+    await nav.getByRole("button", { name: "Fitrah" }).click();
+    await expect(page).toHaveURL(/\/zakat-fitrah$/);
+    await expect(nav.getByRole("button", { name: "Fitrah" })).toHaveAttribute("aria-current", "page");
   });
 
   test("drawer Lainnya membuka kategori sekunder & navigasi bekerja", async ({ page }) => {
@@ -66,11 +63,12 @@ test.describe("AppShell — konsistensi header & bottom nav", () => {
     await expect(dialog.getByText("Semua Kategori")).toBeVisible();
 
     await dialog.getByRole("button", { name: /Pertanian/ }).click();
-    await expect(page).toHaveURL(/\/pertanian$/);
+    await expect(page).toHaveURL(/\/zakat-pertanian$/);
     await expect(
       page.getByRole("navigation", { name: "Navigasi utama" }),
     ).toBeVisible();
   });
+
 
   test("header icons: Pengaturan → Riwayat → Panduan → Home", async ({ page }) => {
     await page.goto("/");
