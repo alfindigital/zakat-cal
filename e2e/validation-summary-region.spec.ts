@@ -23,7 +23,7 @@ test.describe("Validation summary region — polite, labeled, non-disruptive", (
       }
     });
     await page.goto("/");
-    await page.getByRole("button", { name: "Zakat Fitrah" }).first().click();
+    await page.goto("/zakat-fitrah");
   });
 
   test("region ringkasan tidak tampil sebelum validasi di-submit", async ({ page }) => {

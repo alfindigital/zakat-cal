@@ -15,7 +15,7 @@ test.describe("Keyboard navigation — Tab/Shift+Tab through inputs & errors", (
       }
     });
     await page.goto("/");
-    await page.getByRole("button", { name: "Zakat Fitrah" }).first().click();
+    await page.goto("/zakat-fitrah");
     // Aktifkan mode "uang" agar terdapat 2 input decimal berdekatan
     await page.getByRole("radio", { name: /Uang/ }).click();
   });

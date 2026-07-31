@@ -10,7 +10,7 @@ import { formatNumberInput, parseFormattedNumber, formatQuantityInput, parseQuan
 import { ResultCard, MobilePdfFab } from "./MobileCalcChrome";
 import { toast } from "sonner";
 import { focusFirstInvalid } from "@/lib/focus-invalid";
-import { ValidationSummary } from "@/components/ValidationHints";
+import { FieldError, ValidationSummary } from "@/components/ValidationHints";
 
 interface Props {
   goldPrice: number;
@@ -113,8 +113,13 @@ export default function ZakatMaal({ goldPrice, silverPrice, nisabType, isActive,
         placeholder="0"
         value={value}
         onChange={(e) => formattedChange(e, set, quantity ? formatQuantityInput : formatNumberInput)}
+        aria-invalid={id === "maal-tabungan" && attempted && fields[0].invalid ? true : undefined}
+        aria-describedby={id === "maal-tabungan" && attempted && fields[0].invalid ? "maal-tabungan-error" : undefined}
         className="h-11 sm:h-10 text-base"
       />
+      {id === "maal-tabungan" && attempted && (
+        <FieldError id="maal-tabungan" message={fields[0].invalid ? fields[0].message : undefined} />
+      )}
     </div>
   );
 
@@ -136,7 +141,7 @@ export default function ZakatMaal({ goldPrice, silverPrice, nisabType, isActive,
       <ValidationSummary fields={fields} visible={attempted} />
 
       <div className="space-y-1.5">
-        <Button onClick={handleSave} aria-disabled={!canCalc} className="w-full h-11 sm:h-10">
+        <Button onClick={handleSave} className="w-full h-11 sm:h-10">
           Simpan ke Riwayat
         </Button>
         <p aria-live="polite" className="text-xs text-muted-foreground text-center">

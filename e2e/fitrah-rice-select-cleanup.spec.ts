@@ -22,7 +22,7 @@ test.describe("Zakat Fitrah — cleanup aria saat ganti Jenis Beras / harga kust
       }
     });
     await page.goto("/");
-    await page.getByRole("button", { name: "Zakat Fitrah" }).first().click();
+    await page.goto("/zakat-fitrah");
     // Pastikan mode beras
     await page.getByRole("radio", { name: /Beras/ }).click();
   });

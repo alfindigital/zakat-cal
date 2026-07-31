@@ -20,7 +20,7 @@ test.describe("Zakat Fitrah — mode beras: hanya jiwa yang invalid", () => {
       }
     });
     await page.goto("/");
-    await page.getByRole("button", { name: "Zakat Fitrah" }).first().click();
+    await page.goto("/zakat-fitrah");
     // Pastikan berada di mode beras (default, tapi klik eksplisit agar
     // spec tetap valid jika default berubah di masa depan).
     await page.getByRole("radio", { name: /Beras/ }).click();
@@ -80,7 +80,7 @@ test.describe("Zakat Fitrah — mode beras: hanya jiwa yang invalid", () => {
     // di komponen lain yang mungkin muncul di halaman.)
     const alerts = page.locator('[role="alert"][aria-live="assertive"]');
     // Pesan error yang milik Fitrah mengandung id-prefix "fitrah-"
-    const fitrahAlerts = alerts.locator('[id^="fitrah-"]');
+    const fitrahAlerts = page.locator('[role="alert"][aria-live="assertive"][id^="fitrah-"]');
     await expect(fitrahAlerts).toHaveCount(1);
     await expect(fitrahAlerts.first()).toHaveAttribute("id", "fitrah-jiwa-error");
 

@@ -19,7 +19,7 @@ test.describe("Inline validation a11y — aria-live & aria-describedby", () => {
 
   test("Zakat Fitrah: menekan Simpan tanpa mengisi jumlah jiwa memicu error yang diumumkan screen reader", async ({ page }) => {
     // Pindah ke tab Fitrah (desktop tabs atau bottom nav mobile — keduanya pakai role button/tab dengan nama sama)
-    await page.getByRole("button", { name: "Zakat Fitrah" }).first().click();
+    await page.goto("/zakat-fitrah");
 
     const jiwaInput = page.locator("#fitrah-jiwa");
     await expect(jiwaInput).toBeVisible();

@@ -19,7 +19,7 @@ test.describe("Focus-first-invalid + validation summary a11y", () => {
   });
 
   test("Zakat Fitrah (mode uang): fokus pindah ke input JIWA (invalid pertama), bukan ke input tarif", async ({ page }) => {
-    await page.getByRole("button", { name: "Zakat Fitrah" }).first().click();
+    await page.goto("/zakat-fitrah");
 
     // Aktifkan mode uang agar ada 2 field wajib: jiwa + tarif per jiwa
     await page.getByRole("radio", { name: /Uang/ }).click();
