@@ -16,7 +16,7 @@ test.describe("Zakat Fitrah — aria-invalid & aria-describedby per field wajib"
       }
     });
     await page.goto("/");
-    await page.getByRole("button", { name: "Zakat Fitrah" }).first().click();
+    await page.goto("/zakat-fitrah");
   });
 
   test("Mode beras: hanya field jiwa yang wajib → aria-invalid & aria-describedby valid", async ({ page }) => {

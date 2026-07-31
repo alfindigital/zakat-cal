@@ -19,7 +19,7 @@ test.describe("Validation summary — navigasi item ke field yang benar", () => 
       }
     });
     await page.goto("/");
-    await page.getByRole("button", { name: "Zakat Fitrah" }).first().click();
+    await page.goto("/zakat-fitrah");
   });
 
   test("mode uang: klik item 'Jumlah Jiwa' → fokus #fitrah-jiwa; klik 'Tarif per Jiwa' → fokus #fitrah-uang", async ({ page }) => {

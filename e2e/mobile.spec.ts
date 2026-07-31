@@ -20,8 +20,8 @@ test.describe("Mobile UX — ZakatCal", () => {
   test("bottom nav switches between Maal, Fitrah, Perniagaan", async ({ page }) => {
     const nav = page.getByRole("navigation", { name: "Navigasi utama" });
     const dagang = nav.getByRole("button", { name: "Zakat Perniagaan" });
-    const maal = nav.getByRole("button", { name: "Zakat Maal" });
-    const fitrah = nav.getByRole("button", { name: "Zakat Fitrah" });
+    const maal = nav.getByRole("button", { name: "Maal" });
+    const fitrah = nav.getByRole("button", { name: "Fitrah" });
 
     // Default: Maal
     await expect(maal).toHaveAttribute("aria-current", "page");

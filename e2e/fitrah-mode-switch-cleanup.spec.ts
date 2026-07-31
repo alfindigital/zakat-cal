@@ -28,7 +28,7 @@ test.describe("Zakat Fitrah — cleanup aria saat ganti mode", () => {
       }
     });
     await page.goto("/");
-    await page.getByRole("button", { name: "Zakat Fitrah" }).first().click();
+    await page.goto("/zakat-fitrah");
   });
 
   test("beras → uang: pesan error beras tidak boleh tertinggal & aria-describedby konsisten", async ({ page }) => {

@@ -19,7 +19,7 @@ test.describe("Fokus otomatis ke field invalid pertama saat Simpan", () => {
       }
     });
     await page.goto("/");
-    await page.getByRole("button", { name: "Zakat Fitrah" }).first().click();
+    await page.goto("/zakat-fitrah");
   });
 
   test("Mode beras: fokus pindah ke #fitrah-jiwa dengan aria-invalid dan aria-describedby yang benar", async ({ page }) => {
