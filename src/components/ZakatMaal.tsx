@@ -10,7 +10,7 @@ import { formatNumberInput, parseFormattedNumber, formatQuantityInput, parseQuan
 import { ResultCard, MobilePdfFab } from "./MobileCalcChrome";
 import { toast } from "sonner";
 import { focusFirstInvalid } from "@/lib/focus-invalid";
-import { ValidationSummary } from "@/components/ValidationHints";
+import { FieldError, ValidationSummary } from "@/components/ValidationHints";
 
 interface Props {
   goldPrice: number;
