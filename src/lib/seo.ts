@@ -16,7 +16,6 @@ export interface ZakatPage {
   /** Tab id used by the calculator. */
   tab: string;
   label: string;
-  short: string;
   title: string;
   description: string;
   h1: string;
@@ -31,7 +30,6 @@ export const ZAKAT_PAGES: ZakatPage[] = [
     slug: "zakat-maal",
     tab: "maal",
     label: "Maal",
-    short: "Maal",
     title: "Kalkulator Zakat Maal (Harta) — Tabungan, Emas, Investasi | ZakatCal",
     description:
       "Hitung zakat maal dari tabungan, emas, perak, investasi/saham/kripto, dan properti dikurangi hutang. Nisab 85g emas, kadar 2,5% setelah haul.",
@@ -53,7 +51,6 @@ export const ZAKAT_PAGES: ZakatPage[] = [
     slug: "zakat-perniagaan",
     tab: "perniagaan",
     label: "Perniagaan",
-    short: "Dagang",
     title: "Kalkulator Zakat Perniagaan / Perdagangan (Tijarah) — ZakatCal",
     description:
       "Hitung zakat perdagangan: modal kerja + piutang lancar + stok dagang − hutang dagang. Nisab 85g emas, kadar 2,5% setelah haul.",
@@ -71,7 +68,6 @@ export const ZAKAT_PAGES: ZakatPage[] = [
     slug: "zakat-pertanian",
     tab: "pertanian",
     label: "Pertanian",
-    short: "Tani",
     title: "Kalkulator Zakat Pertanian (Hasil Panen) 5%/10% — ZakatCal",
     description:
       "Hitung zakat pertanian dari hasil panen. Nisab 653 kg, kadar 10% (tadah hujan) atau 5% (irigasi/berbiaya), dibayar saat panen tanpa haul.",
@@ -89,7 +85,6 @@ export const ZAKAT_PAGES: ZakatPage[] = [
     slug: "zakat-peternakan",
     tab: "peternakan",
     label: "Peternakan",
-    short: "Ternak",
     title: "Kalkulator Zakat Peternakan (Unta, Sapi, Kambing) — ZakatCal",
     description:
       "Hitung zakat hewan ternak unta, sapi/kerbau, dan kambing/domba sesuai tabel nisab klasik. Estimasi nilai zakat dalam rupiah.",
@@ -107,7 +102,6 @@ export const ZAKAT_PAGES: ZakatPage[] = [
     slug: "zakat-rikaz",
     tab: "rikaz",
     label: "Rikaz",
-    short: "Rikaz",
     title: "Kalkulator Zakat Rikaz (Harta Temuan/Karun) 20% — ZakatCal",
     description:
       "Hitung zakat rikaz (harta terpendam/temuan) sebesar 20% (seperlima). Tanpa nisab dan tanpa haul, wajib langsung saat ditemukan.",
@@ -125,7 +119,6 @@ export const ZAKAT_PAGES: ZakatPage[] = [
     slug: "zakat-madin",
     tab: "madin",
     label: "Ma'din",
-    short: "Tambang",
     title: "Kalkulator Zakat Ma'din (Hasil Tambang) 2,5% — ZakatCal",
     description:
       "Hitung zakat ma'din (hasil tambang: emas, perak, mineral). Menurut jumhur ulama nisab setara 85g emas dan kadar 2,5%.",
@@ -143,7 +136,6 @@ export const ZAKAT_PAGES: ZakatPage[] = [
     slug: "zakat-fitrah",
     tab: "fitrah",
     label: "Fitrah",
-    short: "Fitrah",
     title: "Kalkulator Zakat Fitrah 2,5 kg per Jiwa — ZakatCal",
     description:
       "Hitung zakat fitrah 2,5 kg makanan pokok per jiwa, atau bayar dengan uang sesuai tarif daerah. Wajib sebelum shalat Idul Fitri.",
@@ -165,7 +157,6 @@ export const FIDYAH_PAGE: ZakatPage = {
   slug: "fidyah",
   tab: "fidyah",
   label: "Fidyah",
-  short: "Fidyah",
   title: "Kalkulator Fidyah Puasa — Denda Puasa yang Ditinggalkan | ZakatCal",
   description:
     "Hitung fidyah puasa Ramadhan yang ditinggalkan: ±0,75 kg makanan pokok per hari atau senilai uang. Untuk lansia, sakit menahun, ibu hamil/menyusui.",
