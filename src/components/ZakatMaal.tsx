@@ -113,8 +113,13 @@ export default function ZakatMaal({ goldPrice, silverPrice, nisabType, isActive,
         placeholder="0"
         value={value}
         onChange={(e) => formattedChange(e, set, quantity ? formatQuantityInput : formatNumberInput)}
+        aria-invalid={id === "maal-tabungan" && attempted && fields[0].invalid ? true : undefined}
+        aria-describedby={id === "maal-tabungan" && attempted && fields[0].invalid ? "maal-tabungan-error" : undefined}
         className="h-11 sm:h-10 text-base"
       />
+      {id === "maal-tabungan" && attempted && (
+        <FieldError id="maal-tabungan" message={fields[0].invalid ? fields[0].message : undefined} />
+      )}
     </div>
   );
 
