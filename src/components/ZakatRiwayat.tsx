@@ -41,6 +41,7 @@ import { generateZakatPdf } from "@/lib/pdf-generator";
 // Recharts is heavy — load the chart lazily so it stays out of the initial bundle.
 const ZakatChart = lazy(() => import("./ZakatChart"));
 import HistoryDetailDialog from "./HistoryDetailDialog";
+import { labelForZakatType } from "@/lib/seo";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
 
