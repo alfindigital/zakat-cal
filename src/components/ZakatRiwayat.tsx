@@ -52,7 +52,7 @@ interface Props {
 }
 
 const TYPE_ICON: Record<string, typeof Briefcase> = {
-  Penghasilan: Briefcase,
+  Penghasilan: Wallet,
   Maal: Wallet,
   Fitrah: Wheat,
   Perniagaan: Store,
