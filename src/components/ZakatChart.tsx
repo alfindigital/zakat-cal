@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, PieChart, Pie } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { type ZakatHistory, formatRupiah } from "@/lib/zakat";
+import { labelForZakatType } from "@/lib/seo";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
@@ -32,7 +33,8 @@ export default function ZakatChart({ history }: Props) {
   const summaryByType = useMemo(() => {
     const map: Record<string, number> = {};
     history.forEach((h) => {
-      map[h.type] = (map[h.type] || 0) + h.amount;
+      const key = labelForZakatType(h.type);
+      map[key] = (map[key] || 0) + h.amount;
     });
     return Object.entries(map).map(([type, total]) => ({
       type,
