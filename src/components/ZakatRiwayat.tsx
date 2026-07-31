@@ -232,7 +232,9 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
     if (!isRiwayatPage) return history;
     const q = query.trim().toLowerCase();
     return history.filter((h) => {
-      if (typeFilter !== "all" && h.type !== typeFilter) return false;
+      // Compare on display labels so legacy "Penghasilan" entries match "Maal".
+      if (typeFilter !== "all" && labelForZakatType(h.type) !== labelForZakatType(typeFilter))
+        return false;
       const hDate = historyItemDate(h);
       hDate.setHours(0, 0, 0, 0);
       if (startDate) {
@@ -248,6 +250,7 @@ export default function ZakatRiwayat({ history, onChanged }: Props) {
       if (q) {
         const haystack = [
           h.type,
+          labelForZakatType(h.type),
           h.label,
           formatRupiah(h.amount),
           ...(h.detail?.flatMap((d) => [d.label, d.value]) ?? []),
