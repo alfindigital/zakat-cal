@@ -30,7 +30,7 @@ export const ZAKAT_PAGES: ZakatPage[] = [
     slug: "zakat-maal",
     tab: "maal",
     label: "Maal",
-    title: "Kalkulator Zakat Maal (Harta) — Tabungan, Emas, Investasi | ZakatCal",
+    title: "Zakat Maal: Tabungan, Emas & Investasi | ZakatCal",
     description:
       "Hitung zakat maal dari tabungan, emas, perak, investasi/saham/kripto, dan properti dikurangi hutang. Nisab 85g emas, kadar 2,5% setelah haul.",
     h1: "Kalkulator Zakat Maal (Harta)",
@@ -85,7 +85,7 @@ export const ZAKAT_PAGES: ZakatPage[] = [
     slug: "zakat-peternakan",
     tab: "peternakan",
     label: "Peternakan",
-    title: "Kalkulator Zakat Peternakan (Unta, Sapi, Kambing) — ZakatCal",
+    title: "Zakat Peternakan: Unta, Sapi, Kambing | ZakatCal",
     description:
       "Hitung zakat hewan ternak unta, sapi/kerbau, dan kambing/domba sesuai tabel nisab klasik. Estimasi nilai zakat dalam rupiah.",
     h1: "Kalkulator Zakat Peternakan",
@@ -157,7 +157,7 @@ export const FIDYAH_PAGE: ZakatPage = {
   slug: "fidyah",
   tab: "fidyah",
   label: "Fidyah",
-  title: "Kalkulator Fidyah Puasa — Denda Puasa yang Ditinggalkan | ZakatCal",
+  title: "Kalkulator Fidyah Puasa Ramadhan | ZakatCal",
   description:
     "Hitung fidyah puasa Ramadhan yang ditinggalkan: ±0,75 kg makanan pokok per hari atau senilai uang. Untuk lansia, sakit menahun, ibu hamil/menyusui.",
   h1: "Kalkulator Fidyah Puasa",
