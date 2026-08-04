@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useSeo } from "@/lib/seo";
 
 
@@ -58,7 +58,7 @@ const sections = [
 
 export default function PanduanZakat() {
   useSeo({
-    title: "Panduan Zakat Lengkap — Syarat, Jenis, Nisab & 8 Asnaf | ZakatCal",
+    title: "Panduan Zakat: Syarat, Nisab & 8 Asnaf | ZakatCal",
     description:
       "Panduan zakat lengkap: pengertian, syarat wajib, jenis-jenis zakat, nisab & kadar, 8 golongan penerima zakat (asnaf), dan waktu pembayaran.",
     path: "/panduan-zakat",
@@ -68,12 +68,13 @@ export default function PanduanZakat() {
       className="mx-auto w-full max-w-2xl px-4 py-4 sm:px-6 sm:py-6 md:px-10 lg:px-12 md:py-8 flex-1 space-y-4 sm:space-y-5 md:space-y-6"
       style={{ paddingBottom: "calc(5.5rem + env(safe-area-inset-bottom, 0px))" }}
     >
+      <h1 className="text-xl font-bold tracking-tight sm:text-2xl">Panduan Zakat Lengkap</h1>
 
       <div className="space-y-3 sm:space-y-4">
         {sections.map((s) => (
           <Card key={s.title}>
             <CardHeader className="pb-2 px-4 pt-4 sm:px-6 sm:pt-5">
-              <CardTitle className="text-base sm:text-lg">{s.title}</CardTitle>
+              <h2 className="text-base font-semibold leading-none tracking-tight sm:text-lg">{s.title}</h2>
             </CardHeader>
             <CardContent className="space-y-3 text-xs text-muted-foreground leading-relaxed px-4 pb-4 sm:px-6 sm:pb-5 sm:text-sm">
               {s.content && <p>{s.content}</p>}

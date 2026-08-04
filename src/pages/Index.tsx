@@ -311,7 +311,7 @@ const Index = () => {
 
                 <div className="mb-1 md:mb-2">
                   <h1 className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight">
-                    {activePage?.h1 ?? "Kalkulator Zakat"}
+                    {isHome ? "Kalkulator Zakat Online Gratis & Akurat" : (activePage?.h1 ?? "Kalkulator Zakat")}
                   </h1>
                   {activePage?.intro && (
                     <p className="text-xs sm:text-sm text-muted-foreground mt-1 leading-relaxed">{activePage.intro}</p>

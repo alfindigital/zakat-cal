@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Send } from "lucide-react";
 import { TELEGRAM_BASE } from "@/lib/contact";
@@ -32,7 +32,7 @@ export default function Tentang() {
       </div>
 
       <Card>
-        <CardHeader className="pb-2"><CardTitle className="text-lg">Metodologi Perhitungan</CardTitle></CardHeader>
+        <CardHeader className="pb-2"><h2 className="text-lg font-semibold leading-none tracking-tight">Metodologi Perhitungan</h2></CardHeader>
         <CardContent className="space-y-3 text-sm text-muted-foreground leading-relaxed">
           <ul className="list-disc list-inside space-y-1.5">
             <li><span className="text-foreground font-medium">Nisab</span> — setara 85 gram emas atau 595 gram perak. Harga logam dapat Anda atur manual dan tersimpan di perangkat.</li>
@@ -42,21 +42,21 @@ export default function Tentang() {
       </Card>
 
       <Card>
-        <CardHeader className="pb-2"><CardTitle className="text-lg">Sumber Rujukan</CardTitle></CardHeader>
+        <CardHeader className="pb-2"><h2 className="text-lg font-semibold leading-none tracking-tight">Sumber Rujukan</h2></CardHeader>
         <CardContent className="space-y-2 text-sm text-muted-foreground leading-relaxed">
           <p>Acuan perhitungan merujuk pada ketentuan umum BAZNAS dan kitab-kitab fikih klasik tentang zakat. Untuk keputusan yang mengikat, konsultasikan dengan amil zakat atau ustadz tepercaya.</p>
         </CardContent>
       </Card>
 
       <Card>
-        <CardHeader className="pb-2"><CardTitle className="text-lg">Privasi</CardTitle></CardHeader>
+        <CardHeader className="pb-2"><h2 className="text-lg font-semibold leading-none tracking-tight">Privasi</h2></CardHeader>
         <CardContent className="space-y-2 text-sm text-muted-foreground leading-relaxed">
           <p>Semua perhitungan dilakukan sepenuhnya di perangkat Anda (browser). Angka penghasilan dan harta yang Anda masukkan <span className="text-foreground font-medium">tidak pernah dikirim ke server mana pun</span>. Riwayat hanya disimpan di penyimpanan lokal perangkat dan bisa Anda ekspor/hapus kapan saja.</p>
         </CardContent>
       </Card>
 
       <Card>
-        <CardHeader className="pb-2"><CardTitle className="text-lg">Disclaimer</CardTitle></CardHeader>
+        <CardHeader className="pb-2"><h2 className="text-lg font-semibold leading-none tracking-tight">Disclaimer</h2></CardHeader>
         <CardContent className="space-y-2 text-sm text-muted-foreground leading-relaxed">
           <p>Hasil perhitungan bersifat <span className="text-foreground font-medium">estimasi</span> untuk membantu, bukan fatwa. Perbedaan pendapat fikih, kondisi harta, dan kebijakan lembaga zakat setempat dapat memengaruhi nilai akhir. Pastikan menyalurkan zakat melalui amil/lembaga tepercaya.</p>
         </CardContent>

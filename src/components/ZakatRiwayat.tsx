@@ -84,6 +84,7 @@ function HistoryItem({
 }) {
   const [revealed, setRevealed] = useState(false);
   const Icon = TYPE_ICON[h.type] ?? Briefcase;
+  const itemLabel = `${labelForZakatType(h.type)} ${formatRupiah(h.amount)} (${h.date})`;
 
   return (
     <div data-history-id={h.id} className="relative overflow-hidden rounded-lg">
@@ -92,7 +93,7 @@ function HistoryItem({
         <button
           type="button"
           onClick={onRemove}
-          aria-label="Hapus riwayat"
+          aria-label={`Hapus riwayat ${itemLabel}`}
           className="absolute inset-y-0 right-0 w-20 bg-destructive text-destructive-foreground flex items-center justify-center"
         >
           <Trash2 aria-hidden="true" className="h-5 w-5" />
@@ -113,7 +114,7 @@ function HistoryItem({
             type="checkbox"
             checked={selected}
             onChange={onToggleSelect}
-            aria-label={`Pilih riwayat ${labelForZakatType(h.type)} ${formatRupiah(h.amount)}`}
+            aria-label={`Pilih riwayat ${itemLabel}`}
             className="h-4 w-4 shrink-0 accent-[hsl(var(--primary))] cursor-pointer"
           />
         )}
@@ -122,8 +123,8 @@ function HistoryItem({
           onClick={selectMode ? onToggleSelect : onOpenDetail}
           aria-label={
             selectMode
-              ? `Pilih riwayat ${labelForZakatType(h.type)} ${formatRupiah(h.amount)}`
-              : `Lihat detail riwayat ${labelForZakatType(h.type)} ${formatRupiah(h.amount)}`
+              ? `Pilih riwayat ${itemLabel}`
+              : `Lihat detail riwayat ${itemLabel}`
           }
           className="flex items-center gap-3 min-w-0 flex-1 text-left rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
 
@@ -151,7 +152,7 @@ function HistoryItem({
         {!isMobile && !selectMode ? (
           <div className="flex items-center gap-1 shrink-0">
             <Button
-              aria-label="Lihat detail"
+              aria-label={`Lihat detail riwayat ${itemLabel}`}
               variant="ghost"
               size="icon"
               className="h-10 w-10"
@@ -161,7 +162,7 @@ function HistoryItem({
             </Button>
             {h.detail && h.detail.length > 0 && (
               <Button
-                aria-label="Unduh PDF riwayat"
+                aria-label={`Unduh PDF riwayat ${itemLabel}`}
                 variant="ghost"
                 size="icon"
                 className="h-10 w-10"
@@ -171,7 +172,7 @@ function HistoryItem({
               </Button>
             )}
             <Button
-              aria-label="Hapus riwayat"
+              aria-label={`Hapus riwayat ${itemLabel}`}
               variant="ghost"
               size="icon"
               className="h-10 w-10"
