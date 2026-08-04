@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useSeo } from "@/lib/seo";
 
 
@@ -74,7 +74,7 @@ export default function PanduanZakat() {
         {sections.map((s) => (
           <Card key={s.title}>
             <CardHeader className="pb-2 px-4 pt-4 sm:px-6 sm:pt-5">
-              <CardTitle asChild><h2 className="text-base font-semibold leading-none tracking-tight sm:text-lg">{s.title}</h2></CardTitle>
+              <h2 className="text-base font-semibold leading-none tracking-tight sm:text-lg">{s.title}</h2>
             </CardHeader>
             <CardContent className="space-y-3 text-xs text-muted-foreground leading-relaxed px-4 pb-4 sm:px-6 sm:pb-5 sm:text-sm">
               {s.content && <p>{s.content}</p>}

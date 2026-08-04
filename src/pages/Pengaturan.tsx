@@ -128,8 +128,7 @@ export default function Pengaturan() {
       className="mx-auto w-full max-w-lg md:max-w-2xl px-4 py-4 sm:px-6 sm:py-6 md:px-10 lg:px-12 md:py-8 flex-1 space-y-4 sm:space-y-5 md:space-y-6"
       style={{ paddingBottom: "calc(5.5rem + env(safe-area-inset-bottom, 0px))" }}
     >
-
-
+      <h1 className="sr-only">Pengaturan ZakatCal</h1>
 
       {/* Hero Nisab Card */}
       <div className="relative overflow-hidden rounded-3xl bg-primary p-6 text-primary-foreground shadow-xl shadow-primary/25">
