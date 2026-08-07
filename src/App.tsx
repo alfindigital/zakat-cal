@@ -6,6 +6,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AppLayout } from "@/components/AppLayout";
 import Index from "./pages/Index.tsx";
 import PanduanZakat from "./pages/PanduanZakat.tsx";
+import ZakatEmas from "./pages/ZakatEmas.tsx";
 import Tentang from "./pages/Tentang.tsx";
 import Pengaturan from "./pages/Pengaturan.tsx";
 import Riwayat from "./pages/Riwayat.tsx";
