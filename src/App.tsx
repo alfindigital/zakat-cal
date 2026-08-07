@@ -32,6 +32,7 @@ const App = () => (
               <Route path="/zakat-penghasilan" element={<Navigate to="/" replace />} />
               <Route path="/zakat-maal" element={<Navigate to="/" replace />} />
               <Route path="/panduan-zakat" element={<PanduanZakat />} />
+              <Route path="/zakat-emas" element={<ZakatEmas />} />
               <Route path="/tentang" element={<Tentang />} />
               <Route path="/pengaturan" element={<Pengaturan />} />
               <Route path="/riwayat" element={<Riwayat />} />
