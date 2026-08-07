@@ -96,6 +96,14 @@ export default function PanduanZakat() {
         ))}
       </div>
 
+      <p className="text-xs text-muted-foreground leading-relaxed sm:text-sm">
+        Ingin fokus pada emas? Baca{" "}
+        <Link to="/zakat-emas" className="text-primary underline underline-offset-4">
+          cara menghitung zakat emas (nisab 85 gram, kadar 2,5%)
+        </Link>
+        .
+      </p>
+
       <div className="flex flex-wrap justify-center gap-4 pt-2 text-xs sm:text-sm">
         <Link to="/" className="font-semibold text-primary hover:underline">← Kembali ke kalkulator</Link>
       </div>
