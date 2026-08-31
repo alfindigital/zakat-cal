@@ -1,7 +1,26 @@
 {
-  "name": "vite_react_shadcn_ts",
-  "private": true,
-  "version": "0.0.0",
+  "name": "zakat-cal",
+  "private": false,
+  "version": "1.0.0",
+  "description": "Kalkulator zakat online gratis: maal, fitrah, perniagaan, pertanian, peternakan, rikaz, ma'din & fidyah sesuai syariat Islam.",
+  "license": "MIT",
+  "homepage": "https://github.com/alfindigital/zakat-cal#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alfindigital/zakat-cal.git"
+  },
+  "keywords": [
+    "zakat",
+    "zakat-calculator",
+    "kalkulator-zakat",
+    "islam",
+    "islamic-finance",
+    "zakat-maal",
+    "zakat-fitrah",
+    "react",
+    "vite",
+    "typescript"
+  ],
   "type": "module",
   "scripts": {
     "dev": "vite",
