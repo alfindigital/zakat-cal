@@ -31,7 +31,7 @@ import { Briefcase, Loader2 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ALL_PAGES, HOME_SEO, getPageBySlug, useSeo, type ZakatPage } from "@/lib/seo";
+import { ALL_PAGES, HOME_SEO, SITE_URL, getPageBySlug, useSeo, type ZakatPage } from "@/lib/seo";
 import { track } from "@/lib/analytics";
 import { formatMetalPrice } from "@/lib/format";
 import { TAB_ICONS, pathForTab, tabForPath as tabForPathShared } from "@/components/AppShell";
@@ -82,12 +82,12 @@ const Index = () => {
   const isHome = location.pathname === "/";
   const routeJsonLd = useMemo(() => {
     if (!activePage || isHome) return null;
-    const url = `https://zakat-cal.lovable.app/${activePage.slug}`;
+    const url = `${SITE_URL}/${activePage.slug}`;
     const graph: object[] = [
       {
         "@type": "BreadcrumbList",
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Beranda", item: "https://zakat-cal.lovable.app/" },
+          { "@type": "ListItem", position: 1, name: "Beranda", item: `${SITE_URL}/` },
           { "@type": "ListItem", position: 2, name: activePage.label, item: url },
         ],
       },

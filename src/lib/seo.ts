@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 
-export const SITE_URL = "https://zakat-cal.lovable.app";
+export const SITE_URL: string =
+  (import.meta.env.VITE_SITE_URL as string | undefined) ?? "https://YOUR_DOMAIN";
 export const SITE_NAME = "ZakatCal";
 const OG_IMAGE = `${SITE_URL}/og-image.jpg`;
 
