@@ -107,7 +107,7 @@
     "jest-axe": "^10.0.0",
     "jsdom": "^20.0.3",
     "lovable-tagger": "^1.1.13",
-    "postcss": "^8.5.6",
+    "postcss": "^8.5.23",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.38.0",
@@ -116,6 +116,8 @@
   },
   "overrides": {
     "tinypool": "2.1.2",
-    "postcss-selector-parser": "^7.1.6"
+    "@tailwindcss/typography": {
+      "postcss-selector-parser": "^6.1.5"
+    }
   }
 }
