@@ -41,7 +41,8 @@ secrets/
 .lovable/
 .cursor/
 
-# Playwright snapshots and reports
+# Playwright reports (hasil run, bukan kontrak)
 playwright-report/
 test-results/
-e2e/**/*-snapshots/
+# Baseline snapshot JUSTRU harus ikut di-track: itu acuan visual regression.
+# Mengabaikannya bikin job firefox mustahil lulus karena baselinenya tak pernah ada.
