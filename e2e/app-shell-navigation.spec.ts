@@ -8,7 +8,9 @@ import { test, expect } from "../playwright-fixture";
 test.use({ viewport: { width: 390, height: 844 } });
 
 const ROUTES: Array<{ path: string; marker: string | RegExp }> = [
-  { path: "/", marker: /Kalkulator Zakat Maal/ },
+  // Beranda sengaja memakai h1 generik untuk SEO (lihat komentar di src/lib/seo.ts);
+  // h1 "Kalkulator Zakat Maal (Harta)" hanya muncul di rute /zakat-maal.
+  { path: "/", marker: /Kalkulator Zakat Online Gratis/ },
   { path: "/pengaturan", marker: "Nisab saat ini" },
   { path: "/riwayat", marker: "Riwayat Perhitungan" },
   { path: "/panduan-zakat", marker: "Apa Itu Zakat?" },
